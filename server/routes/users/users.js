@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users router listing. */
+/* users router listing. */
 router.get('/', function(req, res, next) {
   res.send('here is users router');
 });

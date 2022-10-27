@@ -1,10 +1,10 @@
-var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var usersRouter = require('./routes/users/users');
+var transferRouter = require('./routes/users/users_transfer');
 var postRouter = require('./routes/post/post');
 var exchangeRouter = require('./routes/exchange/exchange');
 
@@ -19,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // router
 app.use('/users', usersRouter);
+app.use('/users/transfer', transferRouter);
 app.use('/post', postRouter);
 app.use('/exchange', exchangeRouter);
 
