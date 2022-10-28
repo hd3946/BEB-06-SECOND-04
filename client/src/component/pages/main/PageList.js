@@ -25,7 +25,7 @@ const PageList = () => {
       <div className="pageHeader">
         <div className="tapAll">ALL</div>
       </div>
-      {[1, 2, 3, 4, 5].map((data, index) => (
+      {[1].map((data, index) => (
         <Page key={index} pos="main" />
       ))}
     </PageListBox>
