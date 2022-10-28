@@ -9,17 +9,17 @@ import SignPage from "./component/pages/sign/SignPage";
 
 function App() {
   return (
-    <div className="App">
+    <div>
       <div>
         <BrowserRouter>
           <Sidebar />
-          <div style={{ "padding-left": "9rem" }}>
+          <div style={{ paddingLeft: "14rem" }}>
             <Routes>
               <Route path="/" element={<Main />}></Route>
               <Route path="/detail" element={<Detail />}></Route>
               <Route path="/mint" element={<Mint />}></Route>
-              <Route path="/mypage" element={<Mypage />}></Route>
-              {/* sign은 Sidebar 컴포넌트 밑으로 빼고 redux로 관리 */}
+              <Route path="/mypage2" element={<Mypage />}></Route>
+              {/* sign은 Sidebar 컴포넌트 밑으로 빼고 redux로 on/off 관리 */}
               <Route path="/sign" element={<SignPage />}></Route>
             </Routes>
           </div>
