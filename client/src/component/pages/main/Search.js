@@ -23,9 +23,6 @@ const SearchBox = styled.div`
       }
       .iconBox {
         position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         width: 40px;
         height: 100%;
         border: 1px solid black;
@@ -50,14 +47,9 @@ const SearchBox = styled.div`
         width: 272px;
         height: 100%;
         padding-right: 60px;
-        resize: none;
-        overflow: hidden;
       }
       .buttonBox {
         position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         right: 10px;
         width: 40px;
         height: 110%;
@@ -80,34 +72,79 @@ const SearchBox = styled.div`
 `;
 
 const Search = () => {
-  const [text, setText] = useState({
-    searchId: "",
-    postText: "",
+  const [text, setText] = useState("");
+  const [postData, setPostData] = useState({
+    title: "",
+    desc: "",
   });
 
-  const posting = () => {
-    //axios.get
+  const searchFilter = () => {
+    console.log("검색 버튼 누름!");
+    // 이미 받은 content list에서 filter 시켜 해당 content 노출
   };
+  // /post
+  const posting = () => {
+    console.log("포스팅 post 요청");
+    axios
+      .post(
+        `http://localhost:3005/post`,
+        {
+          post: {
+            email: "redux에 저장된 로그인한 유저 email을 넣어주기",
+            title: "",
+            desc: postData.desc,
+          },
+        },
+        { "Content-Type": "application/json", withCredentials: true }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => alert(err));
+  };
+
+  const enterAction = (key, type) => {
+    console.log(key);
+    if (type === "search") {
+      searchFilter();
+    } else if (type === "desc") {
+      posting();
+    }
+  };
+
   return (
     <SearchBox>
       <div className="inputBox">
         <div className="search">
           <input
             placeholder="찾을 사람 검색!"
-            onChange={(e) => setText({ ...text, searchId: e.target.value })}
+            value={text}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                enterAction(e.key, "search");
+              }
+            }}
+            onChange={(e) => setText(e.target.value)}
           />
-          <div className="iconBox">
+          <div className="iconBox cc" onClick={() => searchFilter()}>
             <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
           </div>
         </div>
 
         <div className="postingBox">
-          {/* <input placeholder="무슨일이 일어나고 있나요?" /> */}
+          {/* title input 만들기 */}
           <textarea
             placeholder="무슨일이 일어나고 있나요?"
-            onChange={(e) => setText({ ...text, postText: e.target.value })}
+            className="ta"
+            value={postData.desc}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                enterAction(e.key, "desc");
+              }
+            }}
+            onChange={(e) => setPostData({ ...postData, desc: e.target.value })}
           />
-          <div className="buttonBox">
+          <div className="buttonBox cc" onClick={() => posting()}>
             <button>Enter</button>
           </div>
         </div>
