@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 const StyledAll = styled.div`
+  position: fixed;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -19,10 +20,14 @@ const StyledLogo = styled.div`
   font-size: 14px;
   display: inline-block;
   margin: 27px 30px 13px 59px;
-  color: #03a9f4;
+  color: var(--mainColor);
+  /* color: #03a9f4; */
 `;
 
 const StyledSidebar = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   top: 0;
   left: 0;
   height: 100vh;
@@ -55,34 +60,38 @@ function Sidebar() {
     <StyledAll>
       <StyledSidebar>
         <StyledLogo>F4</StyledLogo>
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <StyledButton>
-            <FontAwesomeIcon icon={faHouse} style={{ color: "white" }} /> &nbsp;
-            Home
-          </StyledButton>
-        </Link>
-        <Link to="/mint" style={{ textDecoration: "none" }}>
-          <StyledButton>
-            <FontAwesomeIcon icon={faImage} style={{ color: "white" }} />
-            &nbsp;&nbsp; Minting
-          </StyledButton>
-        </Link>
+        <div>
+          <Link to="/" style={{ textDecoration: "none" }}>
+            <StyledButton>
+              <FontAwesomeIcon icon={faHouse} style={{ color: "white" }} />{" "}
+              &nbsp; Home
+            </StyledButton>
+          </Link>
+          <Link to="/mint" style={{ textDecoration: "none" }}>
+            <StyledButton>
+              <FontAwesomeIcon icon={faImage} style={{ color: "white" }} />
+              &nbsp;&nbsp; Minting
+            </StyledButton>
+          </Link>
+          <Link to="/mypage" style={{ textDecoration: "none" }}>
+            <StyledButton>
+              <FontAwesomeIcon icon={faUser} style={{ color: "white" }} />
+              &nbsp;&nbsp;&nbsp;Mypage
+            </StyledButton>
+          </Link>
+        </div>
 
-        <Link to="/mypage" style={{ textDecoration: "none" }}>
-          <StyledButton>
-            <FontAwesomeIcon icon={faUser} style={{ color: "white" }} />
-            &nbsp;&nbsp;&nbsp;Mypage
-          </StyledButton>
-        </Link>
-        <StyledButton></StyledButton>
-        <StyledButton></StyledButton>
+        {/* <StyledButton></StyledButton>
+        <StyledButton></StyledButton> */}
 
-        <Link to="/signin" style={{ textDecoration: "none" }}>
-          <StyledButton2>SignIn</StyledButton2>
-        </Link>
-        <Link to="/signup" style={{ textDecoration: "none" }}>
-          <StyledButton2>SignUp</StyledButton2>
-        </Link>
+        <div>
+          <Link to="/sign?type=in" style={{ textDecoration: "none" }}>
+            <StyledButton2>SignIn</StyledButton2>
+          </Link>
+          <Link to="/sign?type=up" style={{ textDecoration: "none" }}>
+            <StyledButton2>SignUp</StyledButton2>
+          </Link>
+        </div>
       </StyledSidebar>
     </StyledAll>
   );
