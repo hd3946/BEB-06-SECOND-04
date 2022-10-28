@@ -8,7 +8,7 @@ import axios from "axios";
 const PageListBox = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
+  margin-top: 70px;
   .pageHeader {
     .tapAll {
       width: 250px;
