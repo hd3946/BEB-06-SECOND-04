@@ -1,3 +1,14 @@
 :root {
   --mainColor: #03a9f4;
 }
+
+.cc {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ta {
+  resize: none;
+  overflow: hidden;
+}
