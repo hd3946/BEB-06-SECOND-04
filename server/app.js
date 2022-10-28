@@ -1,4 +1,3 @@
-var createError = require('http-errors');
 var express = require('express');
 var app = express();
 var path = require('path');
@@ -9,6 +8,7 @@ var dotenv = require('dotenv');
 dotenv.config();
 var { sequelize } = require('./models');
 
+var app = express();
 app.set('port', process.env.PORT || 3005);
 
 app.use(logger('dev'));
@@ -27,28 +27,23 @@ sequelize
     console.error(err);
   });
 
+var postRouter = require('./routes/post/post');
+var exchangeRouter = require('./routes/exchange/exchange');
+var usersRouter = require('./routes/users'); 
 
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-app.use('/', indexRouter);
+// router
 app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+app.use('/post', postRouter);
+app.use('/exchange', exchangeRouter); 
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(400).send('Something broke!');
+});
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+app.use((req, res, next) => {
+  res.status(404).send("invailed path");
 });
 
 app.listen(app.get('port'), () => {
