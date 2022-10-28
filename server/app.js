@@ -16,7 +16,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors());
+const corsOption = {
+  origin: process.env.CORS_API_URL, // frontend base url
+  credentials: true, // true로 하면 설정한 내용을 response 헤더에 추가 해줍니다.
+};
+app.use(cors(corsOption));
 
 sequelize
   .sync({ force: false }) // force:true 일경우 테이블 전부 지우고 새로 설정~!
