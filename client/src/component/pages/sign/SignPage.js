@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -111,6 +113,7 @@ const SignPageBox = styled.div`
 `;
 
 const SignPage = () => {
+  const location = new URLSearchParams(useLocation().search).get("type");
   const [singUpCheck, setSingUpCheck] = useState(false);
   const [userId, setUserId] = useState({
     id: "",
@@ -122,22 +125,26 @@ const SignPage = () => {
     // 회원 정보 조회
     axios
       .post(
-        `https://localhost:3005/로그인 주소`,
+        `http://localhost:3005/users/login`,
         {
-          userId: userId.id,
+          email: userId.email,
           password: userId.password,
         },
         { "Content-Type": "application/json", withCredentials: true }
       )
       .then((res) => {
+        console.log(res);
         // 조회 결과에 따라 나뉨
         // 1. true일 경우 해당 회원 정보 받아서
         //    리덕스 회원 정보에 저장
         // 2. false일 경우 로그인 실패 메세지
-        return axios.get(`https://localhost:3005/회원정보 조회 주소`);
       })
       .catch((err) => alert(err));
   };
+
+  useEffect(() => {
+    setSingUpCheck(location === "in" ? false : true);
+  }, [location]);
 
   return (
     <SignPageBox singUpCheck={singUpCheck}>
