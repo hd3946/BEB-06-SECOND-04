@@ -33,7 +33,7 @@ sequelize
 
 var postRouter = require('./routes/post/post');
 var exchangeRouter = require('./routes/exchange/exchange');
-var usersRouter = require('./routes/users'); 
+var usersRouter = require('./routes/users/users'); 
 
 // router
 app.use('/users', usersRouter);
