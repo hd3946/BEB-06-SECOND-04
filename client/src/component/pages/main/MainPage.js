@@ -1,5 +1,5 @@
 import React from "react";
-import Search from "./Search";
+import MainTop from "./MainTop";
 import styled from "styled-components";
 import PageList from "./PageList";
 
@@ -11,7 +11,7 @@ const MainPageBox = styled.div`
 const MainPage = () => {
   return (
     <MainPageBox>
-      <Search />
+      <MainTop />
       <PageList />
     </MainPageBox>
   );
