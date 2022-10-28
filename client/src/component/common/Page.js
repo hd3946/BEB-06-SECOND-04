@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 import React from "react";
 import styled from "styled-components";
 
@@ -16,8 +17,9 @@ const PageBox = styled.div`
       border-radius: 50%;
       background-color: rgba(82, 192, 255, 0.6);
       img {
-        width: 100%;
-        height: 100%;
+        /* width: 100%;
+        height: 100%; */
+        object-fit: cover;
       }
     }
     .pageUserBox {
@@ -79,10 +81,52 @@ const PageBox = styled.div`
 `;
 
 const Page = ({ pos }) => {
+  const likeUp = () => {
+    axios
+      .post(
+        `http://localhost:3005/post`,
+        {
+          post: {
+            email: "redux에 저장된 로그인한 유저 email을 넣어주기",
+            contentId: "좋아요 누른 contentID",
+          },
+        },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => alert(err));
+  };
+
+  const likeCancel = () => {
+    axios
+      .put(
+        `http://localhost:3005/post`,
+        {
+          post: {
+            email: "redux에 저장된 로그인한 유저 email을 넣어주기",
+            contentId: "좋아요 누른 contentID",
+          },
+        },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => alert(err));
+  };
+
   return (
     <PageBox pos={pos}>
       <div className="pageHeader">
-        <div className="pageUserProfileBox">
+        <div className="pageUserProfileBox cc">
           <img src="" alt="Profile" />
         </div>
         <div className="pageUserBox">
@@ -104,7 +148,8 @@ const Page = ({ pos }) => {
           <div className="icon">
             <FontAwesomeIcon icon="fa-regular fa-message" />
           </div>
-          <div className="icon">
+          {/* 조건문으로 cencel 버튼 추가 */}
+          <div className="icon" onClick={() => likeUp()}>
             <FontAwesomeIcon icon="fa-heart-circle-plus" />
           </div>
         </div>
