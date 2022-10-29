@@ -28,6 +28,8 @@ const PageList = () => {
       .get(`http://localhost:3005/post`)
       .then((res) => {
         // 받은 list는 redux에서 관리하기
+        // or
+        // 현재 컴포넌트에 임시로 관리하기
         console.log(res);
       })
       .catch((err) => alert(err));

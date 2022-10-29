@@ -82,6 +82,10 @@ const PageBox = styled.div`
 
 const Page = ({ pos }) => {
   const likeUp = () => {
+    // 좋아요
+    // 서버에서 좋아요 개수 업데이트
+    // 클라에선 임시로 클릭한 글 좋아요 + 1 해주기
+    // 이후 글 새롭게 받아오면 좋아요 적용된 글 받을 수 있음
     axios
       .post(
         `http://localhost:3005/post`,
@@ -103,6 +107,9 @@ const Page = ({ pos }) => {
   };
 
   const likeCancel = () => {
+    // 좋아요 취소
+    // 로그인한 유저의 좋아요 목록을 조회해 해당 글 아이디가 있다면
+    // 좋아요 취소 버튼을 노출하고 likeCancel 함수 연결
     axios
       .put(
         `http://localhost:3005/post`,
