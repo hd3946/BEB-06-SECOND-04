@@ -13,6 +13,7 @@ function App() {
       <div>
         <BrowserRouter>
           <Sidebar />
+
           <div style={{ paddingLeft: "14rem" }}>
             <Routes>
               <Route path="/" element={<Main />}></Route>
