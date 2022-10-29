@@ -61,21 +61,20 @@ router.post('/token', async (req, res, next) => {
 router.post('/mint', async (req, res, next) => {  
 
   /** account methods **/
-  const wallet = await web3.eth.personal.newAccount(userPassword) //지갑생성
-  const unlock = await web3.eth.personal.unlockAccount(userAddr, userPassword)
+  // const wallet = await web3.eth.personal.newAccount(userPassword) //지갑생성
+  // const unlock = await web3.eth.personal.unlockAccount(userAddr, userPassword)
 
   /** Token methods **/
-  const tokenBalance = await tokenContract.methods.balanceOf(userAddr).call()
-  const tokenTransfer = await tokenContract.methods.transfer(serverAddr, 1).send({ from: userAddr })
+  // const tokenBalance = await tokenContract.methods.balanceOf(userAddr).call()
+  // const tokenTransfer = await tokenContract.methods.transfer(serverAddr, 1).send({ from: userAddr })
 
   /** NFT methods **/
-  const nftMint = await nftContract.methods.mintNFT.mintNFT(userAddr, "testURI").send({ from: serverAddr })
-  const nftBalance = await nftContract.methods.balanceOf(userAddr).call()
-  const nfttokenId = await nftContract.methods._tokenIds().call()
+  // const nftMint = await nftContract.methods.mintNFT(serverAddr, "testURI").send({ from: serverAddr })
+  // const nftBalance = await nftContract.methods.balanceOf(serverAddr ).call()
+  // const nftTokenId = await nftContract.methods._tokenIds().call()
 
   ////////////////////////////////////////////////////////////////////////////
 
-  console.log("unlock", unlock)
 
   web3.eth.personal.unlockAccount(userAddr, "password") //user unlock
   .then(res => {
