@@ -161,7 +161,7 @@ const SignPage = () => {
   };
 
   useEffect(() => {
-    setSingUpCheck(location === "in" ? true : false);
+    setSingUpCheck(location === "in" ? false : true);
   }, [location]);
 
   return (

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import styled from "styled-components";
-import Page from "../../common/Page";
+import Page from "../../common/page/Page";
 
 const DetailPageBox = styled.div`
   flex-direction: column;

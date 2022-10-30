@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import "@fortawesome/fontawesome-free/js/all.js";
-import Page from "../../common/Page";
+import Page from "../../common/page/Page";
 import { useEffect } from "react";
 import axios from "axios";
 
