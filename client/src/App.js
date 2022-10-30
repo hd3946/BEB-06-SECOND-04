@@ -21,7 +21,7 @@ function App() {
               <Route path="/detail" element={<Detail />}></Route>
               <Route path="/mint" element={<Mint />}></Route>
               <Route path="/mypage" element={<Mypage />}></Route>
-              {/* sign은 Sidebar 컴포넌트 밑으로 빼고 redux로 on/off 관리 */}
+              {/* sign은 Modal 컴포넌트로 이동하고 redux로 on/off 관리 */}
               <Route path="/sign" element={<SignPage />}></Route>
             </Routes>
           </div>
