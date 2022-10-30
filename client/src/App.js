@@ -6,7 +6,7 @@ import Detail from "./component/pages/detail/DetailPage";
 import Mint from "./component/pages/minting/MintingPage";
 import Mypage from "./component/pages/mypage/MyPage";
 import SignPage from "./component/pages/sign/SignPage";
-import Loading from "./component/common/loading/Loading";
+import Modal from "./component/common/modal/Modal";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
       <div>
         <BrowserRouter>
           <Sidebar />
-
+          <Modal />
           <div style={{ paddingLeft: "14rem" }}>
             <Routes>
               <Route path="/" element={<Main />}></Route>
@@ -23,9 +23,6 @@ function App() {
               <Route path="/mypage" element={<Mypage />}></Route>
               {/* sign은 Sidebar 컴포넌트 밑으로 빼고 redux로 on/off 관리 */}
               <Route path="/sign" element={<SignPage />}></Route>
-
-              {/* 테스트 */}
-              <Route path="/test" element={<Loading />}></Route>
             </Routes>
           </div>
         </BrowserRouter>
