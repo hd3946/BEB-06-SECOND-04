@@ -6,11 +6,9 @@ import Myposts from "./Myposts";
 import Send from "./Send";
 
 const MypageBox = styled.div`
-  //background-color: black;
   display: flex;
   flex-direction: column;
   align-items: center;
-  //width: 100%;
   height: 100vh;
 
   .mypageHeader {
@@ -20,18 +18,12 @@ const MypageBox = styled.div`
     height: 70px;
     background-color: rgb(82, 192, 255);
     .mypageProfileImg {
-      display: flex;
-      justify-content: center;
-      align-items: center;
       width: 80px;
       height: 80px;
       border-radius: 50%;
       margin-top: 35px;
       background-color: white;
       div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
         width: 76px;
         height: 76px;
         border-radius: 50%;
@@ -70,9 +62,6 @@ const MypageBox = styled.div`
         margin: 5px 10px;
         transform: translateX(-10px);
         .coinIcon {
-          display: flex;
-          justify-content: center;
-          align-items: center;
           width: 50px;
           height: 50px;
           margin-right: 10px;
@@ -100,8 +89,8 @@ const Mypage = () => {
   return (
     <MypageBox>
       <div className="mypageHeader">
-        <div className="mypageProfileImg">
-          <div>
+        <div className="mypageProfileImg cc">
+          <div className="cc">
             <img src="" alt="프사" />
           </div>
         </div>
@@ -111,7 +100,7 @@ const Mypage = () => {
       <div className="mypageBody">
         <div className="mypageProfile">
           <div className="mypageMyCoin">
-            <div className="coinIcon">
+            <div className="coinIcon cc">
               <FontAwesomeIcon
                 icon="fa-brands fa-bitcoin"
                 size="2x"

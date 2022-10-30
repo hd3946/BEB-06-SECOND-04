@@ -1,12 +1,10 @@
+import axios from "axios";
 import React from "react";
 import styled from "styled-components";
 import Page from "../../common/Page";
 
 const DetailPageBox = styled.div`
-  display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   width: 100%;
   margin-top: 50px;
 
@@ -22,17 +20,13 @@ const DetailPageBox = styled.div`
       width: 530px;
       height: 80px;
       padding: 10px 70px 0px 100px;
-      resize: none;
-      overflow: hidden;
+
       border: 2px solid rgba(110, 110, 110, 0.8);
     }
     .replyIn {
       position: absolute;
     }
     .createReplyProfile {
-      display: flex;
-      justify-content: center;
-      align-items: center;
       object-fit: cover;
       width: 70px;
       height: 70px;
@@ -57,10 +51,7 @@ const DetailPageBox = styled.div`
     }
   }
   .replyList {
-    display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     margin-top: 25px;
     .replyHeader {
@@ -68,9 +59,6 @@ const DetailPageBox = styled.div`
       width: 600px;
       margin-top: 30px;
       .replyUserProfileBox {
-        /* display: flex;
-        justify-content: center;
-        align-items: center; */
         object-fit: cover;
         width: 60px;
         height: 60px;
@@ -96,21 +84,58 @@ const DetailPageBox = styled.div`
 `;
 
 const DetailPage = () => {
+  //수정
+  const contentChange = () => {
+    axios
+      .put(
+        `http://localhost:3005/post`,
+        {
+          title: "수정한 title",
+          desc: "수정한 desc",
+        },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => alert(err));
+  };
+  //삭제
+  const contentDelete = () => {
+    axios
+      .delete(
+        `http://localhost:3005/post`,
+        {
+          contentId: "선택한 contentId",
+          email: "삭제 버튼을 누른 user Email",
+        },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => alert(err));
+  };
+
   return (
-    <DetailPageBox>
+    <DetailPageBox className="cc">
       <div className="pageBox">
         <Page pos="detail" />
       </div>
+      {/* 댓글 박스 */}
       <div className="createReply">
-        <textarea placeholder="Description" />
-        <div className="createReplyProfile replyIn">
+        <textarea placeholder="Description" className="ta" />
+        <div className="createReplyProfile replyIn cc">
           <img src="" alt="프사" />
         </div>
         <div className="createReplyB replyIn">
           <button>reply</button>
         </div>
       </div>
-      <div className="replyList">
+      <div className="replyList cc">
+        {/* page 컴포넌트 사용 고려하기 */}
         {[1, 2, 3].map((data, index) => (
           <div className="replyHeader" key={index}>
             <div className="replyUserProfileBox">

@@ -18,12 +18,8 @@ const MintingPageBox = styled.div`
   }
 
   .mintingBody {
-    display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     margin-top: 70px;
-
     text-align: center;
     .mintingText1 {
       font-size: 20px;
@@ -34,9 +30,6 @@ const MintingPageBox = styled.div`
       font-size: 18px;
     }
     .mintingImg {
-      display: flex;
-      justify-content: center;
-      align-items: center;
       object-fit: cover;
       width: 400px;
       height: 400px;
@@ -129,7 +122,7 @@ const MintingPage = () => {
       <div className="mintingHeader">
         <div className="tapMinting">Minting</div>
       </div>
-      <div className="mintingBody">
+      <div className="mintingBody cc">
         <div className="mintingText1">Create your own NFT</div>
         <div className="mintingText2">Minting per 1 FTC</div>
         <div className="mintingImg">
@@ -142,7 +135,9 @@ const MintingPage = () => {
             onChange={uploadImage}
             name="image"
           ></input>
-          <img className={"uploadImage" + (imageView ? "on" : "")}></img>
+          <div className="mintingImg cc">
+            <img className={"uploadImage" + (imageView ? "on" : "")}></img>
+          </div>
         </div>
         <div className="mintingNFTName">
           <input placeholder="NFT name" />
