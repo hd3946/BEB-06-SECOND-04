@@ -1,4 +1,5 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const MintingPageBox = styled.div`
@@ -35,6 +36,23 @@ const MintingPageBox = styled.div`
       margin-top: 30px;
       background-color: #e5daff;
       border: 2px solid rgba(110, 110, 110, 0.8);
+      position: relative;
+    }
+    #ex_file {
+      width: 420px;
+      border: 0 solid rgba(110, 110, 110, 0.8);
+      padding: 0px 5px 0px 5px;
+    }
+    .file_box {
+      width: 238px;
+      height: 300px;
+      display: inline-block;
+      border: 3px;
+    }
+    .uploadImageon {
+      width: 393px;
+      height: 393px;
+      position: absolute;
     }
     input,
     textarea {
@@ -73,6 +91,32 @@ const MintingPageBox = styled.div`
 `;
 
 const MintingPage = () => {
+  const [imageView, setImage] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+
+  const uploadImage = (e) => {
+    let file = e.target.files[0];
+    const file_url = URL.createObjectURL(file);
+    document.querySelector(".uploadImage").src = file_url;
+    setImage(true);
+    console.log(file_url);
+    //blob:http://localhost:3000/aad74c35-6ea4-4745-b791-fdc827a52a59
+  };
+
+  // 서버에 url formdata로 보내기
+
+  // const setFile = (e) => {
+  //   if(e.target.files[0]){
+  //     const img = new FormData();
+  //     img.append('file',e.target.files[0]);
+  //     axios.post('http://localhost://3005/',img).them((res)=>{
+  //       setImageUrl(res.data);
+  //     }).catch((err)=>{
+  //       console.error(err);
+  //     })
+  //   }
+  // }
+
   return (
     <MintingPageBox>
       <div className="mintingHeader">
@@ -81,8 +125,19 @@ const MintingPage = () => {
       <div className="mintingBody cc">
         <div className="mintingText1">Create your own NFT</div>
         <div className="mintingText2">Minting per 1 FTC</div>
-        <div className="mintingImg cc">
-          <img src="" alt="이미지" />
+        <div className="mintingImg">
+          <label className="file_box" htmlFor="ex_file">
+            <div className="file_label_div"></div>
+          </label>
+          <input
+            type="file"
+            id="ex_file"
+            onChange={uploadImage}
+            name="image"
+          ></input>
+          <div className="mintingImg cc">
+            <img className={"uploadImage" + (imageView ? "on" : "")}></img>
+          </div>
         </div>
         <div className="mintingNFTName">
           <input placeholder="NFT name" />
