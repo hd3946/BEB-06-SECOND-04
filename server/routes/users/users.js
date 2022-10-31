@@ -59,7 +59,7 @@ router.post('/signup', function(req, res, next) {
     await User.create({
       email,
       nick,
-      password: hash,
+      password: password,
     });
 
     res.status(200).json({
