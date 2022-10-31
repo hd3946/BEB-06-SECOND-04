@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 const MypostsBox = styled.div`
@@ -38,21 +39,29 @@ const MypostsBox = styled.div`
         font-weight: 500;
       }
     }
+    .empty {
+      height: 100%;
+    }
   }
 `;
 
 const Myposts = () => {
+  const { list } = useSelector((state) => state.post);
   return (
     <MypostsBox>
       <div className="mypostsHeader">My Posts</div>
       <div className="mypostsList">
-        {[1, 2, 3, 4].map((data, index) => (
-          <div className="mypost" key={index}>
-            <div className="mypostIndex">#{index}</div>
-            <div className="mypostdesc">description</div>
-            <div className="mypostDay">day</div>
-          </div>
-        ))}
+        {list.length > 0 ? (
+          list.map((data, index) => (
+            <div className="mypost" key={index}>
+              <div className="mypostIndex">#{index}</div>
+              <div className="mypostdesc">description</div>
+              <div className="mypostDay">day</div>
+            </div>
+          ))
+        ) : (
+          <div className="empty cc">작성한 글이 없습니다!</div>
+        )}
       </div>
     </MypostsBox>
   );

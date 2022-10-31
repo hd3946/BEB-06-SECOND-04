@@ -6,7 +6,7 @@ module.exports = class User extends Sequelize.Model {
       {
         email: {
           type: Sequelize.STRING(40),
-          allowNull: true,
+          allowNull: false,
           unique: true,
           validate: {
             // notNull: { msg: 'User must have a email' },
@@ -24,7 +24,11 @@ module.exports = class User extends Sequelize.Model {
         },
         password: {
           type: Sequelize.STRING(100),
-          allowNull: true,
+          allowNull: false,
+        },
+        address: {
+          type: Sequelize.STRING(100),
+          allowNull: false,
         },
         picture: {
           type: Sequelize.STRING(255),

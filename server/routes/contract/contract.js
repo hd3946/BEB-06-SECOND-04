@@ -7,9 +7,8 @@ const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
 const serverAddr = process.env.SERVER_ADDRESS;        //가나슈1
 const serverKey =  process.env.SERVER_PRIVATE_KEY;    //가나슈1 비밀키
-const dummyAddr = process.env.DUMMY_ADDRESS;          //가나슈2
-const userAddr = process.env.USER_ADDRESS             //생성된 지갑 초기이더 0.
-const userPassword = process.env.USER_PASSWORD        //생성된 지갑 비밀번호
+const userAddr = process.env.USER_ADDRESS           //가나슈2
+const userPassword = process.env.USER_PRIVATE_KEY       //생성된 지갑 비밀번호
 
 /* web.eth */
 var Web3 = require('web3');
@@ -47,7 +46,7 @@ router.post('/eth', async (req, res, next) => {
 
 /* transfer token  */
 router.post('/token', async (req, res, next) => {
-  const transferToken = await tokenContract.methods.transfer(userAddr, 1).send({ from: serverAddr }) //from에게 1ETH를 전송
+  const transferToken = await tokenContract.methods.transfer(userAddr, 1).send({ from: serverAddr }) //from에게 token를 전송
   const tokenBalance = await tokenContract.methods.balanceOf(userAddr).call()
   console.log(`transfer to userAddr:${userAddr} || 1 Token.`)
   res.status(200).send({ tokenBalance });

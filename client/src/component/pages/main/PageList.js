@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import "@fortawesome/fontawesome-free/js/all.js";
 import Page from "../../common/page/Page";
 import { useEffect } from "react";
 import axios from "axios";
+import { Provider, useSelector, useDispatch } from "react-redux";
+import { info } from "../../../store/slice";
 
 const PageListBox = styled.div`
   display: flex;
@@ -23,6 +25,14 @@ const PageListBox = styled.div`
 
 const PageList = () => {
   // contentList 요청 함수
+
+  const dispatch = useDispatch();
+
+  const { name } = useSelector((state) => {
+    console.log(state.user);
+    return state.user;
+  });
+
   const listUpdate = () => {
     axios
       .get(`http://localhost:3005/post`)
@@ -43,7 +53,22 @@ const PageList = () => {
   return (
     <PageListBox>
       <div className="pageHeader">
-        <div className="tapAll">ALL</div>
+        <div
+          className="tapAll"
+          onClick={() => {
+            dispatch(
+              info({
+                name: "kwak",
+                account: "0X0",
+                nickname: "kyu",
+                balance: "10000",
+              })
+            );
+          }}
+        >
+          ALL
+        </div>
+        <div>{name}</div>
       </div>
       {[1].map((data, index) => (
         <Page key={index} pos="main" />
