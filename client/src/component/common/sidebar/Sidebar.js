@@ -94,16 +94,16 @@ function Sidebar() {
         <StyledButton></StyledButton> */}
 
         <div style={{ padding: "10px 10px 40px 10px" }}>
-          {/* <Link to="/sign?type=in" style={{ textDecoration: "none" }}> */}
-          <StyledButton2 onClick={() => dispatch(check({ type: "login" }))}>
-            SignIn
-          </StyledButton2>
-          {/* </Link> */}
-          {/* <Link to="/sign?type=up" style={{ textDecoration: "none" }}> */}
-          <StyledButton2 onClick={() => dispatch(check({ type: "logout" }))}>
-            SignUp
-          </StyledButton2>
-          {/* </Link> */}
+          <Link to="/sign?type=in" style={{ textDecoration: "none" }}>
+            <StyledButton2 onClick={() => dispatch(check({ type: "login" }))}>
+              SignIn
+            </StyledButton2>
+          </Link>
+          <Link to="/sign?type=up" style={{ textDecoration: "none" }}>
+            <StyledButton2 onClick={() => dispatch(check({ type: "logout" }))}>
+              SignUp
+            </StyledButton2>
+          </Link>
         </div>
       </StyledSidebar>
     </StyledAll>

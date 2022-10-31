@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { info } from "../../../store/slice";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -111,20 +114,29 @@ const SignPageBox = styled.div`
   }
 `;
 
-const SignPage = ({ control }) => {
-  const [singUpCheck, setSingUpCheck] = useState(false);
+const SignPage = () => {
+  const location = new URLSearchParams(useLocation().search).get("type");
+  const [signUpCheck, setSignUpCheck] = useState(false);
   const [userInfo, setUserInfo] = useState({
-    nickname: "",
     email: "",
-    password: "",
-    address: "",
+    acocunt: "",
+    nickname: "",
   });
 
+  const dispatch = useDispatch();
+  const { email, account, nickname } = useSelector((state) => {
+    console.log(state.user);
+    return state.user;
+  });
+
+  useEffect(() => {
+    console.log(nickname);
+  }, [email]);
   const signin = () => {
     // 로그인
     axios
       .post(
-        `http://localhost:3005/users/signin`,
+        `http://localhost:3005/users/login`,
         {
           email: userInfo.email,
           password: userInfo.password,
@@ -137,20 +149,37 @@ const SignPage = ({ control }) => {
         // 1. true일 경우 해당 회원 정보 받아서
         //    리덕스 회원 정보에 저장
         // 2. false일 경우 로그인 실패 메세지
+
+        //api 만들어지면 주석풀기
+        // axios.get(`http://localhost:3005/users`).then((res)=>{
+        //   dispatch(
+        //     info({
+        //       email: res.data.email,
+        //       account: res.data.email,
+        //       nickname: res.data.nickname,
+        //     })
+        //   );
+        dispatch(
+          info({
+            email: "nahye7670@gmail.com",
+            account: "0x0",
+            nickname: "hazel",
+          })
+        );
       })
+
       .catch((err) => alert(err));
   };
 
-  const singup = () => {
+  const signup = () => {
     console.log("회원가입");
     axios
       .post(
         `http://localhost:3005/users/signup`,
         {
           email: userInfo.email,
-          nickname: userInfo.nickname,
+          nick: userInfo.nickname,
           password: userInfo.password,
-          address: userInfo.address,
         },
         { "Content-Type": "application/json", withCredentials: true }
       )
@@ -161,20 +190,13 @@ const SignPage = ({ control }) => {
   };
 
   useEffect(() => {
-    console.log(control);
-    setSingUpCheck(control === "login" ? false : true);
-  }, [control]);
+    setSignUpCheck(location === "in" ? false : true);
+  }, [location]);
 
   return (
-    <SignPageBox
-      singUpCheck={singUpCheck}
-      onClick={(e) => {
-        e.stopPropagation();
-        console.log("클릭");
-      }}
-    >
+    <SignPageBox singUpCheck={signUpCheck}>
       <div className="singBox">
-        <div className="singHeader">{singUpCheck ? "SingUp" : "Singin"}</div>
+        <div className="singHeader">{signUpCheck ? "SignUp" : "Signin"}</div>
         <div className="singBody">
           <div className="singBodyBox">
             <div className="emailBox nb">
@@ -188,7 +210,7 @@ const SignPage = ({ control }) => {
                 }
               />
             </div>
-            {singUpCheck ? (
+            {signUpCheck ? (
               <div className="nickNameBox nb">
                 <div className="n">Nick name : </div>
                 <input
@@ -203,57 +225,43 @@ const SignPage = ({ control }) => {
             <div className="passwordBox nb">
               <div className="n">Password : </div>
               <input
-                type={"password"}
                 placeholder="비밀번호를 입력하세요!"
-                value={userInfo.password}
+                // value={"●".repeat(userInfo.password.length)}
                 onChange={(e) =>
                   setUserInfo({ ...userInfo, password: e.target.value })
                 }
               />
             </div>
-            {singUpCheck ? (
-              <div className="passwordBox nb">
-                <div className="n">address : </div>
-                <input
-                  placeholder="주소를 입력하세요!"
-                  value={userInfo.address}
-                  onChange={(e) =>
-                    setUserInfo({ ...userInfo, address: e.target.value })
-                  }
-                />
-              </div>
-            ) : null}
-
             <div className="signBO">
-              {singUpCheck ? null : (
-                <div className="signB" onClick={() => signin()}>
+              {signUpCheck ? null : (
+                <div className="signB" onClick={signin}>
                   Sign In
                 </div>
               )}
-              {singUpCheck ? null : <div className="or">or</div>}
+              {signUpCheck ? null : <div className="or">or</div>}
               <div
                 className="signB"
                 onClick={() => {
-                  if (singUpCheck) {
+                  if (signUpCheck) {
                     //회원 가입 요청
-                    singup();
+                    signup();
                     setUserInfo({
                       nickname: "",
                       email: "",
                       password: "",
                     });
-                    setSingUpCheck(false);
+                    setSignUpCheck(false);
                   } else {
                     setUserInfo({
                       nickname: "",
                       email: "",
                       password: "",
                     });
-                    setSingUpCheck(true);
+                    setSignUpCheck(true);
                   }
                 }}
               >
-                {singUpCheck ? "Sign Up" : "Go Sign Up"}
+                {signUpCheck ? "Sign Up" : "Go Sign Up"}
               </div>
             </div>
           </div>
