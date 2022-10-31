@@ -3,6 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -121,6 +122,8 @@ const SignPage = () => {
     password: "",
   });
 
+  const { account } = useSelector((state) => state.user);
+
   const signin = () => {
     // 로그인
     axios
@@ -151,6 +154,7 @@ const SignPage = () => {
           email: userInfo.email,
           nick: userInfo.nickname,
           password: userInfo.password,
+          address: account,
         },
         { "Content-Type": "application/json", withCredentials: true }
       )
