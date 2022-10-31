@@ -7,8 +7,7 @@ var logger = require('morgan');
 var dotenv = require('dotenv');
 dotenv.config();
 var { sequelize } = require('./models');
-
-var app = express();
+ 
 app.set('port', process.env.PORT || 3005);
 
 app.use(logger('dev'));
@@ -23,7 +22,7 @@ const corsOption = {
 app.use(cors(corsOption));
 
 sequelize
-  .sync({ force: false }) // force:true 일경우 테이블 전부 지우고 새로 설정~!
+  .sync({ alter: false }) // force:true 일경우 테이블 전부 지우고 새로 설정~!
   .then(() => {
     console.log('데이터베이스 연결 성공');
   })
@@ -47,7 +46,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  res.status(404).send("invailed path");
+  res.status(404).send("invalid path");
 });
 
 app.listen(app.get('port'), () => {
