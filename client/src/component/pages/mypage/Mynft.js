@@ -1,4 +1,7 @@
+import axios from "axios";
 import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 const MynftBox = styled.div`
@@ -19,6 +22,7 @@ const MynftBox = styled.div`
     overflow-y: hidden;
     .myNft {
       object-fit: cover;
+      overflow: hidden;
       width: 145px;
       height: 180px;
       background-color: #bbd0ff;
@@ -29,20 +33,50 @@ const MynftBox = styled.div`
       :hover {
         box-shadow: 0px 1px 5px rgba(116, 116, 116, 0.5);
       }
+      img {
+        width: 100%;
+        height: 100%;
+        transition: 0.3s;
+        :hover {
+          width: 130%;
+          height: 130%;
+        }
+      }
     }
   }
 `;
 
 const Mynft = () => {
+  const [nftList, setNftList] = useState([]);
+
+  // 임시 nft 받아오기
+  const nftCall = () => {
+    axios
+      .get(
+        `https://testnets-api.opensea.io/api/v1/assets?asset_contract_address=0x941c64F524E55b46717Db8AC77c85e973DFEC2c5&order_direction=desc&offset=2&limit=20&include_orders=false`
+      )
+      .then((res) => {
+        setNftList(res.data.assets);
+      });
+  };
+
+  useEffect(() => {
+    nftCall();
+  }, []);
+
   return (
     <MynftBox>
       <div className="myNftHeader">My NFT</div>
       <div className="myNftList">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((data, index) => (
-          <div className="myNft cc" key={index}>
-            <img src="" alt={index} />
-          </div>
-        ))}
+        {nftList.length > 0 ? (
+          nftList.map((data, index) => (
+            <div className="myNft cc" key={index}>
+              <img src={data.image_url} alt={data.name} />
+            </div>
+          ))
+        ) : (
+          <div className="empty cc">보유한 NFT가 없습니다!</div>
+        )}
       </div>
     </MynftBox>
   );

@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Mynft from "./Mynft";
 import Myposts from "./Myposts";
@@ -105,6 +106,9 @@ const MypageBox = styled.div`
 const Mypage = () => {
   const [eth, setEth] = useState(0);
   const [userAddr, setUserAddr] = useState("");
+  const { email, account, nickname, balance } = useSelector(
+    (state) => state.user
+  );
 
   //get 1 eth
   function getEth() {
@@ -143,14 +147,14 @@ const Mypage = () => {
                 color="#555555"
               />
             </div>
-            <div className="coinSymbol">50 FTC</div>
+            <div className="coinSymbol">{balance ? balance : 0} FTC</div>
             <div className="faucetEth"> {eth} ETH</div>
             <div className="faucetButton">
               <button onClick={getEth}>faucet</button>
             </div>
           </div>
-          <div className="mypageName">name</div>
-          <div className="mypageAccount">0x54645465445sads54d5s45sd454</div>
+          <div className="mypageName">{nickname}</div>
+          <div className="mypageAccount">{account}</div>
         </div>
 
         <Send />
