@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { info } from "../../../store/slice";
+import { check, info } from "../../../store/slice";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -114,9 +113,8 @@ const SignPageBox = styled.div`
   }
 `;
 
-const SignPage = () => {
-  const location = new URLSearchParams(useLocation().search).get("type");
-  const [signUpCheck, setSignUpCheck] = useState(false);
+const SignPage = ({ control }) => {
+  const [singUpCheck, setSingUpCheck] = useState(false);
   const [userInfo, setUserInfo] = useState({
     email: "",
     acocunt: "",
@@ -171,15 +169,16 @@ const SignPage = () => {
       .catch((err) => alert(err));
   };
 
-  const signup = () => {
+  const singup = () => {
     console.log("회원가입");
     axios
       .post(
         `http://localhost:3005/users/signup`,
         {
           email: userInfo.email,
-          nick: userInfo.nickname,
+          nickname: userInfo.nickname,
           password: userInfo.password,
+          address: userInfo.address,
         },
         { "Content-Type": "application/json", withCredentials: true }
       )
@@ -190,13 +189,23 @@ const SignPage = () => {
   };
 
   useEffect(() => {
-    setSignUpCheck(location === "in" ? false : true);
-  }, [location]);
+    setSingUpCheck(control === "login" ? false : true);
+  }, [control]);
 
   return (
-    <SignPageBox singUpCheck={signUpCheck}>
-      <div className="singBox">
-        <div className="singHeader">{signUpCheck ? "SignUp" : "Signin"}</div>
+    <SignPageBox
+      singUpCheck={singUpCheck}
+      onClick={(e) => {
+        dispatch(check({ type: "" }));
+      }}
+    >
+      <div
+        className="singBox"
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <div className="singHeader">{singUpCheck ? "SingUp" : "Singin"}</div>
         <div className="singBody">
           <div className="singBodyBox">
             <div className="emailBox nb">
@@ -210,7 +219,7 @@ const SignPage = () => {
                 }
               />
             </div>
-            {signUpCheck ? (
+            {singUpCheck ? (
               <div className="nickNameBox nb">
                 <div className="n">Nick name : </div>
                 <input
@@ -225,43 +234,57 @@ const SignPage = () => {
             <div className="passwordBox nb">
               <div className="n">Password : </div>
               <input
+                type={"password"}
                 placeholder="비밀번호를 입력하세요!"
-                // value={"●".repeat(userInfo.password.length)}
+                value={userInfo.password}
                 onChange={(e) =>
                   setUserInfo({ ...userInfo, password: e.target.value })
                 }
               />
             </div>
+            {singUpCheck ? (
+              <div className="passwordBox nb">
+                <div className="n">address : </div>
+                <input
+                  placeholder="주소를 입력하세요!"
+                  value={userInfo.address}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, address: e.target.value })
+                  }
+                />
+              </div>
+            ) : null}
+
             <div className="signBO">
-              {signUpCheck ? null : (
-                <div className="signB" onClick={signin}>
+              {singUpCheck ? null : (
+                <div className="signB" onClick={() => signin()}>
                   Sign In
                 </div>
               )}
-              {signUpCheck ? null : <div className="or">or</div>}
+              {singUpCheck ? null : <div className="or">or</div>}
               <div
                 className="signB"
                 onClick={() => {
-                  if (signUpCheck) {
+                  if (singUpCheck) {
                     //회원 가입 요청
-                    signup();
+                    singup();
                     setUserInfo({
                       nickname: "",
                       email: "",
                       password: "",
                     });
-                    setSignUpCheck(false);
+                    setSingUpCheck(false);
                   } else {
                     setUserInfo({
                       nickname: "",
                       email: "",
                       password: "",
                     });
-                    setSignUpCheck(true);
+                    setSingUpCheck(true);
                   }
                 }}
               >
-                {signUpCheck ? "Sign Up" : "Go Sign Up"}
+                {singUpCheck ? "Sign Up" : "Go Sign Up"}
               </div>
             </div>
           </div>
