@@ -4,6 +4,7 @@ import "@fortawesome/fontawesome-free/js/all.js";
 import Page from "../../common/page/Page";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 
 const PageListBox = styled.div`
   display: flex;
@@ -33,21 +34,34 @@ const PageListBox = styled.div`
 `;
 
 const PageList = () => {
-  const { filterList } = useSelector((state) => state.post);
+  const [tap, setTap] = useState("ALL");
+  const { list, filterList } = useSelector((state) => state.post);
   console.log("pagelist 리랜더링");
 
   return (
     <PageListBox>
       <div className="pageHeader">
-        <div className="tapAll">ALL</div>
-        {filterList > 0 ? <div className="tapAll">SEARCH</div> : null}
+        <div className="tapAll" onClick={() => setTap("ALL")}>
+          ALL
+        </div>
+        {filterList > 0 ? (
+          <div className="tapAll" onClick={() => setTap("SEARCH")}>
+            SEARCH
+          </div>
+        ) : null}
       </div>
-      {[1].map((data, index) => (
-        // data 에서 페이지 id를 받아 link로 보냄
-        <Link to={`/detail`} key={index} state={{ pageId: 0 }}>
-          <Page pos="main" />
-        </Link>
-      ))}
+      {tap === "ALL"
+        ? list.map((data, index) => (
+            // data 에서 페이지 id를 받아 link로 보냄
+            <Link to={`/detail`} key={index} state={{ pageId: 0 }}>
+              <Page pos="main" />
+            </Link>
+          ))
+        : filterList.map((data, index) => (
+            <Link to={`/detail`} key={index} state={{ pageId: 0 }}>
+              <Page pos="main" />
+            </Link>
+          ))}
     </PageListBox>
   );
 };

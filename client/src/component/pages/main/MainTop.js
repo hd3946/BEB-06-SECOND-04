@@ -105,6 +105,7 @@ const MainTop = () => {
   const [postData, setPostData] = useState({
     title: "",
     contant: "",
+    address: "",
   });
   const dispatch = useDispatch();
   const { email, nickname } = useSelector((state) => state.user);
@@ -129,6 +130,7 @@ const MainTop = () => {
             email: email,
             title: postData.title,
             contant: postData.contant,
+            address: postData.address,
           },
         },
         { "Content-Type": "application/json", withCredentials: true }
@@ -177,7 +179,7 @@ const MainTop = () => {
           onBlur={() => setActive(false)}
         >
           <input
-            placeholder="무슨일이 일어나고 있나요?"
+            placeholder="무슨일이 일어나고 있나요? (title)"
             value={postData.title}
             onChange={(e) =>
               setPostData({ ...postData, title: e.target.value })
@@ -188,8 +190,15 @@ const MainTop = () => {
               }
             }}
           />
+          <input
+            placeholder="당신의 지갑주소를 알려주세요 (address)"
+            value={postData.address}
+            onChange={(e) =>
+              setPostData({ ...postData, address: e.target.value })
+            }
+          />
           <textarea
-            placeholder="자세하게 말해주세요!"
+            placeholder="자세하게 말해주세요! (contant)"
             className="ta"
             value={postData.contant}
             maxLength={50}
