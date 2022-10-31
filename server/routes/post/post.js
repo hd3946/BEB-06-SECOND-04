@@ -33,9 +33,7 @@ router.post("/write", upload.single("post"), async (req, res, next) => {
     return res.status(401).json("로그인되어 있지 않습니다.");
   try {
     const { id, address } = req.cookies.loginData;
-    const { title, content } = req.body.post;
-    console.log(req.cookies.loginData);
-    console.log(content);
+    const { title, content } = req.body;
     console.log("유저 포스트 업로드", id);
     const post = await Post.create({
       title: title,
