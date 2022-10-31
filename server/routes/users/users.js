@@ -10,10 +10,10 @@ var { isLoggedIn } = require("../middlewares");
 router.post("/signup", async (req, res, next) => {
   console.log("회원가입 API signup 실행");
 
-  const { email, password, nick, address } = req.body;
-  console.log("데이터 체크", email, password, nick, address);
+  const { email, password, nickname, address } = req.body;
+  console.log("데이터 체크", email, password, nickname, address);
 
-  if (!(email && password && nick && address))
+  if (!(email && password && nickname && address))
     return res.status(401).json("입력정보가 부족합니다");
 
   try {
@@ -26,14 +26,14 @@ router.post("/signup", async (req, res, next) => {
 
     await User.create({
       email,
-      nick,
+      nickname,
       password,
       address,
     });
 
     res.status(200).json({
       status: true,
-      message: `user: ${nick} is Signup Success`,
+      message: `user: ${nickname} is Signup Success`,
       //token: token,  보류
     });
   } catch (err) {
