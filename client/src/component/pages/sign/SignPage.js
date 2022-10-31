@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { check } from "../../../store/slice";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -120,6 +122,8 @@ const SignPage = ({ control }) => {
     address: "",
   });
 
+  const dispatch = useDispatch();
+
   const signin = () => {
     // 로그인
     axios
@@ -161,7 +165,6 @@ const SignPage = ({ control }) => {
   };
 
   useEffect(() => {
-    console.log(control);
     setSingUpCheck(control === "login" ? false : true);
   }, [control]);
 
@@ -169,11 +172,15 @@ const SignPage = ({ control }) => {
     <SignPageBox
       singUpCheck={singUpCheck}
       onClick={(e) => {
-        e.stopPropagation();
-        console.log("클릭");
+        dispatch(check({ type: "" }));
       }}
     >
-      <div className="singBox">
+      <div
+        className="singBox"
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <div className="singHeader">{singUpCheck ? "SingUp" : "Singin"}</div>
         <div className="singBody">
           <div className="singBodyBox">
