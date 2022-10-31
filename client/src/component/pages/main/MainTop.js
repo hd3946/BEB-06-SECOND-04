@@ -127,12 +127,10 @@ const MainTop = () => {
       .post(
         `http://localhost:3005/post/write`,
         {
-          post: {
-            email: email,
-            title: postData.title,
-            content: postData.content,
-            address: postData.address,
-          },
+          email: email,
+          title: postData.title,
+          content: postData.content,
+          address: postData.address,
         },
         { "Content-Type": "application/json", withCredentials: true }
       )
