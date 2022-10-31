@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -119,9 +117,8 @@ const SignPage = ({ control }) => {
     nickname: "",
     email: "",
     password: "",
+    address: "",
   });
-
-  const { account } = useSelector((state) => state.user);
 
   const signin = () => {
     // 로그인
@@ -153,7 +150,7 @@ const SignPage = ({ control }) => {
           email: userInfo.email,
           nickname: userInfo.nickname,
           password: userInfo.password,
-          address: account,
+          address: userInfo.address,
         },
         { "Content-Type": "application/json", withCredentials: true }
       )
@@ -207,6 +204,19 @@ const SignPage = ({ control }) => {
                 }
               />
             </div>
+            {singUpCheck ? (
+              <div className="passwordBox nb">
+                <div className="n">address : </div>
+                <input
+                  placeholder="주소를 입력하세요!"
+                  value={userInfo.address}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, address: e.target.value })
+                  }
+                />
+              </div>
+            ) : null}
+
             <div className="signBO">
               {singUpCheck ? null : (
                 <div className="signB" onClick={() => signin()}>
