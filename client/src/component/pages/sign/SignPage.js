@@ -197,8 +197,9 @@ const SignPage = ({ control }) => {
             <div className="passwordBox nb">
               <div className="n">Password : </div>
               <input
+                type={"password"}
                 placeholder="비밀번호를 입력하세요!"
-                value={"●".repeat(userInfo.password.length)}
+                value={userInfo.password}
                 onChange={(e) =>
                   setUserInfo({ ...userInfo, password: e.target.value })
                 }
