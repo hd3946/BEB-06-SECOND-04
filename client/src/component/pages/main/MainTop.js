@@ -125,7 +125,7 @@ const MainTop = () => {
     console.log("포스팅 post 요청");
     axios
       .post(
-        `http://localhost:3005/post`,
+        `http://localhost:3005/post/write`,
         {
           post: {
             email: email,

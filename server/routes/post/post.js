@@ -14,7 +14,21 @@ var { upload } = require("./upload");
 // const { isLoggedIn } = require('./middlewares');
 
 /* post router listing. */
-router.post("/", upload.single("post"), async (req, res, next) => {
+router.get("/list", upload.single("post"), async (req, res, next) => {
+  try {
+    const postList = await Post.findAll();
+    console.log(postList)
+    return res.status(200).json({
+      status: true,
+      message: "전제글목록 검색",
+      postList,
+    })
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/write", upload.single("post"), async (req, res, next) => {
   if (!req.cookies.loginData)
     return res.status(401).json("로그인되어 있지 않습니다.");
   try {

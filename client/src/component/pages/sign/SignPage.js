@@ -128,7 +128,7 @@ const SignPage = () => {
     // 로그인
     axios
       .post(
-        `http://localhost:3005/users/login`,
+        `http://localhost:3005/users/signin`,
         {
           email: userInfo.email,
           password: userInfo.password,
@@ -152,7 +152,7 @@ const SignPage = () => {
         `http://localhost:3005/users/signup`,
         {
           email: userInfo.email,
-          nick: userInfo.nickname,
+          nickname: userInfo.nickname,
           password: userInfo.password,
           address: account,
         },
