@@ -2,7 +2,8 @@ var multer = require('multer');
 var path = require('path');
 var fs = require('fs');  
 require('dotenv').config();
- 
+var { upload } = require('./upload')  
+
 //폴더 자동생성 기능 추가
 
 //multer 이용하여 이미지 업로드

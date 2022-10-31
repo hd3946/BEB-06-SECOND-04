@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+
+var { upload } = require('./upload')  
 // const { isLoggedIn } = require('./middlewares'); 
 
 /* post router listing. */
@@ -20,7 +22,7 @@ router.post('/', function(req, res, next) {
 });
 
 //사진 한장~! , 
-router.post('/', isLoggedIn, upload.single('post'), async (req, res, next) => {
+router.post('/', upload.single('post'), async (req, res, next) => {
   try {
     console.log('유저 포스트 업로드', req.user.id);  //req.body.content
     const post = await Post.create({
