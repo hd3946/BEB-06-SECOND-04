@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Mynft from "./Mynft";
 import Myposts from "./Myposts";
@@ -74,6 +75,22 @@ const MypageBox = styled.div`
           font-weight: 600;
         }
       }
+      .faucetEth {
+        position: absolute;
+        top: 70px;
+        right: -50px;
+        font-size: 18px;
+      }
+      .faucetButton {
+        position: absolute;
+        top: 116px;
+        right: -53px;
+      }
+      button {
+        width: 64px;
+        height: 34px;
+        border-radius: 11px;
+      }
       .mypageName {
         font-size: 20px;
         font-weight: 600;
@@ -86,6 +103,25 @@ const MypageBox = styled.div`
 `;
 
 const Mypage = () => {
+  const [eth, setEth] = useState(0);
+  const [userAddr, setUserAddr] = useState("");
+
+  //get 1 eth
+  function getEth() {
+    axios
+      .post(
+        `http://localhost:3005/contract/eth`,
+        {
+          userAddr: userAddr,
+        },
+        { "Content-Type": "application/json", withCredentials: true }
+      )
+      .then((res) => {
+        setEth(eth + 1);
+      })
+      .catch((err) => console.log(err));
+  }
+
   return (
     <MypageBox>
       <div className="mypageHeader">
@@ -108,6 +144,10 @@ const Mypage = () => {
               />
             </div>
             <div className="coinSymbol">50 FTC</div>
+            <div className="faucetEth"> {eth} ETH</div>
+            <div className="faucetButton">
+              <button onClick={getEth}>faucet</button>
+            </div>
           </div>
           <div className="mypageName">name</div>
           <div className="mypageAccount">0x54645465445sads54d5s45sd454</div>
