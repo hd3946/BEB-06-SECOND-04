@@ -149,7 +149,7 @@ const SignPage = () => {
         `http://localhost:3005/users/signup`,
         {
           email: userInfo.email,
-          nickname: userInfo.nickname,
+          nick: userInfo.nickname,
           password: userInfo.password,
         },
         { "Content-Type": "application/json", withCredentials: true }
