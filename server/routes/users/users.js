@@ -35,6 +35,12 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
+router.post('/logout', (req, res, next) => {
+  res.cookie("loginData", null, { maxAge: 0, httpOnly: true }); //쿠키삭제
+  console.log('로그아웃되었습니다');
+  return res.send('logout ok');
+});
+
 router.post('/signup', function(req, res, next) {
   console.log('회원가입 API signup 실행');
 
