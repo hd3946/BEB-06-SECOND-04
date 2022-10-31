@@ -115,20 +115,20 @@ const SignPageBox = styled.div`
 const SignPage = () => {
   const location = new URLSearchParams(useLocation().search).get("type");
   const [singUpCheck, setSingUpCheck] = useState(false);
-  const [userId, setUserId] = useState({
-    id: "",
+  const [userInfo, setUserInfo] = useState({
+    nickname: "",
     email: "",
     password: "",
   });
 
   const signin = () => {
-    // 회원 정보 조회
+    // 로그인
     axios
       .post(
         `http://localhost:3005/users/login`,
         {
-          email: userId.email,
-          password: userId.password,
+          email: userInfo.email,
+          password: userInfo.password,
         },
         { "Content-Type": "application/json", withCredentials: true }
       )
@@ -138,6 +138,24 @@ const SignPage = () => {
         // 1. true일 경우 해당 회원 정보 받아서
         //    리덕스 회원 정보에 저장
         // 2. false일 경우 로그인 실패 메세지
+      })
+      .catch((err) => alert(err));
+  };
+
+  const singup = () => {
+    console.log("회원가입");
+    axios
+      .post(
+        `http://localhost:3005/users/signup`,
+        {
+          email: userInfo.email,
+          nickname: userInfo.nickname,
+          password: userInfo.password,
+        },
+        { "Content-Type": "application/json", withCredentials: true }
+      )
+      .then((res) => {
+        console.log(res);
       })
       .catch((err) => alert(err));
   };
@@ -157,8 +175,9 @@ const SignPage = () => {
               <input
                 type="email"
                 placeholder="email을 입력하세요!"
+                value={userInfo.email}
                 onChange={(e) =>
-                  setUserId({ ...userId, email: e.target.value })
+                  setUserInfo({ ...userInfo, email: e.target.value })
                 }
               />
             </div>
@@ -166,10 +185,10 @@ const SignPage = () => {
               <div className="nickNameBox nb">
                 <div className="n">Nick name : </div>
                 <input
-                  placeholder="비밀번호를 입력하세요!"
-                  value={"●".repeat(userId.password.length)}
+                  placeholder="별명을 입력하세요!"
+                  value={userInfo.nickname}
                   onChange={(e) =>
-                    setUserId({ ...userId, password: e.target.value })
+                    setUserInfo({ ...userInfo, nickname: e.target.value })
                   }
                 />
               </div>
@@ -178,9 +197,9 @@ const SignPage = () => {
               <div className="n">Password : </div>
               <input
                 placeholder="비밀번호를 입력하세요!"
-                value={"●".repeat(userId.password.length)}
+                value={"●".repeat(userInfo.password.length)}
                 onChange={(e) =>
-                  setUserId({ ...userId, password: e.target.value })
+                  setUserInfo({ ...userInfo, password: e.target.value })
                 }
               />
             </div>
@@ -194,15 +213,26 @@ const SignPage = () => {
               <div
                 className="signB"
                 onClick={() => {
-                  // if (singUpCheck) {
-                  //   //회원 가입 요청
-                  // } else {
-                  //   setSingUpCheck(true)
-                  // }
-                  setSingUpCheck(!singUpCheck);
+                  if (singUpCheck) {
+                    //회원 가입 요청
+                    singup();
+                    setUserInfo({
+                      nickname: "",
+                      email: "",
+                      password: "",
+                    });
+                    setSingUpCheck(false);
+                  } else {
+                    setUserInfo({
+                      nickname: "",
+                      email: "",
+                      password: "",
+                    });
+                    setSingUpCheck(true);
+                  }
                 }}
               >
-                Sign Up
+                {singUpCheck ? "Sign Up" : "Go Sign Up"}
               </div>
             </div>
           </div>

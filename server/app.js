@@ -15,8 +15,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 const corsOption = {
-  origin: process.env.CORS_API_URL, // frontend base url
+  origin: 'http://localhost:3000',
   credentials: true, // true로 하면 설정한 내용을 response 헤더에 추가 해줍니다.
 };
 app.use(cors(corsOption));
@@ -30,23 +31,23 @@ sequelize
     console.error(err);
   });
 
-var postRouter = require('./routes/post/post');
-var exchangeRouter = require('./routes/exchange/exchange');
 var usersRouter = require('./routes/users/users'); 
+var postRouter = require('./routes/post/post');
+var contractRouter = require('./routes/contract/contract');
 
 // router
 app.use('/users', usersRouter);
 app.use('/post', postRouter);
-app.use('/exchange', exchangeRouter); 
+app.use('/contract', contractRouter); 
 
 // error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(400).send('Something broke!');
+  return res.status(400).send('Something broke!');
 });
 
 app.use((req, res, next) => {
-  res.status(404).send("invalid path");
+  return res.status(404).send("invailed path");
 });
 
 app.listen(app.get('port'), () => {

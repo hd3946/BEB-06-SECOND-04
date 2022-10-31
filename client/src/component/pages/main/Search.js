@@ -103,6 +103,7 @@ const Search = () => {
 
         <div className="postingBox">
           {/* <input placeholder="무슨일이 일어나고 있나요?" /> */}
+
           <textarea
             placeholder="무슨일이 일어나고 있나요?"
             onChange={(e) => setText({ ...text, postText: e.target.value })}

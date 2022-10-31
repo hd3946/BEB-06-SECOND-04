@@ -18,9 +18,6 @@ const MynftBox = styled.div`
     margin-top: 10px;
     overflow-y: hidden;
     .myNft {
-      display: flex;
-      justify-content: center;
-      align-items: center;
       object-fit: cover;
       width: 145px;
       height: 180px;
@@ -42,7 +39,7 @@ const Mynft = () => {
       <div className="myNftHeader">My NFT</div>
       <div className="myNftList">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((data, index) => (
-          <div className="myNft">
+          <div className="myNft cc" key={index}>
             <img src="" alt={index} />
           </div>
         ))}
