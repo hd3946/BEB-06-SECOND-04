@@ -81,7 +81,6 @@ const PageBox = styled.div`
 `;
 
 const Page = ({ pos, data }) => {
-  console.log(data);
   const likeUp = () => {
     // 좋아요
     // 서버에서 좋아요 개수 업데이트

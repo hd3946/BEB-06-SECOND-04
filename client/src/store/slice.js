@@ -38,6 +38,8 @@ export const stateSlice = createSlice({
         state.control = "login";
       } else if (action.payload.type === "logout") {
         state.control = "logout";
+      } else {
+        state.control = null;
       }
     },
   },

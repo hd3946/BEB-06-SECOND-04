@@ -3,9 +3,8 @@ import styled from "styled-components";
 import "@fortawesome/fontawesome-free/js/all.js";
 import Page from "../../common/page/Page";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useState } from "react";
-import { postlist } from "../../../store/slice";
 
 const PageListBox = styled.div`
   display: flex;
@@ -36,26 +35,16 @@ const PageListBox = styled.div`
 
 const PageList = () => {
   const [tap, setTap] = useState("ALL");
-  const { list, filterList } = useSelector((state) => state.post);
-  console.log("pagelist 리랜더링");
 
-  const dispatch = useDispatch();
+  const { list, filterList } = useSelector((state) => state.post);
+
   return (
     <PageListBox>
       <div className="pageHeader">
         <div
           className="tapAll"
           onClick={() => {
-            // setTap("ALL")
-            dispatch(
-              postlist({
-                list: [
-                  { content: "asdasdsa" },
-                  { content: "asdasdsadasdasdasd" },
-                  { content: "wqerfdsfser" },
-                ],
-              })
-            );
+            setTap("ALL");
           }}
         >
           ALL

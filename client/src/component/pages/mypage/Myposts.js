@@ -1,10 +1,17 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import axios from "axios";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { postlist } from "../../../store/slice";
 
 const MypostsBox = styled.div`
   width: 100%;
   margin-top: 30px;
+  a {
+    text-decoration: none;
+    color: black;
+  }
   .mypostsHeader {
     font-size: 18px;
     font-weight: 500;
@@ -21,6 +28,10 @@ const MypostsBox = styled.div`
       align-items: center;
       height: 50px;
       border-bottom: 1px solid black;
+      transition: 0.2s;
+      :hover {
+        background-color: aliceblue;
+      }
       :last-child {
         border-bottom: 0px;
       }
@@ -34,7 +45,7 @@ const MypostsBox = styled.div`
         width: 550px;
       }
       .mypostDay {
-        width: 80px;
+        width: 150px;
         font-size: 18px;
         font-weight: 500;
       }
@@ -47,17 +58,33 @@ const MypostsBox = styled.div`
 
 const Myposts = () => {
   const { list } = useSelector((state) => state.post);
+  const dispatch = useDispatch();
+
+  const listUpdate = () => {
+    axios
+      .get(`http://localhost:3005/post/list`)
+      .then((res) => {
+        dispatch(postlist({ list: res.data.postList }));
+      })
+      .catch((err) => alert(err));
+  };
+
+  useEffect(() => {
+    listUpdate();
+  }, []);
   return (
     <MypostsBox>
       <div className="mypostsHeader">My Posts</div>
       <div className="mypostsList">
         {list.length > 0 ? (
           list.map((data, index) => (
-            <div className="mypost" key={index}>
-              <div className="mypostIndex">#{index}</div>
-              <div className="mypostdesc">description</div>
-              <div className="mypostDay">day</div>
-            </div>
+            <Link to={"/detail"} key={index} state={{ pageId: 0, data: data }}>
+              <div className="mypost" key={index}>
+                <div className="mypostIndex">#{data.id}</div>
+                <div className="mypostdesc">{data.content}</div>
+                <div className="mypostDay">{data.createdAt.slice(0, 10)}</div>
+              </div>
+            </Link>
           ))
         ) : (
           <div className="empty cc">작성한 글이 없습니다!</div>
