@@ -80,7 +80,8 @@ const PageBox = styled.div`
   }
 `;
 
-const Page = ({ pos }) => {
+const Page = ({ pos, data }) => {
+  console.log(data);
   const likeUp = () => {
     // 좋아요
     // 서버에서 좋아요 개수 업데이트
@@ -138,11 +139,11 @@ const Page = ({ pos }) => {
         </div>
         <div className="pageUserBox">
           <div className="pageUserName">Test User Name</div>
-          <div className="pageUserDesc">Test User Description Test User</div>
+          <div className="pageUserDesc">{data.content}</div>
         </div>
       </div>
       <div className="pageImgBox">
-        <img src="" alt="" />
+        <img src={data.img} alt="img 공간" />
       </div>
       <div className="pageEtcBox">
         {pos === "detail" ? (

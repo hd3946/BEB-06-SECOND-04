@@ -18,7 +18,8 @@ const Modal = () => {
   return (
     <ModalBox control={control}>
       {control === "loading" ? <Loading /> : null}
-      {control === "login" ? <SignPage /> : null}
+      {control === "login" ? <SignPage control={control} /> : null}
+      {control === "logout" ? <SignPage control={control} /> : null}
       {control === "error" ? <Error /> : null}
     </ModalBox>
   );

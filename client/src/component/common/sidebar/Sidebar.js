@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
+import { useDispatch } from "react-redux";
+import { check } from "../../../store/slice";
 const StyledAll = styled.div`
   position: fixed;
   margin: 0;
@@ -62,6 +64,7 @@ const StyledButton2 = styled.div`
 `;
 
 function Sidebar() {
+  const dispatch = useDispatch();
   return (
     <StyledAll>
       <StyledSidebar>
@@ -91,12 +94,16 @@ function Sidebar() {
         <StyledButton></StyledButton> */}
 
         <div style={{ padding: "10px 10px 40px 10px" }}>
-          <Link to="/sign?type=in" style={{ textDecoration: "none" }}>
-            <StyledButton2>SignIn</StyledButton2>
-          </Link>
-          <Link to="/sign?type=up" style={{ textDecoration: "none" }}>
-            <StyledButton2>SignUp</StyledButton2>
-          </Link>
+          {/* <Link to="/sign?type=in" style={{ textDecoration: "none" }}> */}
+          <StyledButton2 onClick={() => dispatch(check({ type: "login" }))}>
+            SignIn
+          </StyledButton2>
+          {/* </Link> */}
+          {/* <Link to="/sign?type=up" style={{ textDecoration: "none" }}> */}
+          <StyledButton2 onClick={() => dispatch(check({ type: "logout" }))}>
+            SignUp
+          </StyledButton2>
+          {/* </Link> */}
         </div>
       </StyledSidebar>
     </StyledAll>

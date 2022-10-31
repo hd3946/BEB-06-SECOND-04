@@ -113,8 +113,7 @@ const SignPageBox = styled.div`
   }
 `;
 
-const SignPage = () => {
-  const location = new URLSearchParams(useLocation().search).get("type");
+const SignPage = ({ control }) => {
   const [singUpCheck, setSingUpCheck] = useState(false);
   const [userInfo, setUserInfo] = useState({
     nickname: "",
@@ -165,8 +164,9 @@ const SignPage = () => {
   };
 
   useEffect(() => {
-    setSingUpCheck(location === "in" ? false : true);
-  }, [location]);
+    console.log(control);
+    setSingUpCheck(control === "login" ? false : true);
+  }, [control]);
 
   return (
     <SignPageBox singUpCheck={singUpCheck}>

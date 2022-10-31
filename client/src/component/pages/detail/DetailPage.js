@@ -86,7 +86,8 @@ const DetailPageBox = styled.div`
 
 const DetailPage = () => {
   const location = useLocation();
-  console.log(location.state);
+  const { pageId, data } = location.state;
+  console.log(location);
   //수정
   const contentChange = () => {
     axios
@@ -125,7 +126,7 @@ const DetailPage = () => {
   return (
     <DetailPageBox className="cc">
       <div className="pageBox">
-        <Page pos="detail" />
+        <Page pos="detail" data={data} />
       </div>
       {/* 댓글 박스 */}
       <div className="createReply">
