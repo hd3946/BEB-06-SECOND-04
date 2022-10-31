@@ -108,7 +108,7 @@ const MainTop = () => {
   const [text, setText] = useState("");
   const [postData, setPostData] = useState({
     title: "",
-    contant: "",
+    content: "",
     address: account,
   });
 
@@ -130,7 +130,7 @@ const MainTop = () => {
           post: {
             email: email,
             title: postData.title,
-            contant: postData.contant,
+            content: postData.content,
             address: postData.address,
           },
         },
@@ -143,7 +143,7 @@ const MainTop = () => {
   };
 
   const enterAction = (type) => {
-    const { title, contant: desc } = postData;
+    const { title, content: desc } = postData;
     if (type === "search") {
       searchFilter();
     } else if (type === "desc" && title && desc) {
@@ -201,12 +201,12 @@ const MainTop = () => {
           <textarea
             placeholder="자세하게 말해주세요! (contant)"
             className="ta"
-            value={postData.contant}
+            value={postData.content}
             maxLength={50}
             onChange={(e) => {
               setPostData({
                 ...postData,
-                contant: e.target.value.replace(/\n/g, ""),
+                content: e.target.value.replace(/\n/g, ""),
               });
             }}
             onKeyDown={(e) => {

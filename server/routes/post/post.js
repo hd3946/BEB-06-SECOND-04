@@ -17,12 +17,12 @@ var { upload } = require("./upload");
 router.get("/list", upload.single("post"), async (req, res, next) => {
   try {
     const postList = await Post.findAll();
-    console.log(postList)
+    console.log(postList);
     return res.status(200).json({
       status: true,
       message: "전제글목록 검색",
       postList,
-    })
+    });
   } catch (error) {
     next(error);
   }
@@ -33,7 +33,9 @@ router.post("/write", upload.single("post"), async (req, res, next) => {
     return res.status(401).json("로그인되어 있지 않습니다.");
   try {
     const { id, address } = req.cookies.loginData;
-    const { title, content } = req.body;
+    const { title, content } = req.body.post;
+    console.log(req.cookies.loginData);
+    console.log(content);
     console.log("유저 포스트 업로드", id);
     const post = await Post.create({
       title: title,

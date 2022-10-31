@@ -41,7 +41,7 @@ router.post("/signup", async (req, res, next) => {
   }
 });
 
-router.post("/login", async (req, res, next) => {
+router.post("/signin", async (req, res, next) => {
   const { email, password } = req.body;
   if (!(email && password))
     return res.status(401).json("입력정보가 부족합니다");
@@ -70,7 +70,7 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-router.post("/logout", (req, res, next) => {
+router.post("/signout", (req, res, next) => {
   res.cookie("loginData", null, { maxAge: 0, httpOnly: true }); //쿠키삭제
   console.log("로그아웃되었습니다");
   return res.status(200).json("logout ok");
