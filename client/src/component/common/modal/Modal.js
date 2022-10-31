@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import SignPage from "../../pages/sign/SignPage";
 import Error from "./Error";
@@ -8,17 +9,17 @@ const ModalBox = styled.div`
   position: fixed;
   width: 100vw;
   height: 100vh;
-  z-index: -1;
+  z-index: ${(props) => (props.control !== null ? "10000" : "-1")};
 `;
 
 const Modal = () => {
-  // redux에서 상태를 가져와 선택 랜더링
-  // 상태에 따라 ModalBox의 z-index도 변경
+  const { control } = useSelector((state) => state.state);
+
   return (
-    <ModalBox>
-      {/* <Loading /> */}
-      {/* <SignPage /> */}
-      {/* <Error /> */}
+    <ModalBox control={control}>
+      {control === "loading" ? <Loading /> : null}
+      {control === "login" ? <SignPage /> : null}
+      {control === "error" ? <Error /> : null}
     </ModalBox>
   );
 };
