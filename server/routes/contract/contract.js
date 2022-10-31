@@ -2,13 +2,15 @@ var express = require('express');
 var router = express.Router();
 require('dotenv').config();
 
+var { User, Post } = require("../../models/index");
+
 /* contract & wallet Addr */
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
 const serverAddr = process.env.SERVER_ADDRESS;        //가나슈1
 const serverKey =  process.env.SERVER_PRIVATE_KEY;    //가나슈1 비밀키
-const userAddr = process.env.USER_ADDRESS           //가나슈2
-const userPassword = process.env.USER_PRIVATE_KEY       //생성된 지갑 비밀번호
+// const userAddr = process.env.USER_ADDRESS           //가나슈2
+// const userPassword = process.env.USER_PRIVATE_KEY       //생성된 지갑 비밀번호
 
 /* web.eth */
 var Web3 = require('web3');
@@ -74,29 +76,26 @@ router.post('/mint', async (req, res, next) => {
 
   ////////////////////////////////////////////////////////////////////////////
 
+  try {
+    const userAddr = req.cookies.loginData.address;
+    if (!req.cookies.loginData.address) return res.status(401).json("로그인되어 있지 않습니다.");
+    const tokenTransfer = await tokenContract.methods.transfer(serverAddr, 1).send({ from: userAddr });
+    if (tokenTransfer) {
+      const nftMint = await nftContract.methods.mintNFT(serverAddr, "testURI").send({ from: serverAddr });
+      const nftTokenId = await nftContract.methods._tokenIds().call();
+      const nftBalance = await nftContract.methods.balanceOf(serverAddr ).call();
+      //tokenId를 데이터베이스에 저장
 
-  web3.eth.personal.unlockAccount(userAddr, "password") //user unlock
-  .then(res => {
-    tokenContract.methods.transfer(serverAddr, 1).send({ from: userAddr })
-    console.log("토큰이 전송되었습니다.")
-  })
-  .then(res => {
-    try {
-      web3.eth.personal.unlockAccount(serverAddr, serverKey) //server unlcok
-      .then(res => nftContract.methods.mintNFT(userAddr, "testURI").send({ from: serverAddr }))
-      .then(res => nftContract.methods._tokenIds().call()) //mint된 tokenId
-      .then(res => console.log("tokenId", res))
-    } catch (err) {
-      web3.eth.personal.unlockAccount(userAddr, "password")
-      .then(res => {
-        tokenContract.methods.transfer(userAddr, 1).send({ from: serverAddr })
-        console.log("토큰이 반환되었습니다.")
+      return res.status(200).json({
+        status: true,
+        messege: "success",
+        nftTokenId,
+        nftBalance
       })
     }
-  })
-  .catch(err => console.log("토큰이 부족합니다."))
-
-  res.send('here is contract/mint router');
+  } catch (error) {
+    next(error);
+  } 
 });
 
 module.exports = router;
