@@ -100,16 +100,17 @@ const MainTopBox = styled.div`
 `;
 
 const MainTop = () => {
+  const dispatch = useDispatch();
+  const { email, nickname, account } = useSelector((state) => state.user);
+  const { list } = useSelector((state) => state.post);
+
   const [active, setActive] = useState(false);
   const [text, setText] = useState("");
   const [postData, setPostData] = useState({
     title: "",
     contant: "",
-    address: "",
+    address: account,
   });
-  const dispatch = useDispatch();
-  const { email, nickname } = useSelector((state) => state.user);
-  const { list } = useSelector((state) => state.post);
 
   const searchFilter = () => {
     console.log("검색 버튼 누름!");
