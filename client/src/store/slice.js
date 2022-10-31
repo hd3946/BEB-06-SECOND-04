@@ -14,10 +14,13 @@ export const userSlice = createSlice({
 
 export const postSlice = createSlice({
   name: "postSlice",
-  initialState: { list: [] },
+  initialState: { list: [], filterList: [] },
   reducers: {
     postlist: (state, action) => {
       state.list = action.payload.list;
+    },
+    filtering: (state, action) => {
+      state.filterList = action.payload.list;
     },
   },
 });
@@ -39,5 +42,5 @@ export const stateSlice = createSlice({
 });
 
 export const { info } = userSlice.actions;
-export const { postlist } = postSlice.actions;
+export const { postlist, filtering } = postSlice.actions;
 export const { check } = stateSlice.actions;

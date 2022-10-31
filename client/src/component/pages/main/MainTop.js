@@ -3,6 +3,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@fortawesome/fontawesome-free/js/all.js";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { filtering } from "../../../store/slice";
 
 const MainTopBox = styled.div`
   .inputBox {
@@ -102,12 +104,19 @@ const MainTop = () => {
   const [text, setText] = useState("");
   const [postData, setPostData] = useState({
     title: "",
-    desc: "",
+    contant: "",
   });
+  const dispatch = useDispatch();
+  const { email, nickname } = useSelector((state) => state.user);
+  const { list } = useSelector((state) => state.post);
 
   const searchFilter = () => {
     console.log("검색 버튼 누름!");
-    // 이미 받은 content list에서 filter 시켜 해당 content 노출
+    dispatch(
+      filtering({
+        list: list.filter((data, index) => data.nickname === nickname),
+      })
+    );
   };
   // /post
   const posting = () => {
@@ -117,9 +126,9 @@ const MainTop = () => {
         `http://localhost:3005/post`,
         {
           post: {
-            email: "redux에 저장된 로그인한 유저 email을 넣어주기",
+            email: email,
             title: postData.title,
-            desc: postData.desc,
+            contant: postData.contant,
           },
         },
         { "Content-Type": "application/json", withCredentials: true }
@@ -131,7 +140,7 @@ const MainTop = () => {
   };
 
   const enterAction = (type) => {
-    const { title, desc } = postData;
+    const { title, contant: desc } = postData;
     if (type === "search") {
       searchFilter();
     } else if (type === "desc" && title && desc) {
@@ -182,12 +191,12 @@ const MainTop = () => {
           <textarea
             placeholder="자세하게 말해주세요!"
             className="ta"
-            value={postData.desc}
+            value={postData.contant}
             maxLength={50}
             onChange={(e) => {
               setPostData({
                 ...postData,
-                desc: e.target.value.replace(/\n/g, ""),
+                contant: e.target.value.replace(/\n/g, ""),
               });
             }}
             onKeyDown={(e) => {

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Page from "../../common/page/Page";
 
@@ -84,6 +85,8 @@ const DetailPageBox = styled.div`
 `;
 
 const DetailPage = () => {
+  const location = useLocation();
+  console.log(location.state);
   //수정
   const contentChange = () => {
     axios
