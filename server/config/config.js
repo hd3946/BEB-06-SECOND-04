@@ -6,7 +6,7 @@ const development = {
 	username: env.MYSQL_USERNAME,
 	password: env.MYSQL_PASSWORD,
 	database: env.MYSQL_DATABASE,
-	host: 'localhost',
+	host: env.MYSQL_HOST,
 	dialect: 'mysql',
 	port: env.MYSQL_PORT,
 	"timezone": "+09:00"

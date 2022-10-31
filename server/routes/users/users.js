@@ -2,7 +2,7 @@ var express = require('express');
 var { User } = require('../../models/index');
 var router = express.Router();
 var bcrypt = require('bcrypt');
-
+var { upload } = require('../post/upload');
 // var { isLoggedIn } = require('./middlewares'); 
 
 /* users router listing. */
@@ -41,7 +41,7 @@ router.post('/logout', (req, res, next) => {
   return res.send('logout ok');
 });
 
-router.post('/signup', function(req, res, next) {
+router.post('/signup', async (req, res, next) => {
   console.log('회원가입 API signup 실행');
 
   const { email, password, nick } = req.body;
@@ -81,7 +81,7 @@ router.post('/signup', function(req, res, next) {
 // });
 
 // 유저 프로필이미지 넣기
-router.post('/img',  upload.single('avatar'), isLoggedIn ,async (req, res) => {
+router.post('/img',  upload.single('avatar') , async (req, res) => {
   try{
     console.log('프로필 이미지 업로드', req.file.location, req.user.id);
     const profileurl = req.file.location;
@@ -112,7 +112,7 @@ router.post('/img',  upload.single('avatar'), isLoggedIn ,async (req, res) => {
 });
 
 //유저 정보 조회
-router.get('/', isLoggedIn ,async (req, res) => {
+router.get('/' ,async (req, res) => {
   console.log('유저 POST 조회 API', req.user.id);
   try{
     const UserPost = await Post.findAll({ where: { UserId: req.user.id } });
