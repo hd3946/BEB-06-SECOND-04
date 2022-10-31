@@ -79,7 +79,7 @@ function Sidebar() {
               &nbsp;&nbsp; Minting
             </StyledButton>
           </Link>
-          <Link to="/mypage2" style={{ textDecoration: "none" }}>
+          <Link to="/mypage" style={{ textDecoration: "none" }}>
             <StyledButton>
               <FontAwesomeIcon icon={faUser} style={{ color: "white" }} />
               &nbsp;&nbsp;&nbsp;Mypage
