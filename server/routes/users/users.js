@@ -39,18 +39,24 @@ router.post('/signup', async (req, res, next) => {
 });
 
 router.post('/login', async (req, res, next) => {
+  const { email, password } = req.body;
+  if(!(email && password)) return res.status(401).json('입력정보가 부족합니다');
   try {
-    const { email, password } = req.body;
-  
     const data = await User.findOne({  
       where: { email, password },
     });
   
     const userData = data.toJSON();
-      delete userData.password //비밀번호 삭제
-      res.cookie("loginData", userData, { maxAge: 3*60*60*1000, httpOnly: true }); //3시간유효
-      console.log('로그인 성공');
-      return res.status(200).json('login ok');
+    delete userData.password //비밀번호 삭제
+    delete userData.deletedAt
+    res.cookie("loginData", userData, { maxAge: 3*60*60*1000, httpOnly: true }); //3시간유효
+    console.log('로그인 성공');
+    const userPost = await Post.findAll({ where: { userId: userData.id } });
+    return res.status(200).json({
+      status: true,
+      message: `user: ${userData.nick} is login Success`,
+      postList: userPost //작성글 목록
+    });
   } catch (err) { 
     console.log('로그인 실패');
     return res.status(401).json('아이디 또는 비밀번호가 잘못되었습니다.'); //deletedAt에 날짜 입력되면 에러처리됨
@@ -68,10 +74,11 @@ router.get('/', async (req, res, next) => {
   const userId = req.cookies.loginData.id;
   console.log('유저 POST 조회 API', userId);
   try {
-    const UserPost = await Post.findAll({ where: { UserId: userId } });
+    const userPost = await Post.findAll({ where: { userId: userId } });
     return res.status(200).json({
-      user: UserPost,
+      status: true,
       message: '유저 게시글정보 조회',
+      postList: userPost
     });
   } catch(err) {
     console.error(err);
