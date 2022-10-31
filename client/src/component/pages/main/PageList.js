@@ -37,8 +37,6 @@ const PageList = () => {
   const [tap, setTap] = useState("ALL");
 
   const { list, filterList } = useSelector((state) => state.post);
-  console.log("pagelist 리랜더링");
-  console.log(list);
 
   return (
     <PageListBox>
