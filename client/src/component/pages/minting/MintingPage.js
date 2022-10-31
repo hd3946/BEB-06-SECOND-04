@@ -5,9 +5,10 @@ import styled from "styled-components";
 const MintingPageBox = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 50px 100px 0px 100px;
+  margin: 0px 100px 0px 100px;
   .mintingHeader {
     .tapMinting {
+      margin: 45px;
       width: 250px;
       padding-bottom: 5px;
       text-align: center;
@@ -39,9 +40,10 @@ const MintingPageBox = styled.div`
       position: relative;
     }
     #ex_file {
-      width: 420px;
-      border: 0 solid rgba(110, 110, 110, 0.8);
-      padding: 0px 5px 0px 5px;
+      position: absolute;
+      top: 173px;
+      left: 159px;
+      border: 0;
     }
     .file_box {
       width: 238px;
@@ -50,9 +52,10 @@ const MintingPageBox = styled.div`
       border: 3px;
     }
     .uploadImageon {
-      width: 393px;
-      height: 393px;
+      width: 397px;
+      height: 399px;
       position: absolute;
+      right: 2px;
     }
     input,
     textarea {
@@ -105,7 +108,7 @@ const MintingPage = () => {
 
   // 서버에 url formdata로 보내기
 
-  // const setFile = (e) => {
+  // const handlePost = (e) => {
   //   if(e.target.files[0]){
   //     const img = new FormData();
   //     img.append('file',e.target.files[0]);
@@ -134,10 +137,10 @@ const MintingPage = () => {
             id="ex_file"
             onChange={uploadImage}
             name="image"
+            style={{ display: "none" }}
           ></input>
-          <div className="mintingImg cc">
-            <img className={"uploadImage" + (imageView ? "on" : "")}></img>
-          </div>
+          <img className={"uploadImage" + (imageView ? "on" : "")}></img>
+          {/* <div className="mintingImg cc"></div> */}
         </div>
         <div className="mintingNFTName">
           <input placeholder="NFT name" />
