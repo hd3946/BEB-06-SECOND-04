@@ -166,7 +166,13 @@ const SignPage = ({ control }) => {
   }, [control]);
 
   return (
-    <SignPageBox singUpCheck={singUpCheck}>
+    <SignPageBox
+      singUpCheck={singUpCheck}
+      onClick={(e) => {
+        e.stopPropagation();
+        console.log("클릭");
+      }}
+    >
       <div className="singBox">
         <div className="singHeader">{singUpCheck ? "SingUp" : "Singin"}</div>
         <div className="singBody">
