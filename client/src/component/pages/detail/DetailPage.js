@@ -7,7 +7,7 @@ import Page from "../../common/page/Page";
 const DetailPageBox = styled.div`
   flex-direction: column;
   width: 100%;
-  margin-top: 50px;
+  padding-top: 50px;
 
   .pageBox {
     width: 700px;

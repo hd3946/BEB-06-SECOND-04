@@ -14,23 +14,17 @@ const MainPageBox = styled.div`
 const MainPage = () => {
   const dispatch = useDispatch();
 
-  // contentList 요청 함수
   const listUpdate = () => {
     axios
-      .get(`http://localhost:3005/post`)
+      .get(`http://localhost:3005/post/list`)
       .then((res) => {
-        // 받은 list는 redux에서 관리하기
-        // or
-        // 현재 컴포넌트에 임시로 관리하기
-        console.log(res);
-        dispatch(postlist(res.postList));
+        dispatch(postlist({ list: res.data.postList }));
       })
       .catch((err) => alert(err));
   };
 
   useEffect(() => {
-    // 서버에서 API완성되면 주석 풀기
-    // listUpdate();
+    listUpdate();
   }, []);
 
   return (
