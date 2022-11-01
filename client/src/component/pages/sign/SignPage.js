@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { check, filtering, info } from "../../../store/slice";
+import { useDispatch } from "react-redux";
+import { check, filtering } from "../../../store/slice";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -113,20 +113,15 @@ const SignPageBox = styled.div`
   }
 `;
 
-const SignPage = ({ control, history }) => {
+const SignPage = ({ control }) => {
   const [signUpCheck, setSignUpCheck] = useState(false);
-
   const [userInfo, setUserInfo] = useState({
     email: "",
     address: "",
     nickname: "",
     password: "",
   });
-
   const dispatch = useDispatch();
-  const { email, account, nickname } = useSelector((state) => {
-    return state.user;
-  });
 
   const signin = () => {
     // 로그인
@@ -141,21 +136,6 @@ const SignPage = ({ control, history }) => {
         { "Content-Type": "application/json", withCredentials: true }
       )
       .then((res) => {
-        console.log(res);
-
-        axios.get(`http://localhost:3005/users/info`).then((res) => {
-          dispatch(
-            info({
-              email: res.data.loginData.email,
-              account: res.data.loginData.address,
-              nickname: res.data.loginData.nickname,
-              balance: res.data.ethBalance,
-            })
-          );
-        });
-
-        dispatch(check({ type: "" }));
-
         return axios
           .get(`http://localhost:3005/users/info`, {
             "Content-Type": "application/json",
@@ -163,8 +143,6 @@ const SignPage = ({ control, history }) => {
           })
           .then(({ data }) => {
             const { address, email, nickname, img } = data.loginData;
-            console.log(data);
-
             dispatch(filtering({ list: res.data.postList }));
 
             localStorage.setItem(
@@ -178,18 +156,21 @@ const SignPage = ({ control, history }) => {
               })
             );
             dispatch(check({ type: "" }));
-            history.push("/");
+            window.location.href = "/";
           })
           .catch((err) => {
             console.log(err);
             dispatch(check({ type: "" }));
           });
       })
-      .catch((err) => alert(err));
+      .catch((err) => {
+        alert(err);
+        dispatch(check({ type: "" }));
+      });
   };
 
   const signup = () => {
-    console.log("회원가입");
+    dispatch(check({ type: "loading" }));
     axios
       .post(
         `http://localhost:3005/users/signup`,
@@ -202,9 +183,13 @@ const SignPage = ({ control, history }) => {
         { "Content-Type": "application/json", withCredentials: true }
       )
       .then((res) => {
+        dispatch(check({ type: "" }));
         console.log(res);
       })
-      .catch((err) => alert(err));
+      .catch((err) => {
+        dispatch(check({ type: "" }));
+        alert(err);
+      });
   };
 
   useEffect(() => {
@@ -288,15 +273,17 @@ const SignPage = ({ control, history }) => {
                     //회원 가입 요청
                     signup();
                     setUserInfo({
-                      nickname: "",
                       email: "",
+                      address: "",
+                      nickname: "",
                       password: "",
                     });
                     setSignUpCheck(false);
                   } else {
                     setUserInfo({
-                      nickname: "",
                       email: "",
+                      address: "",
+                      nickname: "",
                       password: "",
                     });
                     setSignUpCheck(true);
