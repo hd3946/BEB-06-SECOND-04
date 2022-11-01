@@ -95,6 +95,7 @@ function Sidebar() {
               &nbsp; Home
             </StyledButton>
           </Link>
+
           <Link to="/mint" style={{ textDecoration: "none" }}>
             <StyledButton>
               <FontAwesomeIcon icon={faImage} style={{ color: "white" }} />

@@ -45,6 +45,8 @@ export const stateSlice = createSlice({
         state.control = "login";
       } else if (action.payload.type === "logout") {
         state.control = "logout";
+      } else if (action.payload.type === "success") {
+        state.control = "success";
       } else {
         state.control = null;
       }

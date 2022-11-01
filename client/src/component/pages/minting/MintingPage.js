@@ -1,6 +1,8 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
+import { check } from "../../../store/slice";
 
 const MintingPageBox = styled.div`
   display: flex;
@@ -36,7 +38,7 @@ const MintingPageBox = styled.div`
       height: 400px;
       margin-top: 30px;
       background-color: #e5daff;
-      border: 2px solid rgba(110, 110, 110, 0.8);
+      border: 2px dashed rgba(110, 110, 110, 0.8);
       position: relative;
     }
     #ex_file {
@@ -99,6 +101,17 @@ const MintingPage = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [nftName, setNftName] = useState("");
   const [description, setDescription] = useState("");
+  const dispatch = useDispatch();
+  const { control } = useSelector((state) => state.state);
+  const { email } = useSelector((state) => {
+    return state.user;
+  });
+
+  useEffect(() => {
+    if (!email) {
+      dispatch(check({ type: "login" }));
+    }
+  }, []);
 
   const handleNftName = (e) => {
     setNftName(e.target.value);
@@ -142,6 +155,7 @@ const MintingPage = () => {
     //       console.error(err);
     //     });
     // }
+    dispatch(check({ type: "loading" }));
     axios
       .post(
         "http://localhost:3005/contract/mint",
@@ -149,6 +163,7 @@ const MintingPage = () => {
         { "Content-Type": "application/json", withCredentials: true }
       )
       .then((res) => {
+        dispatch(check({ type: "success" }));
         console.log(res.data);
       })
       .catch((err) => {
@@ -181,7 +196,7 @@ const MintingPage = () => {
             alt="파일 아이콘"
             class="image"
           /> */}
-          <p class="message">Click for uploading files</p>
+          <p class="message">Drag & Drops your files here</p>
           {/* <div className="mintingImg cc"></div> */}
         </div>
         <div className="mintingNFTName">

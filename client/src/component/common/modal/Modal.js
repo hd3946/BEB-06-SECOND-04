@@ -4,6 +4,7 @@ import styled from "styled-components";
 import SignPage from "../../pages/sign/SignPage";
 import Error from "./Error";
 import Loading from "./Loading";
+import Success from "./Success";
 
 const ModalBox = styled.div`
   position: fixed;
@@ -21,6 +22,7 @@ const Modal = () => {
       {control === "login" ? <SignPage control={control} /> : null}
       {control === "logout" ? <SignPage control={control} /> : null}
       {control === "error" ? <Error /> : null}
+      {control === "success" ? <Success /> : null}
     </ModalBox>
   );
 };
