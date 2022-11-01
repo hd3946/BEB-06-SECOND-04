@@ -1,11 +1,11 @@
-import express from 'express';
-import bcrypt from 'bcrypt';
+import express from "express";
+import bcrypt from "bcrypt";
 
 const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const serverAddr = process.env.SERVER_ADDRESS; //가나슈1
 
-import Web3  from "web3";
+import Web3 from "web3";
 const web3 = new Web3("http://localhost:7545");
 import Contract from "web3-eth-contract";
 Contract.setProvider("http://localhost:7545");
@@ -15,9 +15,9 @@ import nftABI from "../../web3/nftABI.js";
 const nftContract = new Contract(nftABI, nftAddr);
 
 const router = express.Router();
-import { db } from '../../models/index.js';
+import { db } from "../../models/index.js";
 const { User, Post, Comment } = db;
-import upload from '../post/upload.js';
+import upload from "../post/upload.js";
 
 /* users router listing. */
 router.post("/signup", async (req, res, next) => {
@@ -29,7 +29,7 @@ router.post("/signup", async (req, res, next) => {
   if (!(email && password && nickname && address))
     return res.status(401).json("입력정보가 부족합니다");
 
-  try { 
+  try {
     //const hash = await bcrypt.hash(password, 10);
 
     await User.create({
@@ -51,6 +51,7 @@ router.post("/signup", async (req, res, next) => {
 
 router.post("/signin", async (req, res, next) => {
   const { email, password } = req.body;
+
   if (!(email && password))
     return res.status(401).json("입력정보가 부족합니다");
   try {
@@ -92,18 +93,20 @@ router.get("/info", async (req, res, next) => {
   const { id, address } = loginData;
   try {
     const postList = await Post.findAll({
-      include: 
-      [
-        { model: User, 
-          attributes: ['email', 'nickname'] 
+      include: [
+        { model: User, attributes: ["email", "nickname"] },
+        {
+          model: Comment,
+          attributes: [
+            ["id", "commentId"],
+            "content",
+            "createdAt",
+            "updatedAt",
+            "commenter",
+            "postId",
+          ],
+          include: { model: User, attributes: ["email", "nickname"] },
         },
-        { model: Comment,
-          attributes: [['id', 'commentId'], 'content', 'createdAt', 'updatedAt', 'commenter', 'postId'], 
-          include: 
-          { model: User, 
-            attributes: ['email', 'nickname'] 
-          }
-        }
       ],
       attributes: [
         ["id", "postId"],
@@ -172,5 +175,5 @@ router.post("/img", upload.single("avatar"), async (req, res, next) => {
 // router.post('/', function(req, res, next) {
 //   res.send('here is users router');
 // });
- 
+
 export default router;
