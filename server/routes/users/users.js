@@ -1,23 +1,23 @@
-var express = require("express");
-var router = express.Router();
-var bcrypt = require("bcrypt");
+import express from "express";
+import bcrypt from "bcrypt";
 
 const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const serverAddr = process.env.SERVER_ADDRESS; //가나슈1
 
-var Web3 = require("web3");
-var web3 = new Web3("http://localhost:7545");
-const Contract = require("web3-eth-contract");
+import Web3 from "web3";
+const web3 = new Web3("http://localhost:7545");
+import Contract from "web3-eth-contract";
 Contract.setProvider("http://localhost:7545");
-const tokenABI = require("../../web3/tokenABI");
+import tokenABI from "../../web3/tokenABI.js";
 const tokenContract = new Contract(tokenABI, tokenAddr);
-const nftABI = require("../../web3/nftABI");
+import nftABI from "../../web3/nftABI.js";
 const nftContract = new Contract(nftABI, nftAddr);
 
-var { User, Post, Comment } = require("../../models/index");
-var { upload } = require("../post/upload");
-var { isLoggedIn } = require("../middlewares");
+const router = express.Router();
+import { db } from "../../models/index.js";
+const { User, Post, Comment } = db;
+import upload from "../post/upload.js";
 
 /* users router listing. */
 router.post("/signup", async (req, res, next) => {
@@ -30,12 +30,7 @@ router.post("/signup", async (req, res, next) => {
     return res.status(401).json("입력정보가 부족합니다");
 
   try {
-    const exUser = await User.findOne({ where: { email } });
-    if (exUser)
-      return res
-        .status(401)
-        .json("Authentication failed. 사용자 이미 존재합니다.");
-    const hash = await bcrypt.hash(password, 10);
+    //const hash = await bcrypt.hash(password, 10);
 
     await User.create({
       email,
@@ -97,7 +92,21 @@ router.get("/info", async (req, res, next) => {
   const { id, address } = loginData;
   try {
     const postList = await Post.findAll({
-      include: { model: User, attributes: ["email", "nickname"] },
+      include: [
+        { model: User, attributes: ["email", "nickname"] },
+        {
+          model: Comment,
+          attributes: [
+            ["id", "commentId"],
+            "content",
+            "createdAt",
+            "updatedAt",
+            "commenter",
+            "postId",
+          ],
+          include: { model: User, attributes: ["email", "nickname"] },
+        },
+      ],
       attributes: [
         ["id", "postId"],
         "title",
@@ -166,4 +175,4 @@ router.post("/img", upload.single("avatar"), async (req, res, next) => {
 //   res.send('here is users router');
 // });
 
-module.exports = router;
+export default router;

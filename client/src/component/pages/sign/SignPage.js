@@ -149,24 +149,17 @@ const SignPage = ({ control }) => {
         //    리덕스 회원 정보에 저장
         // 2. false일 경우 로그인 실패 메세지
 
-        //userinfo api 만들어지면 주석풀기
-        // axios.get(`http://localhost:3005/users`).then((res)=>{
-        //   dispatch(
-        //     info({
-        //       email: res.data.email,
-        //       account: res.data.email,
-        //       nickname: res.data.nickname,
-        //       balance: res.data.nickname
-        //     })
-        //   );
-        dispatch(
-          info({
-            email: "test@naver.com",
-            account: "0x0",
-            nickname: "hazel",
-            balance: "100",
-          })
-        );
+        axios.get(`http://localhost:3005/users/info`).then((res) => {
+          dispatch(
+            info({
+              email: res.data.loginData.email,
+              account: res.data.loginData.address,
+              nickname: res.data.loginData.nickname,
+              balance: res.data.ethBalance,
+            })
+          );
+        });
+
         dispatch(check({ type: "" }));
       })
 

@@ -167,6 +167,7 @@ const MintingPage = () => {
         console.log(res.data);
       })
       .catch((err) => {
+        dispatch(check({ type: "error" }));
         console.error(err);
       });
   };

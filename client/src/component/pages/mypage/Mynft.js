@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 const MynftBox = styled.div`
   width: 100%;
-  margin-top: 30px;
+  margin-top: 84px;
   overflow-x: hidden;
   .myNftHeader {
     font-size: 18px;

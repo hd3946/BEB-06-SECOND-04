@@ -1,20 +1,21 @@
-var express = require("express");
-var app = express();
-var path = require("path");
-var cors = require("cors");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var dotenv = require("dotenv");
+import express from "express";
+import path from "path";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
+import dotenv from "dotenv";
 dotenv.config();
-var { sequelize } = require("./models");
+import { sequelize } from "./models/index.js";
+import addFile from "./web3/ipfs.js";
 
+const app = express();
 app.set("port", process.env.PORT || 3005);
 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+//app.use(express.static(path.join(__dirname, "public")));
 
 const corsOption = {
   origin: "http://localhost:3000",
@@ -23,7 +24,7 @@ const corsOption = {
 app.use(cors(corsOption));
 
 sequelize
-  .sync({ alter: false }) // force:true 일경우 테이블 전부 지우고 새로 설정~!
+  .sync({ alter: false }) // force:true 일경우 테이블 전부 지우고 새로 설정~!  alter
   .then(() => {
     console.log("데이터베이스 연결 성공");
   })
@@ -31,11 +32,10 @@ sequelize
     console.error(err);
   });
 
-var usersRouter = require("./routes/users/users");
-var postRouter = require("./routes/post/post");
-var commentRouter = require("./routes/comment/comment");
-var contractRouter = require("./routes/contract/contract");
-
+import usersRouter from "./routes/users/users.js";
+import postRouter from "./routes/post/post.js";
+import contractRouter from "./routes/contract/contract.js";
+import commentRouter from "./routes/comment/comment.js";
 // router
 app.use("/users", usersRouter);
 app.use("/post", postRouter);
@@ -56,4 +56,4 @@ app.listen(app.get("port"), () => {
   console.log(`✅ Server running on http://localhost:${app.get("port")}`);
 });
 
-module.exports = app;
+export default app;
