@@ -1,5 +1,7 @@
 import axios from "axios";
 import React from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Page from "../../common/page/Page";
@@ -88,31 +90,22 @@ const DetailPage = () => {
   const location = useLocation();
   const { pageId, data } = location.state;
   console.log(location);
-  //수정
-  const contentChange = () => {
-    axios
-      .put(
-        `http://localhost:3005/post`,
-        {
-          title: "수정한 title",
-          desc: "수정한 desc",
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => console.log(res))
-      .catch((err) => alert(err));
-  };
-  //삭제
-  const contentDelete = () => {
+
+  const [comment, setComment] = useState("");
+
+  const { nickname, img } = useSelector((state) => state.user);
+  const { commentList } = useSelector((state) => state.post);
+  console.log(commentList);
+
+  // 댓글 작성
+  const commentWrite = () => {
     axios
       .delete(
-        `http://localhost:3005/post`,
+        `http://localhost:3005/comment/write`,
         {
-          contentId: "선택한 contentId",
-          email: "삭제 버튼을 누른 user Email",
+          nickname,
+          comment,
+          img,
         },
         {
           "Content-Type": "application/json",
@@ -123,6 +116,41 @@ const DetailPage = () => {
       .catch((err) => alert(err));
   };
 
+  //수정
+  const commentUpdate = () => {
+    axios
+      .put(
+        `http://localhost:3005/comment/edit`,
+        {
+          comment: "수정한 comment",
+        },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => alert(err));
+  };
+  //삭제
+  const commentDelete = () => {
+    axios
+      .delete(
+        `http://localhost:3005/comment/delete`,
+        {
+          commentId: "선택한 contentId",
+        },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => alert(err));
+  };
+  // localStorage.setItem("text", "data");
+  // console.log(localStorage);
+  //  console.log(document.cookie);
   return (
     <DetailPageBox className="cc">
       <div className="pageBox">
@@ -130,27 +158,34 @@ const DetailPage = () => {
       </div>
       {/* 댓글 박스 */}
       <div className="createReply">
-        <textarea placeholder="Description" className="ta" />
+        <textarea
+          placeholder="Description"
+          className="ta"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
         <div className="createReplyProfile replyIn cc">
           <img src="" alt="프사" />
         </div>
         <div className="createReplyB replyIn">
-          <button>reply</button>
+          <button onClick={() => commentWrite()}>reply</button>
         </div>
       </div>
       <div className="replyList cc">
         {/* page 컴포넌트 사용 고려하기 */}
-        {[1, 2, 3].map((data, index) => (
-          <div className="replyHeader" key={index}>
-            <div className="replyUserProfileBox">
-              <img src="" alt="Profile" />
-            </div>
-            <div className="replyUserBox">
-              <div className="replyUserName">Test User Name</div>
-              <div className="replyUserDesc">Test User Description Test</div>
-            </div>
-          </div>
-        ))}
+        {commentList.length > 0
+          ? commentList.map((data, index) => (
+              <div className="replyHeader" key={index}>
+                <div className="replyUserProfileBox">
+                  <img src={data.img} alt="Profile" />
+                </div>
+                <div className="replyUserBox">
+                  <div className="replyUserName">{data.nickname}</div>
+                  <div className="replyUserDesc">{data.comment}</div>
+                </div>
+              </div>
+            ))
+          : null}
       </div>
     </DetailPageBox>
   );

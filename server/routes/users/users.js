@@ -54,13 +54,20 @@ router.post("/signin", async (req, res, next) => {
     delete userData.deletedAt;
     res.cookie("loginData", userData, {
       maxAge: 3 * 60 * 60 * 1000,
-      httpOnly: true,
+      httpOnly: false,
     }); //3시간유효
     console.log("로그인 성공");
-    const postList = await Post.findAll({ 
-      include: { model: User, attributes: ['nickname']},  
-      attributes: [['id', 'postId'], 'title', 'content', 'img', 'createdAt', 'updatedAt'],
-      where: { userId: userData.id } 
+    const postList = await Post.findAll({
+      include: { model: User, attributes: ["nickname"] },
+      attributes: [
+        ["id", "postId"],
+        "title",
+        "content",
+        "img",
+        "createdAt",
+        "updatedAt",
+      ],
+      where: { userId: userData.id },
     });
     return res.status(200).json({
       status: true,

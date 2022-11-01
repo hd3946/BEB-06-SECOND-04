@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { check, info } from "../../../store/slice";
+import { check, filtering, info } from "../../../store/slice";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -143,6 +143,7 @@ const SignPage = ({ control }) => {
       )
       .then((res) => {
         console.log(res);
+        dispatch(filtering({ list: res.data.postList }));
         // 조회 결과에 따라 나뉨
         // 1. true일 경우 해당 회원 정보 받아서
         //    리덕스 회원 정보에 저장
@@ -160,7 +161,7 @@ const SignPage = ({ control }) => {
         //   );
         dispatch(
           info({
-            email: "nahye7670@gmail.com",
+            email: "test@naver.com",
             account: "0x0",
             nickname: "hazel",
             balance: "100",

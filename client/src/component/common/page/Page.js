@@ -4,6 +4,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { Cookies } from "react-cookie";
 
 const PageBox = styled.div`
   width: 100%;
@@ -94,8 +95,9 @@ const PageBox = styled.div`
 `;
 
 const Page = ({ pos, data }) => {
+  const { content, id, tilte } = data;
   console.log(data);
-  const { email } = useSelector((state) => state.user);
+  // const cookies = new Cookies();
 
   const likeUp = () => {
     // 좋아요
@@ -106,10 +108,8 @@ const Page = ({ pos, data }) => {
       .post(
         `http://localhost:3005/post`,
         {
-          post: {
-            email: "redux에 저장된 로그인한 유저 email을 넣어주기",
-            contentId: "좋아요 누른 contentID",
-          },
+          email: "redux에 저장된 로그인한 유저 email을 넣어주기",
+          contentId: "좋아요 누른 contentID",
         },
         {
           "Content-Type": "application/json",
@@ -130,10 +130,8 @@ const Page = ({ pos, data }) => {
       .put(
         `http://localhost:3005/post`,
         {
-          post: {
-            email: "redux에 저장된 로그인한 유저 email을 넣어주기",
-            contentId: "좋아요 누른 contentID",
-          },
+          email: "redux에 저장된 로그인한 유저 email을 넣어주기",
+          contentId: "좋아요 누른 contentID",
         },
         {
           "Content-Type": "application/json",
@@ -144,6 +142,32 @@ const Page = ({ pos, data }) => {
         console.log(res);
       })
       .catch((err) => alert(err));
+  };
+  const postUpdate = () => {
+    axios
+      .post(
+        `http://localhost:3005/post/edit`,
+        { postId: id, tilte, content },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+  const postDelete = () => {
+    axios
+      .post(
+        `http://localhost:3005/post/delete`,
+        { postId: id },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -174,7 +198,14 @@ const Page = ({ pos, data }) => {
           </div>
         ) : null}
         {/* {email ? : null} */}
+
         <div className="pageiconBox">
+          <div className="icon" onClick={() => postUpdate()}>
+            <FontAwesomeIcon icon="fa-solid fa-pen" />
+          </div>
+          <div className="icon" onClick={() => postDelete()}>
+            <FontAwesomeIcon icon="fa-solid fa-trash" />
+          </div>
           <div className="icon">
             <FontAwesomeIcon icon="fa-regular fa-message" />
           </div>

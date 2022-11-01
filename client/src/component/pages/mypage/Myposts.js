@@ -1,9 +1,7 @@
-import axios from "axios";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { postlist } from "../../../store/slice";
 
 const MypostsBox = styled.div`
   width: 100%;
@@ -58,20 +56,7 @@ const MypostsBox = styled.div`
 
 const Myposts = () => {
   const { list } = useSelector((state) => state.post);
-  const dispatch = useDispatch();
 
-  const listUpdate = () => {
-    axios
-      .get(`http://localhost:3005/post/list`)
-      .then((res) => {
-        dispatch(postlist({ list: res.data.postList }));
-      })
-      .catch((err) => alert(err));
-  };
-
-  useEffect(() => {
-    listUpdate();
-  }, []);
   return (
     <MypostsBox>
       <div className="mypostsHeader">My Posts</div>
