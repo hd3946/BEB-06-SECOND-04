@@ -1,19 +1,17 @@
-var express = require('express');
-var router = express.Router();
-var { upload } = require('./upload');
-// const { isLoggedIn } = require('./middlewares'); 
+import express from 'express';
+const router = express.Router();
+import upload from './upload.js';
 
-const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS
+const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const serverAddr = process.env.SERVER_ADDRESS;        //가나슈1
 
-const Contract = require('web3-eth-contract');
+import Contract from 'web3-eth-contract';
 Contract.setProvider('http://localhost:7545');
-const tokenABI = require('../../web3/tokenABI'); 
+import tokenABI from '../../web3/tokenABI.js'; 
 const tokenContract = new Contract(tokenABI, tokenAddr);
 
-var { User, Post } = require('../../models/index');
-var { upload } = require('./upload')  
-// const { isLoggedIn } = require('./middlewares'); 
+import { db } from '../../models/index.js';
+const { User, Post } = db; 
 
 /* post router listing. */
 router.post('/', upload.single('post'), async (req, res, next) => {
@@ -62,4 +60,4 @@ router.post('/', upload.single('post'), async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

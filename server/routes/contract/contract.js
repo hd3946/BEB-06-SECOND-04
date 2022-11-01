@@ -1,6 +1,7 @@
-var express = require('express');
-var router = express.Router();
-require('dotenv').config();
+import express from 'express';
+const router = express.Router();
+import dotenv from 'dotenv';
+dotenv.config();
 
 /* contract & wallet Addr */
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
@@ -11,15 +12,15 @@ const userAddr = process.env.USER_ADDRESS           //가나슈2
 const userPassword = process.env.USER_PRIVATE_KEY       //생성된 지갑 비밀번호
 
 /* web.eth */
-var Web3 = require('web3');
-var web3 = new Web3('http://localhost:7545');
+import Web3  from 'web3';
+const web3 = new Web3('http://localhost:7545');
 
 /* Contract ABI setProvider */
-const Contract = require('web3-eth-contract');
+import Contract from 'web3-eth-contract';
 Contract.setProvider('http://localhost:7545');
-const tokenABI = require('../../web3/tokenABI'); 
+import tokenABI from '../../web3/tokenABI.js'; 
 const tokenContract = new Contract(tokenABI, tokenAddr);
-const nftABI = require('../../web3/nftABI');
+import nftABI from '../../web3/nftABI.js';
 const nftContract = new Contract(nftABI , nftAddr);
 
 
@@ -98,5 +99,5 @@ router.post('/mint', async (req, res, next) => {
 
   res.send('here is contract/mint router');
 });
-
-module.exports = router;
+ 
+export default router;

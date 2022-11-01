@@ -1,10 +1,10 @@
-var express = require("express");
-var router = express.Router();
-var bcrypt = require("bcrypt");
+import express from 'express';
+import bcrypt from 'bcrypt';
 
-var { User, Post } = require("../../models/index");
-var { upload } = require("../post/upload");
-var { isLoggedIn } = require("../middlewares");
+const router = express.Router();
+import { db } from '../../models/index.js';
+const { User, Post } = db;
+import upload from '../post/upload.js';
 
 /* users router listing. */
 router.post("/signup", async (req, res, next) => {
@@ -16,13 +16,8 @@ router.post("/signup", async (req, res, next) => {
   if (!(email && password && nick && address))
     return res.status(401).json("입력정보가 부족합니다");
 
-  try {
-    const exUser = await User.findOne({ where: { email } });
-    if (exUser)
-      return res
-        .status(401)
-        .json("Authentication failed. 사용자 이미 존재합니다.");
-    const hash = await bcrypt.hash(password, 10);
+  try { 
+    //const hash = await bcrypt.hash(password, 10);
 
     await User.create({
       email,
@@ -131,5 +126,5 @@ router.post("/img", upload.single("avatar"), async (req, res, next) => {
 // router.post('/', function(req, res, next) {
 //   res.send('here is users router');
 // });
-
-module.exports = router;
+ 
+export default router;

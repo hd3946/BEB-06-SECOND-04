@@ -1,6 +1,6 @@
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 
-module.exports = class PostLike extends Sequelize.Model {
+export default class PostLike extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {},
