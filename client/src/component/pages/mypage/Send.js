@@ -47,22 +47,23 @@ const SendBox = styled.div`
 
 const Send = () => {
   return (
-    <SendBox>
-      <div className="mypageSendBox">
-        <div className="mypageSendText">Send my token</div>
-        <div className="mypageSendTV">
-          <div className="mypageSendIBox">
-            <div>To : </div>
-            <input />
-          </div>
-          <div className="mypageSendIBox">
-            <div>Value : </div>
-            <input />
-          </div>
-          <button>send</button>
-        </div>
-      </div>
-    </SendBox>
+    <div></div>
+    // <SendBox>
+    //   <div className="mypageSendBox">
+    //     <div className="mypageSendText">Send my token</div>
+    //     <div className="mypageSendTV">
+    //       <div className="mypageSendIBox">
+    //         <div>To : </div>
+    //         <input />
+    //       </div>
+    //       <div className="mypageSendIBox">
+    //         <div>Value : </div>
+    //         <input />
+    //       </div>
+    //       <button>send</button>
+    //     </div>
+    //   </div>
+    // </SendBox>
   );
 };
 
