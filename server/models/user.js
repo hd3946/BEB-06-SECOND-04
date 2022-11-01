@@ -1,6 +1,6 @@
-const Sequelize = require("sequelize");
+import Sequelize from 'sequelize';
 
-module.exports = class User extends Sequelize.Model {
+export default class User extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
@@ -30,7 +30,7 @@ module.exports = class User extends Sequelize.Model {
           type: Sequelize.STRING(100),
           allowNull: false,
         },
-        picture: {
+        profileurl: {
           type: Sequelize.STRING(255),
           allowNull: true,
         },
@@ -49,9 +49,11 @@ module.exports = class User extends Sequelize.Model {
   }
 
   static associate(db) {
-    db.User.hasMany(db.Post, { foreignKey: "userId", sourceKey: "id" });
-    db.User.hasMany(db.Comment, { foreignKey: "commenter", sourceKey: "id" });
+    db.User.hasMany(db.Post,       { foreignKey: 'userId' , sourceKey: 'id' });
+    db.User.hasMany(db.Comment,    { foreignKey: 'commenter', sourceKey: 'id' });
     //db.User.hasOne(db.wallet)  지갑 테이블 db.wallet.belongsTo()
+    db.User.hasOne(db.PostLike,    { foreignKey: 'LikeUserId', sourceKey: 'id' });
+    db.User.hasOne(db.CommentLike, { foreignKey: 'LikeUserId', sourceKey: 'id' });
     db.User.belongsToMany(db.User, {
       foreignKey: "followingId",
       as: "Followers", //함수불러올때 이름을 정의해주는것

@@ -1,6 +1,6 @@
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 
-module.exports = class Hashtag extends Sequelize.Model {
+export default class Hashtag extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {

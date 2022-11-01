@@ -1,13 +1,11 @@
-var multer = require('multer');
-var path = require('path');
-var fs = require('fs');  
-require('dotenv').config();
-var { upload } = require('./upload')  
-
-//폴더 자동생성 기능 추가
-
+import multer from 'multer';
+import path from 'path';
+//var fs = require('fs');  
+import dotenv from 'dotenv';
+dotenv.config();
+ 
 //multer 이용하여 이미지 업로드
-exports.upload = multer({
+const upload = multer({
   storage: multer.diskStorage({
     destination(req, file, cb) {
       cb(null, 'uploads/');
@@ -20,14 +18,7 @@ exports.upload = multer({
   //limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-
-
-
-
-
-
-
-
+export default upload;
 // try {
 //   fs.readdirSync('uploads');
 // } catch (error) {

@@ -1,6 +1,6 @@
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 
-module.exports = class Post extends Sequelize.Model {
+export default class Post extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
@@ -33,6 +33,8 @@ module.exports = class Post extends Sequelize.Model {
   static associate(db) {
     db.Post.belongsTo(db.User, { foreignKey: 'userId', targetKey: 'id', onDelete: 'cascade', onUpdate: 'cascade' });
     db.Post.hasMany(db.Comment, { foreignKey: 'commenter', sourceKey: 'id' });
+    db.Post.hasMany(db.PostLike, { foreignKey: 'LikePostId', sourceKey: 'id' });
+
     db.Post.belongsToMany(db.Hashtag, { through: 'PostHashtag' });
   }
 };

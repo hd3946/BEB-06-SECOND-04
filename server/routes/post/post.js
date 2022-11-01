@@ -1,17 +1,17 @@
-var express = require("express");
-var router = express.Router();
+import express from 'express';
+const router = express.Router();
+import upload from './upload.js';
 
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
-const serverAddr = process.env.SERVER_ADDRESS; //가나슈1
+const serverAddr = process.env.SERVER_ADDRESS;        //가나슈1
 
-const Contract = require("web3-eth-contract");
-Contract.setProvider("http://localhost:7545");
-const tokenABI = require("../../web3/tokenABI");
+import Contract from 'web3-eth-contract';
+Contract.setProvider('http://localhost:7545');
+import tokenABI from '../../web3/tokenABI.js'; 
 const tokenContract = new Contract(tokenABI, tokenAddr);
 
-var { User, Post, Comment } = require("../../models/index");
-var { upload } = require("./upload");
-// const { isLoggedIn } = require('./middlewares');
+import { db } from '../../models/index.js';
+const { User, Post, Comment } = db; 
 
 /* post router listing. */
 router.get("/list", upload.single("post"), async (req, res, next) => {
@@ -131,16 +131,13 @@ router.post("/delete", upload.single("post"), async (req, res, next) => {
     const { id } = req.cookies.loginData;
     const { postId } = req.body;
     const data = await Post.findOne({ where: { id: postId } });
-    const postingUser = data.toJSON().userId
+    const postingUser = data.toJSON().userId;
     if (postingUser === id) { //삭제는 작성자만 가능
-      data.destroy()
-      .then(() => {
-        return res.status(200).json({
-          status: true,
-          message: "delete success",
-        });
-      })
-      .catch((error) => next(error))
+      data.destroy();
+      return res.status(200).json({
+        status: true,
+        message: "delete success",
+      });
     } else {
       return res.status(401).json({
         status: false,
@@ -152,4 +149,4 @@ router.post("/delete", upload.single("post"), async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;
