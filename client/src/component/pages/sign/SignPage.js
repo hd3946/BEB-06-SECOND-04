@@ -115,6 +115,7 @@ const SignPageBox = styled.div`
 
 const SignPage = ({ control }) => {
   const [singUpCheck, setSingUpCheck] = useState(false);
+
   const [userInfo, setUserInfo] = useState({
     email: "",
     acocunt: "",
@@ -123,7 +124,6 @@ const SignPage = ({ control }) => {
 
   const dispatch = useDispatch();
   const { email, account, nickname } = useSelector((state) => {
-    console.log(state.user);
     return state.user;
   });
 
@@ -134,7 +134,7 @@ const SignPage = ({ control }) => {
     // 로그인
     axios
       .post(
-        `http://localhost:3005/users/login`,
+        `http://localhost:3005/users/signin`,
         {
           email: userInfo.email,
           password: userInfo.password,
@@ -148,13 +148,14 @@ const SignPage = ({ control }) => {
         //    리덕스 회원 정보에 저장
         // 2. false일 경우 로그인 실패 메세지
 
-        //api 만들어지면 주석풀기
+        //userinfo api 만들어지면 주석풀기
         // axios.get(`http://localhost:3005/users`).then((res)=>{
         //   dispatch(
         //     info({
         //       email: res.data.email,
         //       account: res.data.email,
         //       nickname: res.data.nickname,
+        //       balance: res.data.nickname
         //     })
         //   );
         dispatch(
@@ -162,8 +163,10 @@ const SignPage = ({ control }) => {
             email: "nahye7670@gmail.com",
             account: "0x0",
             nickname: "hazel",
+            balance: "100",
           })
         );
+        dispatch(check({ type: "" }));
       })
 
       .catch((err) => alert(err));

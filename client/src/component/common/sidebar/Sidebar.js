@@ -3,8 +3,9 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
-import { useDispatch } from "react-redux";
-import { check } from "../../../store/slice";
+import { useDispatch, useSelector } from "react-redux";
+import { check, logout } from "../../../store/slice";
+import axios from "axios";
 const StyledAll = styled.div`
   position: fixed;
   margin: 0;
@@ -43,6 +44,7 @@ const StyledButton = styled.a`
   color: black;
   display: block;
   transition: 0.3s;
+  cursor: pointer;
   &:hover {
     color: white;
   }
@@ -58,6 +60,7 @@ const StyledButton2 = styled.div`
   border-radius: 15px 15px 15px 15px;
   margin: 13px 10px 7px 63px;
   background-color: #5fc4fd;
+  cursor: pointer;
   &:hover {
     background-color: tomato;
   }
@@ -65,6 +68,20 @@ const StyledButton2 = styled.div`
 
 function Sidebar() {
   const dispatch = useDispatch();
+  const { email, account, nickname } = useSelector((state) => {
+    console.log(state.user);
+    return state.user;
+  });
+
+  function handleLogout() {
+    axios
+      .post(`http://localhost:3005/users/signout`, { withCredentials: true })
+      .then((res) => {
+        dispatch(logout());
+        alert("logout 완료");
+      });
+  }
+
   return (
     <StyledAll>
       <StyledSidebar>
@@ -94,12 +111,25 @@ function Sidebar() {
         <StyledButton></StyledButton> */}
 
         <div style={{ padding: "10px 10px 40px 10px" }}>
-          <StyledButton2 onClick={() => dispatch(check({ type: "login" }))}>
-            SignIn
-          </StyledButton2>
-          <StyledButton2 onClick={() => dispatch(check({ type: "logout" }))}>
-            SignUp
-          </StyledButton2>
+          {email ? (
+            <StyledButton2
+              style={{ backgroundColor: "tomato", cursor: "pointer" }}
+              onClick={handleLogout}
+            >
+              Logout
+            </StyledButton2>
+          ) : (
+            <div>
+              <StyledButton2 onClick={() => dispatch(check({ type: "login" }))}>
+                SignIn
+              </StyledButton2>
+              <StyledButton2
+                onClick={() => dispatch(check({ type: "logout" }))}
+              >
+                SignUp
+              </StyledButton2>
+            </div>
+          )}
         </div>
       </StyledSidebar>
     </StyledAll>
