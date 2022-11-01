@@ -30,26 +30,26 @@ const PageBox = styled.div`
       border-radius: 50%;
       background-color: rgba(82, 192, 255, 0.6);
       img {
-        /* width: 100%;
-        height: 100%; */
         object-fit: cover;
       }
     }
     .pageUserBox {
       width: 90%;
       margin-left: 10px;
-      .pageUserName {
+      .pageUsertitle {
+        margin-top: 10px;
         font-weight: 500;
       }
       .pageUserDesc {
-        margin-top: 10px;
+        position: relative;
+        left: -60px;
+        width: 110%;
+        margin-top: 20px;
       }
     }
   }
 
   .pageImgBox {
-    width: 100%;
-    height: 200px;
     margin-top: 15px;
     background-color: rgba(82, 192, 255, 0.6);
   }
@@ -154,14 +154,18 @@ const Page = ({ pos, data }) => {
             <img src="" alt="Profile" />
           </div>
           <div className="pageUserBox">
-            <div className="pageUserName">Test User Name</div>
+            <div className="pageUserName">User Name</div>
+            <div className="pageUsertitle">Test Title</div>
             <div className="pageUserDesc">{data.content}</div>
           </div>
         </Link>
       </div>
-      <div className="pageImgBox">
-        <img src={data.img} alt="img 공간" />
-      </div>
+      {data.img ? (
+        <div className="pageImgBox">
+          <img src={data.img} alt="img 공간" />
+        </div>
+      ) : null}
+
       <div className="pageEtcBox">
         {pos === "detail" ? (
           <div className="pageRorLBox">
