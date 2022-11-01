@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@fortawesome/fontawesome-free/js/all.js";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { filtering } from "../../../store/slice";
+import { filtering, postlist } from "../../../store/slice";
 
 const MainTopBox = styled.div`
   .inputBox {
@@ -101,7 +101,7 @@ const MainTopBox = styled.div`
 
 const MainTop = () => {
   const dispatch = useDispatch();
-  const { email, nickname, account } = useSelector((state) => state.user);
+  const { nickname } = useSelector((state) => state.user);
   const { list } = useSelector((state) => state.post);
 
   const [active, setActive] = useState(false);
@@ -109,7 +109,6 @@ const MainTop = () => {
   const [postData, setPostData] = useState({
     title: "",
     content: "",
-    address: account,
   });
 
   const searchFilter = () => {
@@ -134,6 +133,13 @@ const MainTop = () => {
       )
       .then((res) => {
         console.log(res);
+        // dispatch()
+        return axios
+          .get(`http://localhost:3005/post/list`)
+          .then((res) => {
+            dispatch(postlist({ list: res.data.postList }));
+          })
+          .catch((err) => alert(err));
       })
       .catch((err) => alert(err));
   };
@@ -187,13 +193,13 @@ const MainTop = () => {
               }
             }}
           />
-          <input
+          {/* <input
             placeholder="당신의 지갑주소를 알려주세요 (address)"
             value={postData.address}
             onChange={(e) =>
               setPostData({ ...postData, address: e.target.value })
             }
-          />
+          /> */}
           <textarea
             placeholder="자세하게 말해주세요! (contant)"
             className="ta"

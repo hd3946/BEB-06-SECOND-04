@@ -82,6 +82,8 @@ function Sidebar() {
       });
   }
 
+  // 로그인 확인
+
   return (
     <StyledAll>
       <StyledSidebar>
