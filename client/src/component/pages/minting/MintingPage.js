@@ -50,6 +50,7 @@ const MintingPageBox = styled.div`
       height: 300px;
       display: inline-block;
       border: 3px;
+      cursor: pointer;
     }
     .uploadImageon {
       width: 397px;
@@ -96,6 +97,18 @@ const MintingPageBox = styled.div`
 const MintingPage = () => {
   const [imageView, setImage] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const [nftName, setNftName] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleNftName = (e) => {
+    setNftName(e.target.value);
+    console.log(e.target.value);
+  };
+
+  const handleDescription = (e) => {
+    setDescription(e.target.value);
+    console.log(e.target.value);
+  };
 
   const uploadImage = (e) => {
     let file = e.target.files[0];
@@ -106,13 +119,22 @@ const MintingPage = () => {
     //blob:http://localhost:3000/aad74c35-6ea4-4745-b791-fdc827a52a59
   };
 
-  // 서버에 url formdata로 보내기
-
   // const handlePost = (e) => {
   //   if(e.target.files[0]){
   //     const img = new FormData();
   //     img.append('file',e.target.files[0]);
-  //     axios.post('http://localhost://3005/',img).them((res)=>{
+
+  //     //value 확인
+  //     for(let value of FormData.values()){
+  //       console.log(value);
+  //     }
+
+  //     axios.post('http://localhost:3005/users/img',img,{
+  //   headers: {
+  //     Authorization: `Bearer ${token}`,
+  //     "Content-Type": "multipart/form-data",
+  //   },
+  // }).them((res)=>{
   //       setImageUrl(res.data);
   //     }).catch((err)=>{
   //       console.error(err);
@@ -140,13 +162,19 @@ const MintingPage = () => {
             style={{ display: "none" }}
           ></input>
           <img className={"uploadImage" + (imageView ? "on" : "")}></img>
+          {/* <img
+            src="https://img.icons8.com/pastel-glyph/2x/image-file.png"
+            alt="파일 아이콘"
+            class="image"
+          /> */}
+          <p class="message">Click for uploading files</p>
           {/* <div className="mintingImg cc"></div> */}
         </div>
         <div className="mintingNFTName">
-          <input placeholder="NFT name" />
+          <input placeholder="NFT name" onChange={handleNftName} />
         </div>
         <div className="mintingNFTDesc">
-          <textarea placeholder="Description" />
+          <textarea placeholder="Description" onChange={handleDescription} />
         </div>
         <div className="mintingB">
           <button>MINTING</button>
