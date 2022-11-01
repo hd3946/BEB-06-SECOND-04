@@ -38,7 +38,7 @@ const StyledSidebar = styled.div`
   background-color: #e0e0e0;
 `;
 
-const StyledButton = styled.a`
+const StyledButton = styled.div`
   padding: 25px 23px 11px 49px;
   font-size: 20px;
   color: black;
@@ -69,14 +69,19 @@ const StyledButton2 = styled.div`
 function Sidebar() {
   const dispatch = useDispatch();
   const { email, account, nickname } = useSelector((state) => {
-    console.log(state.user);
     return state.user;
   });
+
+  const auth = localStorage.getItem("userData");
+  if (localStorage.getItem("userData")) {
+    console.log(JSON.parse(localStorage["userData"]));
+  }
 
   function handleLogout() {
     axios
       .post(`http://localhost:3005/users/signout`, { withCredentials: true })
       .then((res) => {
+        localStorage.clear();
         dispatch(logout());
         alert("logout 완료");
       });
@@ -91,36 +96,44 @@ function Sidebar() {
         <div style={{ padding: "1px 10px 306px" }}>
           <Link to="/" style={{ textDecoration: "none" }}>
             <StyledButton>
-              <FontAwesomeIcon icon={faHouse} style={{ color: "white" }} />{" "}
-              &nbsp; Home
+              <FontAwesomeIcon
+                icon={faHouse}
+                style={{ color: "white", marginRight: "15px" }}
+              />
+              Home
             </StyledButton>
           </Link>
 
           <Link to="/mint" style={{ textDecoration: "none" }}>
             <StyledButton>
-              <FontAwesomeIcon icon={faImage} style={{ color: "white" }} />
-              &nbsp;&nbsp; Minting
+              <FontAwesomeIcon
+                icon={faImage}
+                style={{ color: "white", marginRight: "15px" }}
+              />
+              Minting
             </StyledButton>
           </Link>
           <Link to="/mypage" style={{ textDecoration: "none" }}>
             <StyledButton>
-              <FontAwesomeIcon icon={faUser} style={{ color: "white" }} />
-              &nbsp;&nbsp;&nbsp;Mypage
+              <FontAwesomeIcon
+                icon={faUser}
+                style={{ color: "white", marginRight: "15px" }}
+              />
+              Mypage
             </StyledButton>
           </Link>
         </div>
 
-        {/* <StyledButton></StyledButton>
-        <StyledButton></StyledButton> */}
-
         <div style={{ padding: "10px 10px 40px 10px" }}>
-          {email ? (
-            <StyledButton2
-              style={{ backgroundColor: "tomato", cursor: "pointer" }}
-              onClick={handleLogout}
-            >
-              Logout
-            </StyledButton2>
+          {auth ? (
+            <a href="/" style={{ textDecoration: "none" }}>
+              <StyledButton2
+                style={{ backgroundColor: "tomato", cursor: "pointer" }}
+                onClick={handleLogout}
+              >
+                Logout
+              </StyledButton2>
+            </a>
           ) : (
             <div>
               <StyledButton2 onClick={() => dispatch(check({ type: "login" }))}>

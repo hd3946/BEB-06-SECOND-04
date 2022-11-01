@@ -91,7 +91,7 @@ const DetailPage = () => {
   const { pageId, data } = location.state;
   console.log(location);
 
-  const [comment, setComment] = useState("");
+  const [content, setContent] = useState("");
 
   const { nickname, img } = useSelector((state) => state.user);
   const { commentList } = useSelector((state) => state.post);
@@ -104,7 +104,7 @@ const DetailPage = () => {
         `http://localhost:3005/comment/write`,
         {
           nickname,
-          comment,
+          content,
           img,
         },
         {
@@ -117,12 +117,12 @@ const DetailPage = () => {
   };
 
   //수정
-  const commentUpdate = () => {
+  const commentEdit = () => {
     axios
       .put(
         `http://localhost:3005/comment/edit`,
         {
-          comment: "수정한 comment",
+          content: "수정한 comment",
         },
         {
           "Content-Type": "application/json",
@@ -161,8 +161,8 @@ const DetailPage = () => {
         <textarea
           placeholder="Description"
           className="ta"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
         />
         <div className="createReplyProfile replyIn cc">
           <img src="" alt="프사" />
@@ -173,19 +173,21 @@ const DetailPage = () => {
       </div>
       <div className="replyList cc">
         {/* page 컴포넌트 사용 고려하기 */}
-        {commentList.length > 0
-          ? commentList.map((data, index) => (
-              <div className="replyHeader" key={index}>
-                <div className="replyUserProfileBox">
-                  <img src={data.img} alt="Profile" />
-                </div>
-                <div className="replyUserBox">
-                  <div className="replyUserName">{data.nickname}</div>
-                  <div className="replyUserDesc">{data.comment}</div>
-                </div>
+        {commentList.length > 0 ? (
+          commentList.map((data, index) => (
+            <div className="replyHeader" key={index}>
+              <div className="replyUserProfileBox">
+                <img src={data.img} alt="Profile" />
               </div>
-            ))
-          : null}
+              <div className="replyUserBox">
+                <div className="replyUserName">{data.nickname}</div>
+                <div className="replyUserDesc">{data.comment}</div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div>작성된 댓글이 없습니다!</div>
+        )}
       </div>
     </DetailPageBox>
   );

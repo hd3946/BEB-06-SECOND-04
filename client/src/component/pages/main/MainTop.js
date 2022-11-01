@@ -113,11 +113,14 @@ const MainTop = () => {
 
   const searchFilter = () => {
     console.log("검색 버튼 누름!");
+    const test = list.filter((data, index) => data.nickname === text);
     dispatch(
       filtering({
-        list: list.filter((data, index) => data.nickname === nickname),
+        list: test,
       })
     );
+    console.log(test);
+    console.log(text);
   };
   // /post
   const posting = () => {
