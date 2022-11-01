@@ -3,6 +3,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@fortawesome/fontawesome-free/js/all.js";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { filtering, postlist } from "../../../store/slice";
 
 const MainTopBox = styled.div`
   .inputBox {
@@ -71,7 +73,7 @@ const MainTopBox = styled.div`
         border-bottom: 0px;
         transition: 0.3s;
         :focus {
-          background-color: rgba(189, 189, 189, 0.1);
+          background-color: rgb(243, 243, 243);
           outline: none;
         }
       }
@@ -98,40 +100,52 @@ const MainTopBox = styled.div`
 `;
 
 const MainTop = () => {
+  const dispatch = useDispatch();
+  const { nickname } = useSelector((state) => state.user);
+  const { list } = useSelector((state) => state.post);
+
   const [active, setActive] = useState(false);
   const [text, setText] = useState("");
   const [postData, setPostData] = useState({
     title: "",
-    desc: "",
+    content: "",
   });
 
   const searchFilter = () => {
     console.log("검색 버튼 누름!");
-    // 이미 받은 content list에서 filter 시켜 해당 content 노출
+    dispatch(
+      filtering({
+        list: list.filter((data, index) => data.nickname === nickname),
+      })
+    );
   };
   // /post
   const posting = () => {
     console.log("포스팅 post 요청");
     axios
       .post(
-        `http://localhost:3005/post`,
+        `http://localhost:3005/post/write`,
         {
-          post: {
-            email: "redux에 저장된 로그인한 유저 email을 넣어주기",
-            title: postData.title,
-            desc: postData.desc,
-          },
+          title: postData.title,
+          content: postData.content,
         },
         { "Content-Type": "application/json", withCredentials: true }
       )
       .then((res) => {
         console.log(res);
+        // dispatch()
+        return axios
+          .get(`http://localhost:3005/post/list`)
+          .then((res) => {
+            dispatch(postlist({ list: res.data.postList }));
+          })
+          .catch((err) => alert(err));
       })
       .catch((err) => alert(err));
   };
 
   const enterAction = (type) => {
-    const { title, desc } = postData;
+    const { title, content: desc } = postData;
     if (type === "search") {
       searchFilter();
     } else if (type === "desc" && title && desc) {
@@ -168,7 +182,7 @@ const MainTop = () => {
           onBlur={() => setActive(false)}
         >
           <input
-            placeholder="무슨일이 일어나고 있나요?"
+            placeholder="무슨일이 일어나고 있나요? (title)"
             value={postData.title}
             onChange={(e) =>
               setPostData({ ...postData, title: e.target.value })
@@ -179,15 +193,22 @@ const MainTop = () => {
               }
             }}
           />
+          {/* <input
+            placeholder="당신의 지갑주소를 알려주세요 (address)"
+            value={postData.address}
+            onChange={(e) =>
+              setPostData({ ...postData, address: e.target.value })
+            }
+          /> */}
           <textarea
-            placeholder="자세하게 말해주세요!"
+            placeholder="자세하게 말해주세요! (contant)"
             className="ta"
-            value={postData.desc}
+            value={postData.content}
             maxLength={50}
             onChange={(e) => {
               setPostData({
                 ...postData,
-                desc: e.target.value.replace(/\n/g, ""),
+                content: e.target.value.replace(/\n/g, ""),
               });
             }}
             onKeyDown={(e) => {

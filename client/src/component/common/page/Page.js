@@ -1,13 +1,27 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { Cookies } from "react-cookie";
 
 const PageBox = styled.div`
   width: 100%;
   border-bottom: ${(props) =>
     props.pos === "main" ? "2px solid rgba(36, 36, 36, 0.5)" : null};
   margin-top: 20px;
+  a {
+    display: flex;
+    width: 100%;
+    color: black;
+    text-decoration: none;
+    cursor: default;
+    transition: 0.3s;
+    :hover {
+      background-color: aliceblue;
+    }
+  }
   .pageHeader {
     display: flex;
     width: 100%;
@@ -17,26 +31,26 @@ const PageBox = styled.div`
       border-radius: 50%;
       background-color: rgba(82, 192, 255, 0.6);
       img {
-        /* width: 100%;
-        height: 100%; */
         object-fit: cover;
       }
     }
     .pageUserBox {
       width: 90%;
       margin-left: 10px;
-      .pageUserName {
+      .pageUsertitle {
+        margin-top: 10px;
         font-weight: 500;
       }
       .pageUserDesc {
-        margin-top: 10px;
+        position: relative;
+        left: -60px;
+        width: 110%;
+        margin-top: 20px;
       }
     }
   }
 
   .pageImgBox {
-    width: 100%;
-    height: 200px;
     margin-top: 15px;
     background-color: rgba(82, 192, 255, 0.6);
   }
@@ -80,7 +94,11 @@ const PageBox = styled.div`
   }
 `;
 
-const Page = ({ pos }) => {
+const Page = ({ pos, data }) => {
+  const { content, id, tilte } = data;
+  console.log(data);
+  // const cookies = new Cookies();
+
   const likeUp = () => {
     // 좋아요
     // 서버에서 좋아요 개수 업데이트
@@ -90,10 +108,8 @@ const Page = ({ pos }) => {
       .post(
         `http://localhost:3005/post`,
         {
-          post: {
-            email: "redux에 저장된 로그인한 유저 email을 넣어주기",
-            contentId: "좋아요 누른 contentID",
-          },
+          email: "redux에 저장된 로그인한 유저 email을 넣어주기",
+          contentId: "좋아요 누른 contentID",
         },
         {
           "Content-Type": "application/json",
@@ -114,10 +130,8 @@ const Page = ({ pos }) => {
       .put(
         `http://localhost:3005/post`,
         {
-          post: {
-            email: "redux에 저장된 로그인한 유저 email을 넣어주기",
-            contentId: "좋아요 누른 contentID",
-          },
+          email: "redux에 저장된 로그인한 유저 email을 넣어주기",
+          contentId: "좋아요 누른 contentID",
         },
         {
           "Content-Type": "application/json",
@@ -129,21 +143,53 @@ const Page = ({ pos }) => {
       })
       .catch((err) => alert(err));
   };
+  const postUpdate = () => {
+    axios
+      .post(
+        `http://localhost:3005/post/edit`,
+        { postId: id, tilte, content },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+  const postDelete = () => {
+    axios
+      .post(
+        `http://localhost:3005/post/delete`,
+        { postId: id },
+        {
+          "Content-Type": "application/json",
+          withCredentials: true,
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
 
   return (
     <PageBox pos={pos}>
       <div className="pageHeader">
-        <div className="pageUserProfileBox cc">
-          <img src="" alt="Profile" />
-        </div>
-        <div className="pageUserBox">
-          <div className="pageUserName">Test User Name</div>
-          <div className="pageUserDesc">Test User Description Test User</div>
-        </div>
+        <Link to={`/detail`} state={{ pageId: 0, data: data }}>
+          <div className="pageUserProfileBox cc">
+            <img src="" alt="Profile" />
+          </div>
+          <div className="pageUserBox">
+            <div className="pageUserName">User Name</div>
+            <div className="pageUsertitle">Test Title</div>
+            <div className="pageUserDesc">{data.content}</div>
+          </div>
+        </Link>
       </div>
-      <div className="pageImgBox">
-        <img src="" alt="" />
-      </div>
+      {data.img ? (
+        <div className="pageImgBox">
+          <img src={data.img} alt="img 공간" />
+        </div>
+      ) : null}
+
       <div className="pageEtcBox">
         {pos === "detail" ? (
           <div className="pageRorLBox">
@@ -151,7 +197,15 @@ const Page = ({ pos }) => {
             <div className="count">0 Likes</div>
           </div>
         ) : null}
+        {/* {email ? : null} */}
+
         <div className="pageiconBox">
+          <div className="icon" onClick={() => postUpdate()}>
+            <FontAwesomeIcon icon="fa-solid fa-pen" />
+          </div>
+          <div className="icon" onClick={() => postDelete()}>
+            <FontAwesomeIcon icon="fa-solid fa-trash" />
+          </div>
           <div className="icon">
             <FontAwesomeIcon icon="fa-regular fa-message" />
           </div>

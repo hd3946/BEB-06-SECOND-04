@@ -18,6 +18,8 @@ contract FantasticNFT is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter public _tokenIds;
 
+    constructor() public ERC721("FantasticNFT", "NFT") {}
+
     function mintNFT(address recipient, string memory tokenURI)
         public onlyOwner
         returns (uint256)

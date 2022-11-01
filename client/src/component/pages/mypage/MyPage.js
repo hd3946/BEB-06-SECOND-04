@@ -131,7 +131,18 @@ const Mypage = () => {
       <div className="mypageHeader">
         <div className="mypageProfileImg cc">
           <div className="cc">
-            <img src="" alt="프사" />
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "41px",
+                color: "white",
+                fontWeight: "700",
+                height: "57px",
+              }}
+            >
+              {nickname.charAt(0).toUpperCase()}
+            </div>
+            {/* <img src="" alt="프사"></img> */}
           </div>
         </div>
         <div className="headerLine" />

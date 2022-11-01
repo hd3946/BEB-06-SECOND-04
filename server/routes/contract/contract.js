@@ -6,10 +6,10 @@ dotenv.config();
 /* contract & wallet Addr */
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
-const serverAddr = process.env.SERVER_ADDRESS;        //가나슈1
-const serverKey =  process.env.SERVER_PRIVATE_KEY;    //가나슈1 비밀키
-const userAddr = process.env.USER_ADDRESS           //가나슈2
-const userPassword = process.env.USER_PRIVATE_KEY       //생성된 지갑 비밀번호
+const serverAddr = process.env.SERVER_ADDRESS; //가나슈1
+const serverKey = process.env.SERVER_PRIVATE_KEY; //가나슈1 비밀키
+// const userAddr = process.env.USER_ADDRESS           //가나슈2
+// const userPassword = process.env.USER_PRIVATE_KEY       //생성된 지갑 비밀번호
 
 /* web.eth */
 import Web3  from 'web3';
@@ -28,38 +28,36 @@ const nftContract = new Contract(nftABI , nftAddr);
 ///////////////////////////////////////////////////////////////////////////
 
 /* eth faucet */
-router.post('/eth', async (req, res, next) => {  
-  const eth = web3.utils.toWei("1") 
-  const send = await web3.eth.sendTransaction({ //1이더 전송
+router.post("/eth", async (req, res, next) => {
+  const eth = web3.utils.toWei("1");
+  const send = await web3.eth.sendTransaction({
+    //1이더 전송
     from: serverAddr,
     to: userAddr,
-    value: eth
-  })
-  const weiBalance = await web3.eth.getBalance(userAddr)
-  const ethBalance = web3.utils.fromWei(weiBalance)
-  console.log(`transfer to userAddr:${userAddr} || 1 ETH.`)
+    value: eth,
+  });
+  const weiBalance = await web3.eth.getBalance(userAddr);
+  const ethBalance = web3.utils.fromWei(weiBalance);
+  console.log(`transfer to userAddr:${userAddr} || 1 ETH.`);
   res.status(200).send({ ethBalance });
 });
-
-
 
 ///////////////////////////////////////////////////////////////////////////
 
 /* transfer token  */
-router.post('/token', async (req, res, next) => {
-  const transferToken = await tokenContract.methods.transfer(userAddr, 1).send({ from: serverAddr }) //from에게 token를 전송
-  const tokenBalance = await tokenContract.methods.balanceOf(userAddr).call()
-  console.log(`transfer to userAddr:${userAddr} || 1 Token.`)
+router.post("/token", async (req, res, next) => {
+  const transferToken = await tokenContract.methods
+    .transfer(userAddr, 1)
+    .send({ from: serverAddr }); //from에게 token를 전송
+  const tokenBalance = await tokenContract.methods.balanceOf(userAddr).call();
+  console.log(`transfer to userAddr:${userAddr} || 1 Token.`);
   res.status(200).send({ tokenBalance });
 });
-
-
 
 ///////////////////////////////////////////////////////////////////////////
 
 /* mint NFT */
-router.post('/mint', async (req, res, next) => {  
-
+router.post("/mint", async (req, res, next) => {
   /** account methods **/
   // const wallet = await web3.eth.personal.newAccount(userPassword) //지갑생성
   // const unlock = await web3.eth.personal.unlockAccount(userAddr, userPassword)
@@ -75,29 +73,31 @@ router.post('/mint', async (req, res, next) => {
 
   ////////////////////////////////////////////////////////////////////////////
 
+  try {
+    const userAddr = req.cookies.loginData.address;
+    if (!req.cookies.loginData.address)
+      return res.status(401).json("로그인되어 있지 않습니다.");
+    const tokenTransfer = await tokenContract.methods
+      .transfer(serverAddr, 1)
+      .send({ from: userAddr });
+    if (tokenTransfer) {
+      const nftMint = await nftContract.methods
+        .mintNFT(userAddr, "testURI")
+        .send({ from: serverAddr });
+      const nftTokenId = await nftContract.methods._tokenIds().call();
+      const nftBalance = await nftContract.methods.balanceOf(userAddr).call();
+      //tokenId를 데이터베이스에 저장
 
-  web3.eth.personal.unlockAccount(userAddr, "password") //user unlock
-  .then(res => {
-    tokenContract.methods.transfer(serverAddr, 1).send({ from: userAddr })
-    console.log("토큰이 전송되었습니다.")
-  })
-  .then(res => {
-    try {
-      web3.eth.personal.unlockAccount(serverAddr, serverKey) //server unlcok
-      .then(res => nftContract.methods.mintNFT(userAddr, "testURI").send({ from: serverAddr }))
-      .then(res => nftContract.methods._tokenIds().call()) //mint된 tokenId
-      .then(res => console.log("tokenId", res))
-    } catch (err) {
-      web3.eth.personal.unlockAccount(userAddr, "password")
-      .then(res => {
-        tokenContract.methods.transfer(userAddr, 1).send({ from: serverAddr })
-        console.log("토큰이 반환되었습니다.")
-      })
+      return res.status(200).json({
+        status: true,
+        messege: "success",
+        nftTokenId,
+        nftBalance,
+      });
     }
-  })
-  .catch(err => console.log("토큰이 부족합니다."))
-
-  res.send('here is contract/mint router');
+  } catch (error) {
+    next(error);
+  }
 });
  
 export default router;

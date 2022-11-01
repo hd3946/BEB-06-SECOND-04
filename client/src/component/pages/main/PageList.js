@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import "@fortawesome/fontawesome-free/js/all.js";
 import Page from "../../common/page/Page";
-import { useEffect } from "react";
-import axios from "axios";
-import { Provider, useSelector, useDispatch } from "react-redux";
-import { info } from "../../../store/slice";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 
 const PageListBox = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 70px;
   .pageHeader {
+    display: flex;
+    justify-content: space-between;
     .tapAll {
       width: 250px;
       padding-bottom: 5px;
@@ -24,31 +24,9 @@ const PageListBox = styled.div`
 `;
 
 const PageList = () => {
-  // contentList 요청 함수
+  const [tap, setTap] = useState("ALL");
 
-  const dispatch = useDispatch();
-
-  const { name } = useSelector((state) => {
-    console.log(state.user);
-    return state.user;
-  });
-
-  const listUpdate = () => {
-    axios
-      .get(`http://localhost:3005/post`)
-      .then((res) => {
-        // 받은 list는 redux에서 관리하기
-        // or
-        // 현재 컴포넌트에 임시로 관리하기
-        console.log(res);
-      })
-      .catch((err) => alert(err));
-  };
-
-  useEffect(() => {
-    // 서버에서 API완성되면 주석 풀기
-    // listUpdate();
-  }, []);
+  const { list, filterList } = useSelector((state) => state.post);
 
   return (
     <PageListBox>
@@ -56,23 +34,33 @@ const PageList = () => {
         <div
           className="tapAll"
           onClick={() => {
-            dispatch(
-              info({
-                name: "kwak",
-                account: "0X0",
-                nickname: "kyu",
-                balance: "10000",
-              })
-            );
+            setTap("ALL");
           }}
         >
           ALL
         </div>
-        <div>{name}</div>
+
+        <div className="tapAll" onClick={() => setTap("SEARCH")}>
+          SEARCH
+        </div>
       </div>
-      {[1].map((data, index) => (
-        <Page key={index} pos="main" />
-      ))}
+      {tap === "ALL" ? (
+        list.length > 0 ? (
+          list.map((data, index) => (
+            // data 에서 페이지 id를 받아 link로 보냄
+
+            <Page pos="main" key={index} data={data} />
+          ))
+        ) : (
+          <div>작성된 글이 없어요!</div>
+        )
+      ) : filterList.length > 0 ? (
+        filterList.map((data, index) => (
+          <Page pos="main" key={index} data={data} />
+        ))
+      ) : (
+        <div>검색된 글이 없어요!</div>
+      )}
     </PageListBox>
   );
 };

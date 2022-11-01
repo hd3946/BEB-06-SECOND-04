@@ -1,6 +1,8 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
+import { check } from "../../../store/slice";
 
 const MintingPageBox = styled.div`
   display: flex;
@@ -36,7 +38,7 @@ const MintingPageBox = styled.div`
       height: 400px;
       margin-top: 30px;
       background-color: #e5daff;
-      border: 2px solid rgba(110, 110, 110, 0.8);
+      border: 2px dashed rgba(110, 110, 110, 0.8);
       position: relative;
     }
     #ex_file {
@@ -50,6 +52,7 @@ const MintingPageBox = styled.div`
       height: 300px;
       display: inline-block;
       border: 3px;
+      cursor: pointer;
     }
     .uploadImageon {
       width: 397px;
@@ -96,6 +99,29 @@ const MintingPageBox = styled.div`
 const MintingPage = () => {
   const [imageView, setImage] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const [nftName, setNftName] = useState("");
+  const [description, setDescription] = useState("");
+  const dispatch = useDispatch();
+  const { control } = useSelector((state) => state.state);
+  const { email } = useSelector((state) => {
+    return state.user;
+  });
+
+  useEffect(() => {
+    if (!email) {
+      dispatch(check({ type: "login" }));
+    }
+  }, []);
+
+  const handleNftName = (e) => {
+    setNftName(e.target.value);
+    console.log(e.target.value);
+  };
+
+  const handleDescription = (e) => {
+    setDescription(e.target.value);
+    console.log(e.target.value);
+  };
 
   const uploadImage = (e) => {
     let file = e.target.files[0];
@@ -106,19 +132,44 @@ const MintingPage = () => {
     //blob:http://localhost:3000/aad74c35-6ea4-4745-b791-fdc827a52a59
   };
 
-  // 서버에 url formdata로 보내기
+  const handlePost = (e) => {
+    // if (e.target.files[0]) {
+    //   const img = new FormData();
+    //   img.append("file", e.target.files[0]);
 
-  // const handlePost = (e) => {
-  //   if(e.target.files[0]){
-  //     const img = new FormData();
-  //     img.append('file',e.target.files[0]);
-  //     axios.post('http://localhost://3005/',img).them((res)=>{
-  //       setImageUrl(res.data);
-  //     }).catch((err)=>{
-  //       console.error(err);
-  //     })
-  //   }
-  // }
+    //   //value 확인
+    //   for (let value of FormData.values()) {
+    //     console.log(value);
+    //   }
+
+    //   axios
+    //     .post(
+    //       "http://localhost:3005/contract/mint",
+    //       { token: 1, balance: 1 },
+    //       { "Content-Type": "application/json", withCredentials: true }
+    //     )
+    //     .then((res) => {
+    //       console.log(res.data);
+    //     })
+    //     .catch((err) => {
+    //       console.error(err);
+    //     });
+    // }
+    dispatch(check({ type: "loading" }));
+    axios
+      .post(
+        "http://localhost:3005/contract/mint",
+        { token: 1, balance: 1 },
+        { "Content-Type": "application/json", withCredentials: true }
+      )
+      .then((res) => {
+        dispatch(check({ type: "success" }));
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   return (
     <MintingPageBox>
@@ -140,16 +191,22 @@ const MintingPage = () => {
             style={{ display: "none" }}
           ></input>
           <img className={"uploadImage" + (imageView ? "on" : "")}></img>
+          {/* <img
+            src="https://img.icons8.com/pastel-glyph/2x/image-file.png"
+            alt="파일 아이콘"
+            class="image"
+          /> */}
+          <p class="message">Drag & Drops your files here</p>
           {/* <div className="mintingImg cc"></div> */}
         </div>
         <div className="mintingNFTName">
-          <input placeholder="NFT name" />
+          <input placeholder="NFT name" onChange={handleNftName} />
         </div>
         <div className="mintingNFTDesc">
-          <textarea placeholder="Description" />
+          <textarea placeholder="Description" onChange={handleDescription} />
         </div>
         <div className="mintingB">
-          <button>MINTING</button>
+          <button onClick={handlePost}>MINTING</button>
         </div>
       </div>
     </MintingPageBox>

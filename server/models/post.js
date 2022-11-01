@@ -6,7 +6,7 @@ export default class Post extends Sequelize.Model {
       {
         title: {
           type: Sequelize.STRING(100),
-          allowNull: true,
+          allowNull: false,
         },
         content: {
           type: Sequelize.STRING(255),

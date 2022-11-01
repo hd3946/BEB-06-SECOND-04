@@ -10,17 +10,17 @@ export default class User extends Sequelize.Model {
           unique: true,
           validate: {
             // notNull: { msg: 'User must have a email' },
-            notEmpty: { msg: 'Email must not be empty' },
-            isEmail: { msg: 'Must be a valid email address' }
-          }
+            notEmpty: { msg: "Email must not be empty" },
+            isEmail: { msg: "Must be a valid email address" },
+          },
         },
         nickname: {
           type: Sequelize.STRING(15),
           allowNull: false,
           validate: {
-            notNull: { msg: 'User must have a name' },
-            notEmpty: { msg: 'Name must not be empty' }
-          }
+            notNull: { msg: "User must have a name" },
+            notEmpty: { msg: "Name must not be empty" },
+          },
         },
         password: {
           type: Sequelize.STRING(100),
@@ -39,12 +39,12 @@ export default class User extends Sequelize.Model {
         sequelize,
         timestamps: true,
         underscored: false,
-        modelName: 'User',
-        tableName: 'users',
+        modelName: "User",
+        tableName: "users",
         paranoid: true,
-        charset: 'utf8',
-        collate: 'utf8_general_ci',
-      },
+        charset: "utf8",
+        collate: "utf8_general_ci",
+      }
     );
   }
 
@@ -55,14 +55,14 @@ export default class User extends Sequelize.Model {
     db.User.hasOne(db.PostLike,    { foreignKey: 'LikeUserId', sourceKey: 'id' });
     db.User.hasOne(db.CommentLike, { foreignKey: 'LikeUserId', sourceKey: 'id' });
     db.User.belongsToMany(db.User, {
-      foreignKey: 'followingId',
-      as: 'Followers',     //함수불러올때 이름을 정의해주는것
-      through: 'Follow',  //중간테이블
+      foreignKey: "followingId",
+      as: "Followers", //함수불러올때 이름을 정의해주는것
+      through: "Follow", //중간테이블
     });
     db.User.belongsToMany(db.User, {
-      foreignKey: 'followerId',
-      as: 'Followings',
-      through: 'Follow',
+      foreignKey: "followerId",
+      as: "Followings",
+      through: "Follow",
     });
   }
 };
