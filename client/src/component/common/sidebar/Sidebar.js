@@ -73,9 +73,6 @@ function Sidebar() {
   });
 
   const auth = localStorage.getItem("userData");
-  if (localStorage.getItem("userData")) {
-    console.log(JSON.parse(localStorage["userData"]));
-  }
 
   function handleLogout() {
     axios
