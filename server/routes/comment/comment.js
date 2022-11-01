@@ -44,26 +44,10 @@ router.post("/write", async (req, res, next) => {
       commenter: id,              //작성자
       postId: postId,             //게시글 위치 (삭제된 게시글이면 에러발생)
     });
-    if (comment) {
-      const comments = await Comment.findAll({ 
-        attributes: [['id', 'commentId'], 'content', 'createdAt', 'updatedAt', 'commenter', 'postId'], 
-        include: 
-        { model: User, 
-          attributes: ['email', 'nickname']
-        },  
-        where: { postId } 
-      })
-      return res.status(200).json({
-        status: true,
-        message: "Success",
-        comments,    //최신댓글목록
-      });
-    } else {
-      return res.status(401).json({
-        status: false,
-        message: "fail",
-      });
-    }
+    return res.status(200).json({
+      status: true,
+      message: "Success",
+    });
   } catch (err) {
     console.error(err);
     next(err);
