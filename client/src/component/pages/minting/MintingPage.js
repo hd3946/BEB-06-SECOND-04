@@ -119,28 +119,42 @@ const MintingPage = () => {
     //blob:http://localhost:3000/aad74c35-6ea4-4745-b791-fdc827a52a59
   };
 
-  // const handlePost = (e) => {
-  //   if(e.target.files[0]){
-  //     const img = new FormData();
-  //     img.append('file',e.target.files[0]);
+  const handlePost = (e) => {
+    // if (e.target.files[0]) {
+    //   const img = new FormData();
+    //   img.append("file", e.target.files[0]);
 
-  //     //value 확인
-  //     for(let value of FormData.values()){
-  //       console.log(value);
-  //     }
+    //   //value 확인
+    //   for (let value of FormData.values()) {
+    //     console.log(value);
+    //   }
 
-  //     axios.post('http://localhost:3005/users/img',img,{
-  //   headers: {
-  //     Authorization: `Bearer ${token}`,
-  //     "Content-Type": "multipart/form-data",
-  //   },
-  // }).them((res)=>{
-  //       setImageUrl(res.data);
-  //     }).catch((err)=>{
-  //       console.error(err);
-  //     })
-  //   }
-  // }
+    //   axios
+    //     .post(
+    //       "http://localhost:3005/contract/mint",
+    //       { token: 1, balance: 1 },
+    //       { "Content-Type": "application/json", withCredentials: true }
+    //     )
+    //     .then((res) => {
+    //       console.log(res.data);
+    //     })
+    //     .catch((err) => {
+    //       console.error(err);
+    //     });
+    // }
+    axios
+      .post(
+        "http://localhost:3005/contract/mint",
+        { token: 1, balance: 1 },
+        { "Content-Type": "application/json", withCredentials: true }
+      )
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   return (
     <MintingPageBox>
@@ -177,7 +191,7 @@ const MintingPage = () => {
           <textarea placeholder="Description" onChange={handleDescription} />
         </div>
         <div className="mintingB">
-          <button>MINTING</button>
+          <button onClick={handlePost}>MINTING</button>
         </div>
       </div>
     </MintingPageBox>
