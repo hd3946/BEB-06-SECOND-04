@@ -49,7 +49,6 @@ router.post("/signin", async (req, res, next) => {
     const data = await User.findOne({
       where: { email, password },
     });
-
     const userData = data.toJSON();
     delete userData.password; //비밀번호 삭제
     delete userData.deletedAt;
@@ -58,11 +57,15 @@ router.post("/signin", async (req, res, next) => {
       httpOnly: true,
     }); //3시간유효
     console.log("로그인 성공");
-    const userPost = await Post.findAll({ where: { userId: userData.id } });
+    const postList = await Post.findAll({ 
+      include: { model: User, attributes: ['nickname']},  
+      attributes: [['id', 'postId'], 'title', 'content', 'img', 'createdAt', 'updatedAt'],
+      where: { userId: userData.id } 
+    });
     return res.status(200).json({
       status: true,
-      message: `user: ${userData.nick} is login Success`,
-      postList: userPost, //작성글 목록
+      message: `user: ${userData.nickname} is login Success`,
+      postList: postList, //작성글 목록
     });
   } catch (err) {
     console.log("로그인 실패");
