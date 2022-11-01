@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 require("dotenv").config();
 
-var { User, Post } = require("../../models/index");
+var { User, Post, Comment } = require("../../models/index");
 
 /* contract & wallet Addr */
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
