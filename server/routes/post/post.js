@@ -82,4 +82,61 @@ router.post("/write", upload.single("post"), async (req, res, next) => {
   }
 });
 
+router.post("/edit", upload.single("post"), async (req, res, next) => {
+  if (!req.cookies.loginData)
+    return res.status(401).json("로그인되어 있지 않습니다.");
+  try {
+    const { postId, title, content } = req.body;
+    const data = await Post.findOne({ where: { id: postId } });
+    const postingUser = data.toJSON().userId
+    if (postingUser === req.cookies.loginData.id) { //수정은 작성자만 가능
+      data.update({ //update 날짜는 자동으로 변경
+        title: title,
+        content: content,
+      })
+      .then(() => {
+        return res.status(200).json({
+          status: true,
+          message: "edit success",
+        });
+      })
+      .catch((error) => next(error))
+    } else {
+      return res.status(401).json({
+        status: false,
+        message: "Not Authorized",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/delete", upload.single("post"), async (req, res, next) => {
+  if (!req.cookies.loginData)
+    return res.status(401).json("로그인되어 있지 않습니다.");
+  try {
+    const { postId } = req.body;
+    const data = await Post.findOne({ where: { id: postId } });
+    const postingUser = data.toJSON().userId
+    if (postingUser === req.cookies.loginData.id) { //삭제는 작성자만 가능
+      data.destroy()
+      .then(() => {
+        return res.status(200).json({
+          status: true,
+          message: "delete success",
+        });
+      })
+      .catch((error) => next(error))
+    } else {
+      return res.status(401).json({
+        status: false,
+        message: "Not Authorized",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
