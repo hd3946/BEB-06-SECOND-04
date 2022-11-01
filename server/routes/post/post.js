@@ -11,7 +11,7 @@ import tokenABI from '../../web3/tokenABI.js';
 const tokenContract = new Contract(tokenABI, tokenAddr);
 
 import { db } from '../../models/index.js';
-const { User, Post } = db; 
+const { User, Post, Comment } = db; 
 
 /* post router listing. */
 router.get("/list", upload.single("post"), async (req, res, next) => {
@@ -131,16 +131,13 @@ router.post("/delete", upload.single("post"), async (req, res, next) => {
     const { id } = req.cookies.loginData;
     const { postId } = req.body;
     const data = await Post.findOne({ where: { id: postId } });
-    const postingUser = data.toJSON().userId
+    const postingUser = data.toJSON().userId;
     if (postingUser === id) { //삭제는 작성자만 가능
-      data.destroy()
-      .then(() => {
-        return res.status(200).json({
-          status: true,
-          message: "delete success",
-        });
-      })
-      .catch((error) => next(error))
+      data.destroy();
+      return res.status(200).json({
+        status: true,
+        message: "delete success",
+      });
     } else {
       return res.status(401).json({
         status: false,

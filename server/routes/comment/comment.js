@@ -66,9 +66,9 @@ router.post("/edit", async (req, res, next) => {
     const commenter = data.toJSON().commenter
     console.log(commenter)
     if (commenter === id) {//수정은 작성자만 가능
-      const update = data.update({ //update 날짜는 자동으로 변경
+      data.update({ //update 날짜는 자동으로 변경
         content: content,
-      })
+      });
       return res.status(200).json({
         status: true,
         message: "edit success",
@@ -94,14 +94,11 @@ router.post("/delete", async (req, res, next) => {
     const data = await Comment.findOne({ where: { id: commentId } });
     const commenter = data.toJSON().commenter
     if (commenter === id) { //삭제는 작성자만 가능
-      data.destroy()
-      .then(() => {
-        return res.status(200).json({
-          status: true,
-          message: "delete success",
-        });
-      })
-      .catch((error) => next(error))
+      data.destroy();
+      return res.status(200).json({
+        status: true,
+        message: "delete success",
+      });
     } else {
       return res.status(401).json({
         status: false,

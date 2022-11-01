@@ -16,7 +16,7 @@ const nftContract = new Contract(nftABI, nftAddr);
 
 const router = express.Router();
 import { db } from '../../models/index.js';
-const { User, Post ,Comment } = db;
+const { User, Post, Comment } = db;
 import upload from '../post/upload.js';
 
 /* users router listing. */
@@ -92,7 +92,19 @@ router.get("/info", async (req, res, next) => {
   const { id, address } = loginData;
   try {
     const postList = await Post.findAll({
-      include: { model: User, attributes: ["email", "nickname"] },
+      include: 
+      [
+        { model: User, 
+          attributes: ['email', 'nickname'] 
+        },
+        { model: Comment,
+          attributes: [['id', 'commentId'], 'content', 'createdAt', 'updatedAt', 'commenter', 'postId'], 
+          include: 
+          { model: User, 
+            attributes: ['email', 'nickname'] 
+          }
+        }
+      ],
       attributes: [
         ["id", "postId"],
         "title",
