@@ -427,4 +427,5 @@ const abi = [
 	}
 ]
 
-module.exports = abi;
+//module.exports = abi;
+export default abi;

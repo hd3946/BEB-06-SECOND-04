@@ -143,16 +143,18 @@ const SignPage = ({ control, history }) => {
       .then((res) => {
         console.log(res);
 
-        // userinfo api 만들어지면 주석풀기
-        // axios.get(`http://localhost:3005/users`).then((res)=>{
-        //   dispatch(
-        //     info({
-        //       email: res.data.email,
-        //       account: res.data.email,
-        //       nickname: res.data.nickname,
-        //       balance: res.data.nickname
-        //     })
-        //   );
+        axios.get(`http://localhost:3005/users/info`).then((res) => {
+          dispatch(
+            info({
+              email: res.data.loginData.email,
+              account: res.data.loginData.address,
+              nickname: res.data.loginData.nickname,
+              balance: res.data.ethBalance,
+            })
+          );
+        });
+
+        dispatch(check({ type: "" }));
 
         return axios
           .get(`http://localhost:3005/users/info`, {
