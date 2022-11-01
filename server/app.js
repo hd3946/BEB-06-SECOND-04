@@ -36,7 +36,6 @@ var postRouter = require("./routes/post/post");
 var commentRouter = require("./routes/comment/comment");
 var contractRouter = require("./routes/contract/contract");
 
-
 // router
 app.use("/users", usersRouter);
 app.use("/post", postRouter);
