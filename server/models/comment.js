@@ -4,10 +4,6 @@ module.exports = class Comment extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
-        title: {
-          type: Sequelize.STRING(100),
-          allowNull: true,
-        },
         content: {
           type: Sequelize.STRING(255),
           allowNull: false,

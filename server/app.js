@@ -33,11 +33,14 @@ sequelize
 
 var usersRouter = require("./routes/users/users");
 var postRouter = require("./routes/post/post");
+var commentRouter = require("./routes/comment/comment");
 var contractRouter = require("./routes/contract/contract");
+
 
 // router
 app.use("/users", usersRouter);
 app.use("/post", postRouter);
+app.use("/comment", commentRouter);
 app.use("/contract", contractRouter);
 
 // error handler

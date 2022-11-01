@@ -2,7 +2,20 @@ var express = require("express");
 var router = express.Router();
 var bcrypt = require("bcrypt");
 
-var { User, Post } = require("../../models/index");
+const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
+const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
+const serverAddr = process.env.SERVER_ADDRESS; //가나슈1
+
+var Web3 = require("web3");
+var web3 = new Web3("http://localhost:7545");
+const Contract = require("web3-eth-contract");
+Contract.setProvider("http://localhost:7545");
+const tokenABI = require("../../web3/tokenABI");
+const tokenContract = new Contract(tokenABI, tokenAddr);
+const nftABI = require("../../web3/nftABI");
+const nftContract = new Contract(nftABI, nftAddr);
+
+var { User, Post, Comment } = require("../../models/index");
 var { upload } = require("../post/upload");
 var { isLoggedIn } = require("../middlewares");
 
@@ -57,22 +70,9 @@ router.post("/signin", async (req, res, next) => {
       httpOnly: false,
     }); //3시간유효
     console.log("로그인 성공");
-    const postList = await Post.findAll({
-      include: { model: User, attributes: ["nickname"] },
-      attributes: [
-        ["id", "postId"],
-        "title",
-        "content",
-        "img",
-        "createdAt",
-        "updatedAt",
-      ],
-      where: { userId: userData.id },
-    });
     return res.status(200).json({
       status: true,
-      message: `user: ${userData.nickname} is login Success`,
-      postList: postList, //작성글 목록
+      message: `${userData.nickname} is login Success`,
     });
   } catch (err) {
     console.log("로그인 실패");
@@ -86,16 +86,40 @@ router.post("/signout", (req, res, next) => {
   return res.status(200).json("logout ok");
 });
 
-//유저 게시글정보 조회
-router.get("/", async (req, res, next) => {
-  const userId = req.cookies.loginData.id;
-  console.log("유저 POST 조회 API", userId);
+//유저정보 조회
+router.get("/info", async (req, res, next) => {
+  if (!req.cookies.loginData)
+    return res.status(401).json({
+      status: false,
+      message: "로그인이 필요합니다.",
+    });
+  const loginData = req.cookies.loginData;
+  const { id, address } = loginData;
   try {
-    const userPost = await Post.findAll({ where: { userId: userId } });
+    const postList = await Post.findAll({
+      include: { model: User, attributes: ["email", "nickname"] },
+      attributes: [
+        ["id", "postId"],
+        "title",
+        "content",
+        "img",
+        "createdAt",
+        "updatedAt",
+      ],
+      where: { userId: id },
+    });
+    const weiBalance = await web3.eth.getBalance(address);
+    const ethBalance = web3.utils.fromWei(weiBalance);
+    const tokenBalance = await tokenContract.methods.balanceOf(address).call();
+    const nftBalance = await nftContract.methods.balanceOf(address).call();
     return res.status(200).json({
       status: true,
-      message: "유저 게시글정보 조회",
-      postList: userPost,
+      message: "유저정보 검색",
+      loginData,
+      ethBalance,
+      tokenBalance,
+      nftBalance,
+      postList, //나의 게시글목록
     });
   } catch (err) {
     console.error(err);

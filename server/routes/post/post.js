@@ -9,19 +9,33 @@ Contract.setProvider("http://localhost:7545");
 const tokenABI = require("../../web3/tokenABI");
 const tokenContract = new Contract(tokenABI, tokenAddr);
 
-var { User, Post } = require("../../models/index");
+var { User, Post, Comment } = require("../../models/index");
 var { upload } = require("./upload");
 // const { isLoggedIn } = require('./middlewares');
 
 /* post router listing. */
 router.get("/list", upload.single("post"), async (req, res, next) => {
   try {
-    const postList = await Post.findAll();
-    console.log(postList);
+    const postList = await Post.findAll({
+      attributes: [['id', 'postId'], 'title', 'content', 'createdAt', 'updatedAt' ],
+      include: 
+      [
+        { model: User, 
+          attributes: ['email', 'nickname'] 
+        },
+        { model: Comment,
+          attributes: [['id', 'commentId'], 'content', 'createdAt', 'updatedAt', 'commenter', 'postId'], 
+          include: 
+          { model: User, 
+            attributes: ['email', 'nickname'] 
+          }
+        }
+      ],
+    });
     return res.status(200).json({
       status: true,
       message: "전제글목록 검색",
-      postList,
+      postList, //최신게시글목록
     });
   } catch (error) {
     next(error);
@@ -64,13 +78,13 @@ router.post("/write", upload.single("post"), async (req, res, next) => {
       return res.status(200).json({
         status: true,
         message: "Post Success",
-        tokenBalance: tokenBalance,
+        tokenBalance,
       });
     } else {
       const tokenBalance = await tokenContract.methods
         .balanceOf(address)
         .call();
-      return res.status(200).json({
+      return res.status(401).json({
         status: false,
         message: "Post fail",
         tokenBalance: tokenBalance,
@@ -86,21 +100,19 @@ router.post("/edit", upload.single("post"), async (req, res, next) => {
   if (!req.cookies.loginData)
     return res.status(401).json("로그인되어 있지 않습니다.");
   try {
+    const { id } = req.cookies.loginData;
     const { postId, title, content } = req.body;
     const data = await Post.findOne({ where: { id: postId } });
     const postingUser = data.toJSON().userId
-    if (postingUser === req.cookies.loginData.id) { //수정은 작성자만 가능
-      data.update({ //update 날짜는 자동으로 변경
-        title: title,
-        content: content,
+    if (postingUser === id) { //수정은 작성자만 가능
+      const update = data.update({ //update 날짜는 자동으로 변경
+          title: title,
+          content: content,
       })
-      .then(() => {
-        return res.status(200).json({
-          status: true,
-          message: "edit success",
-        });
+      return res.status(200).json({
+        status: true,
+        message: "edit success",
       })
-      .catch((error) => next(error))
     } else {
       return res.status(401).json({
         status: false,
@@ -116,10 +128,11 @@ router.post("/delete", upload.single("post"), async (req, res, next) => {
   if (!req.cookies.loginData)
     return res.status(401).json("로그인되어 있지 않습니다.");
   try {
+    const { id } = req.cookies.loginData;
     const { postId } = req.body;
     const data = await Post.findOne({ where: { id: postId } });
     const postingUser = data.toJSON().userId
-    if (postingUser === req.cookies.loginData.id) { //삭제는 작성자만 가능
+    if (postingUser === id) { //삭제는 작성자만 가능
       data.destroy()
       .then(() => {
         return res.status(200).json({
