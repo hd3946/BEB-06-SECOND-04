@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import "@fortawesome/fontawesome-free/js/all.js";
 import Page from "../../common/page/Page";
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 
@@ -10,15 +9,6 @@ const PageListBox = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 70px;
-  a {
-    color: black;
-    text-decoration: none;
-    cursor: default;
-    transition: 0.3s;
-    :hover {
-      background-color: aliceblue;
-    }
-  }
   .pageHeader {
     display: flex;
     justify-content: space-between;
@@ -58,18 +48,15 @@ const PageList = () => {
         list.length > 0 ? (
           list.map((data, index) => (
             // data 에서 페이지 id를 받아 link로 보냄
-            <Link to={`/detail`} key={index} state={{ pageId: 0, data: data }}>
-              <Page pos="main" data={data} />
-            </Link>
+
+            <Page pos="main" key={index} data={data} />
           ))
         ) : (
           <div>작성된 글이 없어요!</div>
         )
       ) : filterList.length > 0 ? (
         filterList.map((data, index) => (
-          <Link to={`/detail`} key={index} state={{ pageId: 0, data: data }}>
-            <Page pos="main" data={data} />
-          </Link>
+          <Page pos="main" key={index} data={data} />
         ))
       ) : (
         <div>검색된 글이 없어요!</div>

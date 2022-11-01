@@ -1,6 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const PageBox = styled.div`
@@ -8,6 +10,17 @@ const PageBox = styled.div`
   border-bottom: ${(props) =>
     props.pos === "main" ? "2px solid rgba(36, 36, 36, 0.5)" : null};
   margin-top: 20px;
+  a {
+    display: flex;
+    width: 100%;
+    color: black;
+    text-decoration: none;
+    cursor: default;
+    transition: 0.3s;
+    :hover {
+      background-color: aliceblue;
+    }
+  }
   .pageHeader {
     display: flex;
     width: 100%;
@@ -81,6 +94,9 @@ const PageBox = styled.div`
 `;
 
 const Page = ({ pos, data }) => {
+  console.log(data);
+  const { email } = useSelector((state) => state.user);
+
   const likeUp = () => {
     // 좋아요
     // 서버에서 좋아요 개수 업데이트
@@ -133,13 +149,15 @@ const Page = ({ pos, data }) => {
   return (
     <PageBox pos={pos}>
       <div className="pageHeader">
-        <div className="pageUserProfileBox cc">
-          <img src="" alt="Profile" />
-        </div>
-        <div className="pageUserBox">
-          <div className="pageUserName">Test User Name</div>
-          <div className="pageUserDesc">{data.content}</div>
-        </div>
+        <Link to={`/detail`} state={{ pageId: 0, data: data }}>
+          <div className="pageUserProfileBox cc">
+            <img src="" alt="Profile" />
+          </div>
+          <div className="pageUserBox">
+            <div className="pageUserName">Test User Name</div>
+            <div className="pageUserDesc">{data.content}</div>
+          </div>
+        </Link>
       </div>
       <div className="pageImgBox">
         <img src={data.img} alt="img 공간" />
@@ -151,6 +169,7 @@ const Page = ({ pos, data }) => {
             <div className="count">0 Likes</div>
           </div>
         ) : null}
+        {/* {email ? : null} */}
         <div className="pageiconBox">
           <div className="icon">
             <FontAwesomeIcon icon="fa-regular fa-message" />
