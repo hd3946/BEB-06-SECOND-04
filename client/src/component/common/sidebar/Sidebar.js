@@ -3,9 +3,8 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { check, logout } from "../../../store/slice";
-import axios from "axios";
 import { validate } from "../../../libs/validate";
 import { logoutUser } from "../../../api/sign";
 const StyledAll = styled.div`
