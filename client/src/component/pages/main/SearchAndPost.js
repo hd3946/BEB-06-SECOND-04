@@ -153,6 +153,7 @@ const SearchAndPost = () => {
           content: false,
         });
         dispatch(check({ type: "" }));
+        window.location.href = `/`;
       }
     }
   };
