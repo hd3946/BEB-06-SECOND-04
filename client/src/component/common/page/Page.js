@@ -1,13 +1,17 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useCallback, useState } from "react";
+import { useEffect } from "react";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { postDelete, postUpdate } from "../../../api/post";
+import { postValidate } from "../../../libs/validate";
 
 const PageBox = styled.div`
   width: 100%;
   border-bottom: ${(props) =>
-    props.pos === "main" ? "2px solid rgba(36, 36, 36, 0.5)" : null};
+    props.path !== "detail" ? "2px solid rgba(36, 36, 36, 0.5)" : null};
   margin-top: 20px;
   a {
     display: flex;
@@ -43,7 +47,32 @@ const PageBox = styled.div`
         position: relative;
         left: -60px;
         width: 110%;
-        margin-top: 20px;
+
+        margin: 20px 0px 20px 0px;
+      }
+      .updateContentBox {
+        height: 100%;
+        textarea {
+          font-size: 16px;
+          margin-bottom: 0px;
+          padding: 0px;
+          border: 0px;
+          background-color: antiquewhite;
+          outline: 1px solid rgba(129, 129, 129, 0.479);
+          resize: block;
+        }
+        .updateButton {
+          height: 30px;
+          margin: 0;
+          border: 1px solid black;
+          background-color: antiquewhite;
+          font-size: 18px;
+          font-weight: 700;
+          transition: 0.3s;
+          :hover {
+            background-color: rgb(255, 185, 94);
+          }
+        }
       }
     }
   }
@@ -97,11 +126,16 @@ const PageBox = styled.div`
   }
 `;
 
-const Page = ({ pos, data }) => {
-  const { content, id, tilte } = data;
-  // console.log(data);
-  // const cookies = new Cookies();
+const Page = ({ data }) => {
+  const textareaRef = useRef();
+  const location = useLocation();
+  const { pathname } = location;
+  const path = pathname.slice(1);
+  const { content, postId, title, User } = data;
+  const [updateTogglem, setUpdateToggle] = useState(false);
+  const [updateContent, setUpdateContent] = useState(content);
 
+  // 좋아요 작업하기
   const likeUp = () => {
     // 좋아요
     // 서버에서 좋아요 개수 업데이트
@@ -124,7 +158,7 @@ const Page = ({ pos, data }) => {
       })
       .catch((err) => alert(err));
   };
-
+  // 좋아요 취소 ? 필요한가?
   const likeCancel = () => {
     // 좋아요 취소
     // 로그인한 유저의 좋아요 목록을 조회해 해당 글 아이디가 있다면
@@ -146,51 +180,92 @@ const Page = ({ pos, data }) => {
       })
       .catch((err) => alert(err));
   };
-  const postUpdate = () => {
-    axios
-      .post(
-        `http://localhost:3005/post/edit`,
-        { postId: id, tilte, content },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  };
-  const postDelete = () => {
-    axios
-      .post(
-        `http://localhost:3005/post/delete`,
-        { postId: id },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+
+  const postUpdateCall = async () => {
+    const postDate = {
+      postId,
+      title,
+      content: updateContent,
+    };
+    const { status } = await postUpdate(postDate);
+    if (status) {
+      window.location.href = `/detail?${postId}`;
+    }
   };
 
+  const postDeleteCall = async () => {
+    const { status, data } = await postDelete({ postId });
+    console.log(data);
+    if (status) {
+      window.location.href = `/`;
+    }
+  };
+
+  const resizeHeight = useCallback(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
+    }
+  }, []);
+
+  useEffect(() => {
+    if (updateTogglem && textareaRef.current) {
+      textareaRef.current.focus();
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
+    } else if (!updateTogglem) {
+      setUpdateContent(data.content);
+    }
+  }, [updateTogglem]);
+
   return (
-    <PageBox pos={pos}>
-      <div className="pageHeader">
-        <Link
-          to={`/detail`}
-          state={{ pageId: 0, data: data }}
-          style={{ pointerEvents: pos === "detail" ? "none" : "" }}
-        >
+    <PageBox path={path}>
+      {path === "detail" ? (
+        <div className="pageHeader">
           <div className="pageUserProfileBox cc">
             <img src="" alt="Profile" />
           </div>
           <div className="pageUserBox">
-            <div className="pageUserName">{data.User.nickname}</div>
-            <div className="pageUsertitle">{data.title}</div>
-            <div className="pageUserDesc">{data.content}</div>
+            <div className="pageUserName">{User.nickname}</div>
+            <div className="pageUsertitle">{title}</div>
+            {updateTogglem ? (
+              <div className="updateContentBox">
+                <textarea
+                  ref={textareaRef}
+                  className="pageUserDesc ta"
+                  value={updateContent}
+                  onChange={(e) => {
+                    resizeHeight();
+                    setUpdateContent(e.target.value);
+                  }}
+                />
+                <button
+                  className="pageUserDesc updateButton"
+                  onClick={() => postUpdateCall()}
+                >
+                  수정하기
+                </button>
+              </div>
+            ) : (
+              <div className="pageUserDesc">{updateContent}</div>
+            )}
           </div>
-        </Link>
-      </div>
+        </div>
+      ) : (
+        <div className="pageHeader">
+          <Link to={`/detail?${postId}`}>
+            <div className="pageUserProfileBox cc">
+              <img src="" alt="Profile" />
+            </div>
+            <div className="pageUserBox">
+              <div className="pageUserName">{data.User.nickname}</div>
+              <div className="pageUsertitle">{title}</div>
+              <div className="pageUserDesc">{content}</div>
+            </div>
+          </Link>
+        </div>
+      )}
+
       {data.img ? (
         <div className="pageImgBox">
           <img src={data.img} alt="img 공간" />
@@ -198,27 +273,32 @@ const Page = ({ pos, data }) => {
       ) : null}
 
       <div className="pageEtcBox">
-        {pos === "detail" ? (
+        {path === "detail" ? (
           <div className="pageRorLBox">
             <div className="count">0 Reply</div>
             <div className="count">0 Likes</div>
           </div>
         ) : null}
-        {/* {email ? : null} */}
 
         <div className="pageiconBox">
-          {/* 로그인 확인 후 수정, 삭제 버튼 노출 */}
-          <div className="icon" onClick={() => postUpdate()}>
-            <FontAwesomeIcon icon="fa-solid fa-pen" />
-          </div>
-          <div className="icon delete" onClick={() => postDelete()}>
-            <FontAwesomeIcon icon="fa-solid fa-trash" />
-          </div>
+          {postValidate(User.nickname) ? (
+            <div className="cc">
+              <div
+                className="icon"
+                onClick={() => setUpdateToggle(!updateTogglem)}
+              >
+                <FontAwesomeIcon icon="fa-solid fa-pen" />
+              </div>
+              <div className="icon delete" onClick={() => postDeleteCall()}>
+                <FontAwesomeIcon icon="fa-solid fa-trash" />
+              </div>
+            </div>
+          ) : null}
 
           <div className="icon">
             <FontAwesomeIcon icon="fa-regular fa-message" />
           </div>
-          {/* 조건문으로 cencel 버튼 추가 */}
+
           <div className="icon" onClick={() => likeUp()}>
             <FontAwesomeIcon icon="fa-heart-circle-plus" />
           </div>
