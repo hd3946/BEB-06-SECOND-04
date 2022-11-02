@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { check, filtering } from "../../../store/slice";
 import { registerUser, loginUser, registerInfo } from "../../../api/sign";
+import { useRef } from "react";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -140,6 +141,8 @@ const SignPageBox = styled.div`
 `;
 
 const SignPage = ({ control }) => {
+  const dispatch = useDispatch();
+  const idRef = useRef();
   const [signUpCheck, setSignUpCheck] = useState(false);
   const [errorData, setErrorData] = useState({
     dis: { email: false, address: false, nickname: false, password: false },
@@ -151,9 +154,8 @@ const SignPage = ({ control }) => {
     nickname: "",
     password: "",
   });
-  const dispatch = useDispatch();
 
-  const validate = (type) => {
+  const inputCheck = (type) => {
     const { email, nickname, password, address } = userInfo;
     if (!email) {
       setErrorData({
@@ -197,7 +199,7 @@ const SignPage = ({ control }) => {
 
   const signin = async () => {
     try {
-      if (!validate()) {
+      if (!inputCheck()) {
         return;
       }
       dispatch(check({ type: "loading" }));
@@ -240,7 +242,7 @@ const SignPage = ({ control }) => {
   const signup = async () => {
     try {
       const { email, nickname, password, address } = userInfo;
-      if (!validate("signup")) {
+      if (!inputCheck("signup")) {
         return;
       }
       dispatch(check({ type: "loading" }));
@@ -267,6 +269,12 @@ const SignPage = ({ control }) => {
     setSignUpCheck(control === "login" ? false : true);
   }, [control]);
 
+  useEffect(() => {
+    if (idRef.current) {
+      idRef.current.focus();
+    }
+  }, [control]);
+
   return (
     <SignPageBox
       error={errorData.dis}
@@ -287,6 +295,7 @@ const SignPage = ({ control }) => {
             <div className="emailBox nb">
               <div className="n">Email : </div>
               <input
+                ref={idRef}
                 type="email"
                 placeholder="email을 입력하세요!"
                 value={userInfo.email}

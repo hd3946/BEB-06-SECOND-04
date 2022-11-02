@@ -198,12 +198,13 @@ const MainTop = () => {
 
         <div
           className="postingBox"
-          onClick={() => {}}
+          onClick={() => {
+            if (!validate()) {
+              dispatch(check({ type: "login" }));
+            }
+          }}
           onFocus={() => setActive(true)}
           onBlur={() => setActive(false)}
-          style={
-            validate() ? { pointerEvents: "block" } : { pointerEvents: "none" }
-          }
         >
           <input
             placeholder={
@@ -211,6 +212,7 @@ const MainTop = () => {
                 ? "무슨일이 일어나고 있나요? (title)"
                 : "로그인을 해주세요!"
             }
+            tabIndex={validate() ? 1 : -1}
             value={postData.title}
             onChange={(e) => {
               if (e.target.value) {
@@ -236,6 +238,7 @@ const MainTop = () => {
           <textarea
             placeholder="자세하게 말해주세요! (contant)"
             className="ta"
+            tabIndex={validate() ? 1 : -1}
             value={postData.content}
             maxLength={50}
             onChange={(e) => {
@@ -262,7 +265,7 @@ const MainTop = () => {
             }}
           />
           <div className="buttonBox cc" onClick={() => posting()}>
-            <button>Enter</button>
+            <button tabIndex={-1}>Enter</button>
           </div>
         </div>
       </div>
