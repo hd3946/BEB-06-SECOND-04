@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { check, filtering, info } from "../../../store/slice";
-import { registerUser, loginUser } from "../../../api/sign";
+import { registerUser, loginUser, registerInfo } from "../../../api/sign";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -125,29 +125,40 @@ const SignPage = ({ control }) => {
   const dispatch = useDispatch();
 
   const signin = async () => {
-    dispatch(check({ type: "loading" }));
+    try {
+      dispatch(check({ type: "loading" }));
 
-    const userData = {
-      email: userInfo.email,
-      password: userInfo.password,
-    };
+      const userData = {
+        email: userInfo.email,
+        password: userInfo.password,
+      };
 
-    const { data } = await loginUser(userData);
-    console.log(data);
+      const { data } = await loginUser(userData);
+      console.log(data);
+      if (data.status) {
+        const userInfoData = await registerInfo();
+        const { address, nickname, email, profileurl } =
+          userInfoData.data.loginData;
 
-    // dispatch(filtering({ list: res.data.postList }));
-    // localStorage.setItem(
-    //   "userData",
-    //   JSON.stringify({
-    //     nickname,
-    //     email,
-    //     img,
-    //     address,
-    //     tokenBalance: data.tokenBalance,
-    //   })
-    // );
-    // dispatch(check({ type: "" }));
-    // window.location.href = "/";
+        // dispatch(filtering({ list: res.data.postList }));
+        localStorage.setItem(
+          "userData",
+          JSON.stringify({
+            nickname,
+            email,
+            profileImg: profileurl,
+            address,
+            tokenBalance: userInfoData.data.ethBalance,
+          })
+        );
+        window.location.href = "/";
+        dispatch(check({ type: "" }));
+      } else {
+        alert("로그인 실패!");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const signup = async () => {
