@@ -6,6 +6,8 @@ import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { check, logout } from "../../../store/slice";
 import axios from "axios";
+import { validate } from "../../../libs/validate";
+import { logoutUser } from "../../../api/sign";
 const StyledAll = styled.div`
   position: fixed;
   margin: 0;
@@ -68,23 +70,12 @@ const StyledButton2 = styled.div`
 
 function Sidebar() {
   const dispatch = useDispatch();
-  const { email, account, nickname } = useSelector((state) => {
-    return state.user;
-  });
 
-  const auth = localStorage.getItem("userData");
-
-  function handleLogout() {
-    axios
-      .post(`http://localhost:3005/users/signout`, { withCredentials: true })
-      .then((res) => {
-        localStorage.clear();
-        dispatch(logout());
-        alert("logout 완료");
-      });
-  }
-
-  // 로그인 확인
+  const handleLogout = async () => {
+    await logoutUser();
+    localStorage.clear();
+    dispatch(logout());
+  };
 
   return (
     <StyledAll>
@@ -101,28 +92,32 @@ function Sidebar() {
             </StyledButton>
           </Link>
 
-          <Link to="/mint" style={{ textDecoration: "none" }}>
-            <StyledButton>
-              <FontAwesomeIcon
-                icon={faImage}
-                style={{ color: "white", marginRight: "15px" }}
-              />
-              Minting
-            </StyledButton>
-          </Link>
-          <Link to="/mypage" style={{ textDecoration: "none" }}>
-            <StyledButton>
-              <FontAwesomeIcon
-                icon={faUser}
-                style={{ color: "white", marginRight: "15px" }}
-              />
-              Mypage
-            </StyledButton>
-          </Link>
+          {validate() ? (
+            <div>
+              <Link to="/mint" style={{ textDecoration: "none" }}>
+                <StyledButton>
+                  <FontAwesomeIcon
+                    icon={faImage}
+                    style={{ color: "white", marginRight: "15px" }}
+                  />
+                  Minting
+                </StyledButton>
+              </Link>
+              <Link to="/mypage" style={{ textDecoration: "none" }}>
+                <StyledButton>
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    style={{ color: "white", marginRight: "15px" }}
+                  />
+                  Mypage
+                </StyledButton>
+              </Link>
+            </div>
+          ) : null}
         </div>
 
         <div style={{ padding: "10px 10px 40px 10px" }}>
-          {auth ? (
+          {validate() ? (
             <a href="/" style={{ textDecoration: "none" }}>
               <StyledButton2
                 style={{ backgroundColor: "tomato", cursor: "pointer" }}
