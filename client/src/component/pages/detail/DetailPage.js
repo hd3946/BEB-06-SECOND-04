@@ -153,7 +153,7 @@ const DetailPage = () => {
   useEffect(() => {
     const test = async () => {
       const { data } = await postListCall();
-      dispatch(postlist({ list: data.postList }));
+      dispatch(postlist({ list: data.postList.reverse() }));
       dispatch(detailPageCall({ postId }));
     };
     test();

@@ -39,6 +39,7 @@ const PageBox = styled.div`
     .pageUserBox {
       width: 90%;
       margin-left: 10px;
+
       .pageUsertitle {
         margin-top: 10px;
         font-weight: 500;
@@ -189,7 +190,11 @@ const Page = ({ data }) => {
     };
     const { status } = await postUpdate(postDate);
     if (status) {
-      window.location.href = `/detail?${postId}`;
+      if (path === "detail") {
+        window.location.href = `/detail?${postId}`;
+      } else {
+        window.location.href = `/`;
+      }
     }
   };
 
@@ -220,51 +225,47 @@ const Page = ({ data }) => {
 
   return (
     <PageBox path={path}>
-      {path === "detail" ? (
-        <div className="pageHeader">
-          <div className="pageUserProfileBox cc">
-            <img src="" alt="Profile" />
-          </div>
-          <div className="pageUserBox">
-            <div className="pageUserName">{User.nickname}</div>
-            <div className="pageUsertitle">{title}</div>
-            {updateTogglem ? (
-              <div className="updateContentBox">
-                <textarea
-                  ref={textareaRef}
-                  className="pageUserDesc ta"
-                  value={updateContent}
-                  onChange={(e) => {
-                    resizeHeight();
-                    setUpdateContent(e.target.value);
-                  }}
-                />
-                <button
-                  className="pageUserDesc updateButton"
-                  onClick={() => postUpdateCall()}
-                >
-                  수정하기
-                </button>
-              </div>
-            ) : (
-              <div className="pageUserDesc">{updateContent}</div>
-            )}
-          </div>
+      <div className="pageHeader">
+        <div className="pageUserProfileBox cc">
+          <img src="" alt="Profile" />
         </div>
-      ) : (
-        <div className="pageHeader">
-          <Link to={`/detail?${postId}`}>
-            <div className="pageUserProfileBox cc">
-              <img src="" alt="Profile" />
-            </div>
-            <div className="pageUserBox">
-              <div className="pageUserName">{data.User.nickname}</div>
+        <div className="pageUserBox">
+          <Link
+            to={`/detail?${postId}`}
+            onClick={(e) => {
+              if (path === "detail" || updateTogglem) {
+                e.preventDefault();
+              }
+            }}
+          >
+            <div>
+              <div className="pageUserName">{User.nickname}</div>
               <div className="pageUsertitle">{title}</div>
-              <div className="pageUserDesc">{content}</div>
             </div>
           </Link>
+          {updateTogglem ? (
+            <div className="updateContentBox">
+              <textarea
+                ref={textareaRef}
+                className="pageUserDesc ta"
+                value={updateContent}
+                onChange={(e) => {
+                  resizeHeight();
+                  setUpdateContent(e.target.value);
+                }}
+              />
+              <button
+                className="pageUserDesc updateButton"
+                onClick={() => postUpdateCall()}
+              >
+                수정하기
+              </button>
+            </div>
+          ) : (
+            <div className="pageUserDesc">{updateContent}</div>
+          )}
         </div>
-      )}
+      </div>
 
       {data.img ? (
         <div className="pageImgBox">
@@ -285,7 +286,14 @@ const Page = ({ data }) => {
             <div className="cc">
               <div
                 className="icon"
-                onClick={() => setUpdateToggle(!updateTogglem)}
+                onClick={() => {
+                  // if (path === "detail") {
+                  //   setUpdateToggle(!updateTogglem);
+                  // } else {
+                  //   window.location.href = `/detail?${postId}`;
+                  // }
+                  setUpdateToggle(!updateTogglem);
+                }}
               >
                 <FontAwesomeIcon icon="fa-solid fa-pen" />
               </div>
