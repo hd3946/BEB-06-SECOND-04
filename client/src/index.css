@@ -7,6 +7,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 
   overflow-x: hidden;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 code {
