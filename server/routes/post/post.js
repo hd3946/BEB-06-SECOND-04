@@ -2,16 +2,10 @@ import express from 'express';
 const router = express.Router();
 import upload from './upload.js';
 
-const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
-const serverAddr = process.env.SERVER_ADDRESS;        //가나슈1
-
-import Contract from 'web3-eth-contract';
-Contract.setProvider('http://localhost:7545');
-import tokenABI from '../../web3/tokenABI.js'; 
-const tokenContract = new Contract(tokenABI, tokenAddr);
-
 import { db } from '../../models/index.js';
 const { User, Post, Comment } = db; 
+import ganache  from "../../web3/web3.js";
+const { getTokenBalance, giveContribution } = ganache;
 
 /* post router listing. */
 router.get("/list", upload.single("post"), async (req, res, next) => {
@@ -69,21 +63,15 @@ router.post("/write", upload.single("post"), async (req, res, next) => {
     // }
     if (post) {
       //게시글 하나 작성할때마다 토큰을 하나 전송
-      const transferToken = await tokenContract.methods
-        .transfer(address, 1)
-        .send({ from: serverAddr }); //user에게 token를 전송
-      const tokenBalance = await tokenContract.methods
-        .balanceOf(address)
-        .call();
+      const transferToken = await giveContribution(address, 1); //user에게 token 1개를 전송
+      const tokenBalance = await getTokenBalance(address);
       return res.status(200).json({
         status: true,
         message: "Post Success",
         tokenBalance,
       });
     } else {
-      const tokenBalance = await tokenContract.methods
-        .balanceOf(address)
-        .call();
+      const tokenBalance = await getTokenBalance(address);
       return res.status(401).json({
         status: false,
         message: "Post fail",
