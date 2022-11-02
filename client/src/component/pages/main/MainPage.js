@@ -15,7 +15,6 @@ const MainPage = () => {
   const dispatch = useDispatch();
 
   const listCall = async () => {
-    console.log("페이지 콜");
     const { data } = await postListCall();
     dispatch(postlist({ list: data.postList.reverse() }));
   };
