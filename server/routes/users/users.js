@@ -5,7 +5,7 @@ const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const serverAddr = process.env.SERVER_ADDRESS; //가나슈1
 
-import Web3  from "web3";
+import Web3 from "web3";
 const web3 = new Web3("http://localhost:7545");
 import Contract from "web3-eth-contract";
 Contract.setProvider("http://localhost:7545");
@@ -57,7 +57,8 @@ router.post("/signin", async (req, res, next) => {
     const data = await User.findOne({
       where: { email, password },
     });
-    const userData = data.toJSON();
+   
+    const userData = data;
     delete userData.password; //비밀번호 삭제
     delete userData.deletedAt;
     res.cookie("loginData", userData, {

@@ -1,5 +1,5 @@
 import * as IPFS from "ipfs-core";
-import fs from 'fs'; 
+import fs from 'fs';   
 
 const node = await IPFS.create();
 //fileName filePath
