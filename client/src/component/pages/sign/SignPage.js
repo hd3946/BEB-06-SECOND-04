@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import styled from "styled-components";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -85,9 +84,12 @@ const SignPageBox = styled.div`
 
         .signBO {
           display: flex;
-          flex-direction: column;
+          flex-direction: ${(props) => (props.signUpCheck ? "row" : "column")};
           justify-content: center;
           align-items: center;
+          transform: translateY(
+            ${(props) => (props.signUpCheck ? "30px" : "0px")}
+          );
           margin-top: ${(props) => (props.signUpCheck ? "40px" : "50px")};
           transition: 0.3s;
 
@@ -109,7 +111,10 @@ const SignPageBox = styled.div`
           }
           .or {
             position: relative;
-            margin: 30px 0px;
+            margin: ${(props) => (props.signUpCheck ? "10px 0px" : "30px 0px")};
+            transform: translateY(
+              ${(props) => (props.signUpCheck ? "-40px" : "0px")}
+            );
 
             ::after {
               position: absolute;
@@ -148,8 +153,53 @@ const SignPage = ({ control }) => {
   });
   const dispatch = useDispatch();
 
+  const validate = (type) => {
+    const { email, nickname, password, address } = userInfo;
+    if (!email) {
+      setErrorData({
+        dis: { ...errorData.dis, email: true },
+        msg: { ...errorData.msg, email: "email을 입력해 주세요!" },
+      });
+      return false;
+    } else {
+      if (email.search(/@/g) === -1 || email.search(/[.]/g) === -1) {
+        setErrorData({
+          dis: { ...errorData.dis, email: true },
+          msg: { ...errorData.msg, email: "email 형식이 맞지 않습니다!" },
+        });
+        return false;
+      }
+    }
+
+    if (!nickname && type === "signup") {
+      setErrorData({
+        dis: { ...errorData.dis, nickname: true },
+        msg: { ...errorData.msg, nickname: "nickname을 입력해 주세요!" },
+      });
+      return false;
+    }
+    if (!password) {
+      setErrorData({
+        dis: { ...errorData.dis, password: true },
+        msg: { ...errorData.msg, password: "password를 입력해 주세요!" },
+      });
+      return false;
+    }
+    if (!address && type === "signup") {
+      setErrorData({
+        dis: { ...errorData.dis, address: true },
+        msg: { ...errorData.msg, address: "address를 입력해 주세요!" },
+      });
+      return false;
+    }
+    return true;
+  };
+
   const signin = async () => {
     try {
+      if (!validate()) {
+        return;
+      }
       dispatch(check({ type: "loading" }));
 
       const userData = {
@@ -190,40 +240,11 @@ const SignPage = ({ control }) => {
   const signup = async () => {
     try {
       const { email, nickname, password, address } = userInfo;
-      if (!email) {
-        setErrorData({
-          dis: { ...errorData.dis, email: true },
-          msg: { ...errorData.msg, email: "email을 입력해 주세요!" },
-        });
-        return;
-      } else if (!nickname) {
-        setErrorData({
-          dis: { ...errorData.dis, nickname: true },
-          msg: { ...errorData.msg, nickname: "nickname을 입력해 주세요!" },
-        });
-        return;
-      } else if (!password) {
-        setErrorData({
-          dis: { ...errorData.dis, password: true },
-          msg: { ...errorData.msg, password: "password를 입력해 주세요!" },
-        });
-        return;
-      } else if (!address) {
-        setErrorData({
-          dis: { ...errorData.dis, address: true },
-          msg: { ...errorData.msg, address: "address를 입력해 주세요!" },
-        });
+      if (!validate("signup")) {
         return;
       }
-
+      dispatch(check({ type: "loading" }));
       if (email && nickname && password && address) {
-        if (email.search(/@/g) === -1 || email.search(/[.]/g) === -1) {
-          setErrorData({
-            dis: { ...errorData.dis, email: true },
-            msg: { ...errorData.msg, email: "email 형식이 맞지 않습니다!" },
-          });
-          return;
-        }
         const userData = {
           email,
           nickname,
@@ -235,6 +256,7 @@ const SignPage = ({ control }) => {
           return dispatch(check({ type: "login" }));
         }
       }
+      dispatch(check({ type: "logout" }));
     } catch (err) {
       console.log(err);
       dispatch(check({ type: "" }));
@@ -330,25 +352,26 @@ const SignPage = ({ control }) => {
             ) : null}
 
             <div className="signBO">
-              {signUpCheck ? null : (
-                <div className="signB" onClick={() => signin()}>
-                  Sign In
-                </div>
-              )}
-              {signUpCheck ? null : <div className="or">or</div>}
+              <div
+                className="signB"
+                onClick={() => {
+                  if (!signUpCheck) {
+                    signin();
+                  } else {
+                    setSignUpCheck(false);
+                  }
+                }}
+              >
+                {signUpCheck ? "Go Sign In" : "Sign In"}
+              </div>
+
+              <div className="or">or</div>
               <div
                 className="signB"
                 onClick={() => {
                   if (signUpCheck) {
                     //회원 가입 요청
                     signup();
-                    setUserInfo({
-                      email: "",
-                      address: "",
-                      nickname: "",
-                      password: "",
-                    });
-                    //setSignUpCheck(false);
                   } else {
                     setSignUpCheck(true);
                   }
