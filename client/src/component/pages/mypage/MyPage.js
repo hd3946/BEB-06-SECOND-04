@@ -1,11 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Mynft from "./Mynft";
 import Myposts from "./Myposts";
 import Send from "./Send";
+import { info } from "../../../store/slice";
 
 const MypageBox = styled.div`
   display: flex;
@@ -17,13 +18,13 @@ const MypageBox = styled.div`
     display: flex;
     justify-content: center;
     width: 100%;
-    height: 70px;
+    height: 126px;
     background-color: rgb(82, 192, 255);
     .mypageProfileImg {
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      margin-top: 35px;
+      margin-top: 82px;
       background-color: white;
       div {
         width: 76px;
@@ -93,7 +94,7 @@ const MypageBox = styled.div`
         border-radius: 11px;
       }
       .mypageName {
-        font-size: 20px;
+        font-size: 25px;
         font-weight: 600;
       }
       .mypageAccount {
@@ -104,26 +105,32 @@ const MypageBox = styled.div`
 `;
 
 const Mypage = () => {
-  const [eth, setEth] = useState(0);
+  const dispatch = useDispatch();
   const [userAddr, setUserAddr] = useState("");
   const { email, account, nickname, balance } = useSelector(
     (state) => state.user
   );
 
-  //get 1 eth
-  function getEth() {
+  useEffect(() => {
+    getToken();
+  }, []);
+
+  function getToken() {
     axios
-      .post(
-        `http://localhost:3005/contract/eth`,
-        {
-          userAddr: userAddr,
-        },
-        { "Content-Type": "application/json", withCredentials: true }
-      )
-      .then((res) => {
-        setEth(eth + 1);
+      .get(`http://localhost:3005/users/info`, {
+        "Content-Type": "application/json",
+        withCredentials: true,
       })
-      .catch((err) => console.log(err));
+      .then((res) =>
+        dispatch(
+          info({
+            email: res.data.loginData.email,
+            account: res.data.loginData.address,
+            nickname: res.data.loginData.nickname,
+            balance: res.data.ethBalance,
+          })
+        )
+      );
   }
 
   return (
@@ -140,7 +147,7 @@ const Mypage = () => {
                 height: "57px",
               }}
             >
-              {nickname.charAt(0).toUpperCase()}
+              {nickname ? nickname.charAt(0).toUpperCase() : "?"}
             </div>
             {/* <img src="" alt="프사"></img> */}
           </div>
@@ -159,10 +166,6 @@ const Mypage = () => {
               />
             </div>
             <div className="coinSymbol">{balance ? balance : 0} FTC</div>
-            <div className="faucetEth"> {eth} ETH</div>
-            <div className="faucetButton">
-              <button onClick={getEth}>faucet</button>
-            </div>
           </div>
           <div className="mypageName">{nickname}</div>
           <div className="mypageAccount">{account}</div>

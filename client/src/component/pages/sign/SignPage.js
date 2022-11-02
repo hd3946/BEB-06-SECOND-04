@@ -17,34 +17,34 @@ const SignPageBox = styled.div`
   background-color: rgba(131, 131, 131, 0.8);
   z-index: 100;
 
-  .singBox {
+  .signBox {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 500px;
     height: 600px;
     background-color: #f8f8f8;
-    .singHeader {
+    .signHeader {
       width: 200px;
       margin-top: 50px;
       padding-bottom: 5px;
       border-bottom: ${(props) =>
-        props.singUpCheck
+        props.signUpCheck
           ? "3px solid rgb(255, 82, 82)"
           : "3px solid rgb(82, 192, 255)"};
       text-align: center;
       font-weight: 500;
       transition: 0.3s;
     }
-    .singBody {
+    .signBody {
       text-align: center;
       width: 400px;
-      height: ${(props) => (props.singUpCheck ? "400px" : "400px")};
+      height: ${(props) => (props.signUpCheck ? "400px" : "400px")};
       margin-top: 50px;
       border: 2px solid black;
       transition: 0.3s;
 
-      .singBodyBox {
+      .signBodyBox {
         margin-top: 50px;
         .nb {
           display: flex;
@@ -68,7 +68,7 @@ const SignPageBox = styled.div`
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          margin-top: ${(props) => (props.singUpCheck ? "80px" : "50px")};
+          margin-top: ${(props) => (props.signUpCheck ? "80px" : "50px")};
           transition: 0.3s;
 
           .signB {
@@ -77,12 +77,12 @@ const SignPageBox = styled.div`
             height: 30px;
             color: white;
             background-color: ${(props) =>
-              props.singUpCheck ? "rgb(255, 82, 82)" : "rgb(82, 192, 255)"};
+              props.signUpCheck ? "rgb(255, 82, 82)" : "rgb(82, 192, 255)"};
             cursor: pointer;
             transition: 0.2s;
             :hover {
               background-color: ${(props) =>
-                props.singUpCheck
+                props.signUpCheck
                   ? "rgba(255, 82, 82, 0.7)"
                   : "rgba(82, 192, 255, 0.7)"};
             }
@@ -115,24 +115,22 @@ const SignPageBox = styled.div`
 `;
 
 const SignPage = ({ control }) => {
-  const [singUpCheck, setSingUpCheck] = useState(false);
-
+  const [signUpCheck, setSignUpCheck] = useState(false);
   const [userInfo, setUserInfo] = useState({
     email: "",
-    account: "",
+    address: "",
     nickname: "",
+    password: "",
   });
-
   const dispatch = useDispatch();
-  const { email, account, nickname } = useSelector((state) => {
-    return state.user;
-  });
 
   useEffect(() => {
     console.log(nickname);
   }, [email]);
 
   const signin = async () => {
+
+    dispatch(check({ type: "loading" }));
 
     const userData = {
       email: userInfo.email,
@@ -160,33 +158,26 @@ const SignPage = ({ control }) => {
         //    리덕스 회원 정보에 저장
         // 2. false일 경우 로그인 실패 메세지
 
-        //userinfo api 만들어지면 주석풀기
-        // axios.get(`http://localhost:3005/users`).then((res)=>{
-        //   dispatch(
-        //     info({
-        //       email: res.data.email,
-        //       account: res.data.email,
-        //       nickname: res.data.nickname,
-        //       balance: res.data.nickname
-        //     })
-        //   );
-        dispatch(
-          info({
-            email: "test@naver.com",
-            account: "0x0",
-            nickname: "hazel",
-            balance: "100",
-          })
-        );
-        dispatch(check({ type: "" }));
-      })
+            localStorage.setItem(
+              "userData",
+              JSON.stringify({
+                nickname,
+                email,
+                img,
+                address,
+                tokenBalance: data.tokenBalance,
+              })
+            );
+            dispatch(check({ type: "" }));
+            window.location.href = "/";
+          
+          // .catch((err) => {
+          //   console.log(err);
+          //   dispatch(check({ type: "" }));
+          // });
+        };
 
-      .catch((err) => alert(err));
-  };
-
-  const singup = async () => {
-    console.log("회원가입");
-
+  const signup = () => {
     const userData = {
       email: userInfo.email,
       nickname: userInfo.nickname,
@@ -197,43 +188,48 @@ const SignPage = ({ control }) => {
     const { data } = await registerUser(userData);
     console.log("회원가입 정보: ", data);
 
-    // axios
-    //   .post(
-    //     `http://localhost:3005/users/signup`,
-    //     {
-    //       email: userInfo.email,
-    //       nickname: userInfo.nickname,
-    //       password: userInfo.password,
-    //       address: userInfo.address,
-    //     },
-    //     { "Content-Type": "application/json", withCredentials: true }
-    //   )
-    //   .then((res) => {
-    //     console.log("회원가입 정보: ",res);
-    //   })
-    //   .catch((err) => alert(err));
+    dispatch(check({ type: "loading" }));
+    axios
+      .post(
+        `http://localhost:3005/users/signup`,
+        {
+          email: userInfo.email,
+          nickname: userInfo.nickname,
+          password: userInfo.password,
+          address: userInfo.address,
+        },
+        { "Content-Type": "application/json", withCredentials: true }
+      )
+      .then((res) => {
+        dispatch(check({ type: "" }));
+        console.log(res);
+      })
+      .catch((err) => {
+        dispatch(check({ type: "" }));
+        alert(err);
+      });
   };
 
   useEffect(() => {
-    setSingUpCheck(control === "login" ? false : true);
+    setSignUpCheck(control === "login" ? false : true);
   }, [control]);
 
   return (
     <SignPageBox
-      singUpCheck={singUpCheck}
+      signUpCheck={signUpCheck}
       onClick={(e) => {
         dispatch(check({ type: "" }));
       }}
     >
       <div
-        className="singBox"
+        className="signBox"
         onClick={(e) => {
           e.stopPropagation();
         }}
       >
-        <div className="singHeader">{singUpCheck ? "SignUp" : "SignIn"}</div>
-        <div className="singBody">
-          <div className="singBodyBox">
+        <div className="signHeader">{signUpCheck ? "signUp" : "signin"}</div>
+        <div className="signBody">
+          <div className="signBodyBox">
             <div className="emailBox nb">
               <div className="n">Email : </div>
               <input
@@ -245,7 +241,7 @@ const SignPage = ({ control }) => {
                 }
               />
             </div>
-            {singUpCheck ? (
+            {signUpCheck ? (
               <div className="nickNameBox nb">
                 <div className="n">Nick name : </div>
                 <input
@@ -268,7 +264,7 @@ const SignPage = ({ control }) => {
                 }
               />
             </div>
-            {singUpCheck ? (
+            {signUpCheck ? (
               <div className="passwordBox nb">
                 <div className="n">address : </div>
                 <input
@@ -282,35 +278,37 @@ const SignPage = ({ control }) => {
             ) : null}
 
             <div className="signBO">
-              {singUpCheck ? null : (
+              {signUpCheck ? null : (
                 <div className="signB" onClick={() => signin()}>
                   Sign In
                 </div>
               )}
-              {singUpCheck ? null : <div className="or">or</div>}
+              {signUpCheck ? null : <div className="or">or</div>}
               <div
                 className="signB"
                 onClick={() => {
-                  if (singUpCheck) {
+                  if (signUpCheck) {
                     //회원 가입 요청
-                    singup();
+                    signup();
                     setUserInfo({
-                      nickname: "",
                       email: "",
+                      address: "",
+                      nickname: "",
                       password: "",
                     });
-                    setSingUpCheck(false);
+                    setSignUpCheck(false);
                   } else {
                     setUserInfo({
-                      nickname: "",
                       email: "",
+                      address: "",
+                      nickname: "",
                       password: "",
                     });
-                    setSingUpCheck(true);
+                    setSignUpCheck(true);
                   }
                 }}
               >
-                {singUpCheck ? "Sign Up" : "Go Sign Up"}
+                {signUpCheck ? "Sign Up" : "Go Sign Up"}
               </div>
             </div>
           </div>

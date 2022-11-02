@@ -8,6 +8,8 @@ import Mypage from "./component/pages/mypage/MyPage";
 import Modal from "./component/common/modal/Modal";
 
 function App() {
+  // localStorage.removeItem("text");
+  console.log(localStorage);
   return (
     <div>
       <div>

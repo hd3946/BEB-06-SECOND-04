@@ -1,10 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React from "react";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Cookies } from "react-cookie";
 
 const PageBox = styled.div`
   width: 100%;
@@ -90,13 +88,18 @@ const PageBox = styled.div`
           background-color: rgba(0, 0, 0, 0.1);
         }
       }
+      .delete {
+        :hover {
+          background-color: rgba(255, 0, 0, 0.5);
+        }
+      }
     }
   }
 `;
 
 const Page = ({ pos, data }) => {
   const { content, id, tilte } = data;
-  console.log(data);
+  // console.log(data);
   // const cookies = new Cookies();
 
   const likeUp = () => {
@@ -173,13 +176,17 @@ const Page = ({ pos, data }) => {
   return (
     <PageBox pos={pos}>
       <div className="pageHeader">
-        <Link to={`/detail`} state={{ pageId: 0, data: data }}>
+        <Link
+          to={`/detail`}
+          state={{ pageId: 0, data: data }}
+          style={{ pointerEvents: pos === "detail" ? "none" : "" }}
+        >
           <div className="pageUserProfileBox cc">
             <img src="" alt="Profile" />
           </div>
           <div className="pageUserBox">
-            <div className="pageUserName">User Name</div>
-            <div className="pageUsertitle">Test Title</div>
+            <div className="pageUserName">{data.User.nickname}</div>
+            <div className="pageUsertitle">{data.title}</div>
             <div className="pageUserDesc">{data.content}</div>
           </div>
         </Link>
@@ -200,12 +207,14 @@ const Page = ({ pos, data }) => {
         {/* {email ? : null} */}
 
         <div className="pageiconBox">
+          {/* 로그인 확인 후 수정, 삭제 버튼 노출 */}
           <div className="icon" onClick={() => postUpdate()}>
             <FontAwesomeIcon icon="fa-solid fa-pen" />
           </div>
-          <div className="icon" onClick={() => postDelete()}>
+          <div className="icon delete" onClick={() => postDelete()}>
             <FontAwesomeIcon icon="fa-solid fa-trash" />
           </div>
+
           <div className="icon">
             <FontAwesomeIcon icon="fa-regular fa-message" />
           </div>

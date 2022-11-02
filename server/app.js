@@ -1,19 +1,19 @@
-import express from'express';
-import path from 'path';
-import cors from'cors';
-import cookieParser from'cookie-parser';
-import logger from'morgan';
-import dotenv from'dotenv';
+import express from "express";
+import path from "path";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
+import dotenv from "dotenv";
 dotenv.config();
-import { sequelize } from './models/index.js';
-import addFile from'./web3/ipfs.js';
+import { sequelize } from "./models/index.js";
+import addFile from "./web3/ipfs.js";
 
 const data = await  addFile();
 console.log('ipfs test' , data);
 const app = express();
-app.set('port', process.env.PORT || 3005);
+app.set("port", process.env.PORT || 3005);
 
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -34,10 +34,10 @@ sequelize
     console.error(err);
   });
 
-import usersRouter from './routes/users/users.js'; 
-import postRouter from './routes/post/post.js';
-import contractRouter from './routes/contract/contract.js';
-import commentRouter from './routes/comment/comment.js';
+import usersRouter from "./routes/users/users.js";
+import postRouter from "./routes/post/post.js";
+import contractRouter from "./routes/contract/contract.js";
+import commentRouter from "./routes/comment/comment.js";
 // router
 app.use("/users", usersRouter);
 app.use("/post", postRouter);
@@ -58,6 +58,4 @@ app.listen(app.get("port"), () => {
   console.log(`✅ Server running on http://localhost:${app.get("port")}`);
 });
 
-
 export default app;
-
