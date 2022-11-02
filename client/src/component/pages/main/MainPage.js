@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import MainTop from "./MainTop";
+import SearchAndPost from "./SearchAndPost";
 import styled from "styled-components";
 import PageList from "./PageList";
 import { useDispatch } from "react-redux";
@@ -15,6 +15,7 @@ const MainPage = () => {
   const dispatch = useDispatch();
 
   const listCall = async () => {
+    console.log("페이지 콜");
     const { data } = await postListCall();
     dispatch(postlist({ list: data.postList.reverse() }));
   };
@@ -25,7 +26,7 @@ const MainPage = () => {
 
   return (
     <MainPageBox>
-      <MainTop />
+      <SearchAndPost />
       <PageList />
     </MainPageBox>
   );
