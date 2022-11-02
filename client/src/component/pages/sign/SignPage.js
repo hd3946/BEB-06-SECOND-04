@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { check, filtering, info } from "../../../store/slice";
-import { registerUser, loginUser } from '../../../api/sign';
+import { registerUser, loginUser } from "../../../api/sign";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -124,12 +124,7 @@ const SignPage = ({ control }) => {
   });
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log(nickname);
-  }, [email]);
-
   const signin = async () => {
-
     dispatch(check({ type: "loading" }));
 
     const userData = {
@@ -140,44 +135,22 @@ const SignPage = ({ control }) => {
     const { data } = await loginUser(userData);
     console.log(data);
 
-    // 로그인
-    // axios
-    //   .post(
-    //     `http://localhost:3005/users/signin`,
-    //     {
-    //       email: userInfo.email,
-    //       password: userInfo.password,
-    //     },
-    //     { "Content-Type": "application/json", withCredentials: true }
-    //   )
-    //   .then((res) => {
-    //     console.log(res);
-    //     dispatch(filtering({ list: res.data.postList }));
-        // 조회 결과에 따라 나뉨
-        // 1. true일 경우 해당 회원 정보 받아서
-        //    리덕스 회원 정보에 저장
-        // 2. false일 경우 로그인 실패 메세지
+    // dispatch(filtering({ list: res.data.postList }));
+    // localStorage.setItem(
+    //   "userData",
+    //   JSON.stringify({
+    //     nickname,
+    //     email,
+    //     img,
+    //     address,
+    //     tokenBalance: data.tokenBalance,
+    //   })
+    // );
+    // dispatch(check({ type: "" }));
+    // window.location.href = "/";
+  };
 
-            localStorage.setItem(
-              "userData",
-              JSON.stringify({
-                nickname,
-                email,
-                img,
-                address,
-                tokenBalance: data.tokenBalance,
-              })
-            );
-            dispatch(check({ type: "" }));
-            window.location.href = "/";
-          
-          // .catch((err) => {
-          //   console.log(err);
-          //   dispatch(check({ type: "" }));
-          // });
-        };
-
-  const signup = () => {
+  const signup = async () => {
     const userData = {
       email: userInfo.email,
       nickname: userInfo.nickname,
