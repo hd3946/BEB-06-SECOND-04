@@ -1,22 +1,12 @@
 import express from "express";
 import bcrypt from "bcrypt";
 
-const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
-const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
-const serverAddr = process.env.SERVER_ADDRESS; //가나슈1
-
-import Web3 from "web3";
-const web3 = new Web3("http://localhost:7545");
-import Contract from "web3-eth-contract";
-Contract.setProvider("http://localhost:7545");
-import tokenABI from "../../web3/tokenABI.js";
-const tokenContract = new Contract(tokenABI, tokenAddr);
-import nftABI from "../../web3/nftABI.js";
-const nftContract = new Contract(nftABI, nftAddr);
-
 const router = express.Router();
 import { db } from "../../models/index.js";
 const { User, Post, Comment } = db;
+import ganache  from "../../web3/web3.js";
+const { getEthBalance, getTokenBalance, getNftBalance } = ganache;
+
 import upload from "../post/upload.js";
 
 /* users router listing. */
@@ -119,10 +109,10 @@ router.get("/info", async (req, res, next) => {
       ],
       where: { userId: id },
     });
-    const weiBalance = await web3.eth.getBalance(address);
-    const ethBalance = web3.utils.fromWei(weiBalance);
-    const tokenBalance = await tokenContract.methods.balanceOf(address).call();
-    const nftBalance = await nftContract.methods.balanceOf(address).call();
+    // const weiBalance = await web3.eth.getBalance(address);
+    const ethBalance = await getEthBalance(address);
+    const tokenBalance = await getTokenBalance(address);
+    const nftBalance = await getNftBalance(address);
     return res.status(200).json({
       status: true,
       message: "유저정보 검색",

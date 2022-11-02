@@ -6,10 +6,7 @@ import logger from "morgan";
 import dotenv from "dotenv";
 dotenv.config();
 import { sequelize } from "./models/index.js";
-import addFile from "./web3/ipfs.js";
 
-const data = await  addFile();
-console.log('ipfs test' , data);
 const app = express();
 app.set("port", process.env.PORT || 3005);
 
