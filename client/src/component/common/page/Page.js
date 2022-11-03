@@ -122,6 +122,47 @@ const PageBox = styled.div`
           background-color: rgba(255, 0, 0, 0.5);
         }
       }
+
+      .test {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        color: red;
+        font-weight: 700;
+
+        .t1 {
+          position: absolute;
+          right: 50%;
+          width: 50px;
+          height: 50px;
+          overflow: hidden;
+          transition: 0.3s;
+          transform: ${(props) =>
+            props.deleteCheck ? "translateX(-30px)" : null};
+
+          ::before {
+            position: absolute;
+            right: -11px;
+            content: "🗑️";
+          }
+        }
+        .t2 {
+          position: absolute;
+          left: 50%;
+          width: 50px;
+          height: 50px;
+          overflow: hidden;
+          transition: 0.3s;
+          transform: ${(props) =>
+            props.deleteCheck ? "translateX(30px)" : null};
+          ::after {
+            position: absolute;
+            left: -11px;
+            content: "🗑️";
+          }
+        }
+      }
     }
   }
 `;
@@ -132,11 +173,12 @@ const Page = ({ data }) => {
   const { pathname } = location;
   const path = pathname.slice(1);
   const { content, postId, title, User } = data;
-  const [updateTogglem, setUpdateToggle] = useState(false);
+  const [updateToggle, setUpdateToggle] = useState(false);
   const [updateContent, setUpdateContent] = useState(content);
+  const [deleteCheck, setDeleteCheck] = useState(false);
 
   // 좋아요 작업하기
-  const likeUp = async () => {
+  const postLikeUp = async () => {
     console.log("좋아요 클릭!");
     // console.log(data);
     //const { status } = await postLike(postId);
@@ -179,17 +221,17 @@ const Page = ({ data }) => {
   }, []);
 
   useEffect(() => {
-    if (updateTogglem && textareaRef.current) {
+    if (updateToggle && textareaRef.current) {
       textareaRef.current.focus();
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight + "px";
-    } else if (!updateTogglem) {
+    } else if (!updateToggle) {
       setUpdateContent(data.content);
     }
-  }, [updateTogglem]);
+  }, [updateToggle]);
 
   return (
-    <PageBox path={path}>
+    <PageBox path={path} deleteCheck={deleteCheck}>
       <div className="pageHeader">
         <div className="pageUserProfileBox cc">
           <img src="" alt="Profile" />
@@ -198,7 +240,7 @@ const Page = ({ data }) => {
           <Link
             to={`/detail?${postId}`}
             onClick={(e) => {
-              if (path === "detail" || updateTogglem) {
+              if (path === "detail" || updateToggle) {
                 e.preventDefault();
               }
             }}
@@ -208,7 +250,7 @@ const Page = ({ data }) => {
               <div className="pageUsertitle">{title}</div>
             </div>
           </Link>
-          {updateTogglem ? (
+          {updateToggle ? (
             <div className="updateContentBox">
               <textarea
                 ref={textareaRef}
@@ -252,7 +294,7 @@ const Page = ({ data }) => {
               <div
                 className="icon"
                 onClick={() => {
-                  setUpdateToggle(!updateTogglem);
+                  setUpdateToggle(!updateToggle);
                 }}
               >
                 <FontAwesomeIcon icon="fa-solid fa-pen" />
@@ -263,11 +305,25 @@ const Page = ({ data }) => {
             </div>
           ) : null}
 
-          {/* <div className="icon">
-            <FontAwesomeIcon icon="fa-regular fa-message" />
-          </div> */}
+          <div
+            className="icon test"
+            onClick={(e) => {
+              if (!deleteCheck) {
+                setDeleteCheck(true);
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (deleteCheck) {
+                setDeleteCheck(false);
+              }
+            }}
+          >
+            <div className="t1 cc" />
+            {deleteCheck ? "삭제?" : null}
+            <div className="t2 cc" />
+          </div>
 
-          <div className="icon likeButton" onClick={() => likeUp()}>
+          <div className="icon likeButton" onClick={() => postLikeUp()}>
             <FontAwesomeIcon icon="fa-heart-circle-plus" />
           </div>
         </div>
