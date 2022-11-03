@@ -1,10 +1,18 @@
-import axios from "axios";
-import React, { useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+import {
+  commentDelete,
+  commentLike,
+  commentListCall,
+  commentUpdate,
+  commentWrite,
+} from "../../../api/comment";
 import { postListCall } from "../../../api/post";
+import { postValidate } from "../../../libs/validate";
 import { detailPageCall, postlist } from "../../../store/slice";
 import Page from "../../common/page/Page";
 
@@ -86,82 +94,156 @@ const DetailPageBox = styled.div`
       }
     }
   }
+  .pageiconBox2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .icon2 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      margin-left: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: 0.2s;
+      :hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .delete2 {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      overflow: hidden;
+      color: red;
+      font-weight: 700;
+      :hover {
+        background-color: rgba(255, 0, 0, 0.3);
+      }
+
+      .t11 {
+        position: absolute;
+        right: 50%;
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        transition: 0.3s;
+        transform: ${(props) =>
+          props.cDeleteCheck ? "translateX(-30px)" : null};
+
+        ::before {
+          position: absolute;
+          right: -11px;
+          content: "🗑️";
+        }
+      }
+      .t22 {
+        position: absolute;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        transition: 0.3s;
+        transform: ${(props) =>
+          props.cDeleteCheck ? "translateX(30px)" : null};
+        ::after {
+          position: absolute;
+          left: -11px;
+          content: "🗑️";
+        }
+      }
+    }
+  }
 `;
 
 const DetailPage = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const textareaRef = useRef();
   const { search } = location;
   const postId = search.slice(1);
   const [content, setContent] = useState("");
+  const [commentList, setCommentList] = useState([]);
+  const [commentLender, setCommentLender] = useState(false);
+  const [updateComment, setUpdateComment] = useState(content);
+  const [commentToggle, setCommentToggle] = useState(false);
+  const [cDeleteCheck, setCDeleteCheck] = useState(false);
+  const [likeCheck, setLikeCheck] = useState(false);
 
-  const { nickname, img } = useSelector((state) => state.user);
-  const { detailPage, commentList } = useSelector((state) => state.post);
+  const { detailPage } = useSelector((state) => state.post);
+  const { User } = detailPage[0];
+  console.log(commentList);
 
-  // 댓글 작성
-  const commentWrite = () => {
-    axios
-      .delete(
-        `http://localhost:3005/comment/write`,
-        {
-          nickname,
-          content,
-          img,
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => console.log(res))
-      .catch((err) => alert(err));
+  const handlerCommentList = async () => {
+    const { status, data } = await commentListCall(postId);
+    if (status) {
+      setCommentList(data.comments);
+      setCommentLender(false);
+    }
+  };
+
+  const handlerCommentWrite = async () => {
+    const { status } = await commentWrite({ postId, content });
+    if (status) {
+      setCommentLender(true);
+      setContent("");
+    }
   };
 
   //수정
-  const commentEdit = () => {
-    axios
-      .put(
-        `http://localhost:3005/comment/edit`,
-        {
-          content: "수정한 comment",
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => console.log(res))
-      .catch((err) => alert(err));
+  const handlerCommentEdit = async (commentId) => {
+    const { status } = await commentUpdate({ commentId, content });
+    if (status) {
+    }
   };
   //삭제
-  const commentDelete = () => {
-    axios
-      .delete(
-        `http://localhost:3005/comment/delete`,
-        {
-          commentId: "선택한 contentId",
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => console.log(res))
-      .catch((err) => alert(err));
+  const handlerCommentDelete = async (commentId) => {
+    const { status } = await commentDelete({ commentId });
+    if (status) {
+    }
+  };
+
+  const handlerCommentLike = async (commentId) => {
+    const { status } = await commentLike({ commentId });
+    if (status) {
+      setLikeCheck(false);
+      setCommentLender(true);
+    }
   };
 
   useEffect(() => {
     const detailPostCall = async () => {
-      const { data } = await postListCall();
-      dispatch(postlist({ list: data.postList }));
-      dispatch(detailPageCall({ postId }));
+      const { status, data } = await postListCall();
+      if (status) {
+        dispatch(postlist({ list: data.postList }));
+        dispatch(detailPageCall({ postId }));
+      }
     };
     detailPostCall();
+    handlerCommentList();
+
     return;
   }, [postId]);
 
+  useEffect(() => {
+    if (commentLender) {
+      handlerCommentList();
+    }
+  }, [commentLender]);
+
+  const resizeHeight = useCallback(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height =
+        textareaRef.current.scrollHeight + "px";
+    }
+  }, []);
+
   return (
-    <DetailPageBox className="cc">
+    <DetailPageBox className="cc" cDeleteCheck={cDeleteCheck}>
       <div className="pageBox">
         {detailPage.length > 0 ? <Page data={detailPage[0]} /> : null}
       </div>
@@ -177,11 +259,10 @@ const DetailPage = () => {
           <img src="" alt="프사" />
         </div>
         <div className="createReplyB replyIn">
-          <button onClick={() => commentWrite()}>reply</button>
+          <button onClick={() => handlerCommentWrite()}>reply</button>
         </div>
       </div>
       <div className="replyList cc">
-        {/* page 컴포넌트 사용 고려하기 */}
         {commentList.length > 0 ? (
           commentList.map((data, index) => (
             <div className="replyHeader" key={index}>
@@ -189,8 +270,77 @@ const DetailPage = () => {
                 <img src={data.img} alt="Profile" />
               </div>
               <div className="replyUserBox">
-                <div className="replyUserName">{data.nickname}</div>
-                <div className="replyUserDesc">{data.comment}</div>
+                <div className="replyUserName">{data.User.nickname}</div>
+
+                {commentToggle ? (
+                  <div className="updateContentBox">
+                    <textarea
+                      ref={textareaRef}
+                      className="pageUserDesc ta"
+                      value={updateComment}
+                      onChange={(e) => {
+                        resizeHeight();
+                        setUpdateComment(e.target.value);
+                      }}
+                    />
+                    <button
+                      className="pageUserDesc updateButton"
+                      onClick={() => handlerCommentEdit()}
+                    >
+                      수정하기
+                    </button>
+                  </div>
+                ) : (
+                  <div className="replyUserDesc">{data.content}</div>
+                )}
+              </div>
+
+              <div className="pageiconBox2">
+                {postValidate(User.nickname) ? (
+                  <div className="cc">
+                    <div
+                      className="icon2"
+                      onClick={() => {
+                        setCommentToggle(!commentToggle);
+                      }}
+                    >
+                      <FontAwesomeIcon icon="fa-solid fa-pen" />
+                    </div>
+                    <div
+                      className="icon2 delete2"
+                      onClick={(e) => {
+                        if (!cDeleteCheck) {
+                          setCDeleteCheck(true);
+                        } else if (cDeleteCheck) {
+                          handlerCommentDelete();
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (cDeleteCheck) {
+                          setCDeleteCheck(false);
+                        }
+                      }}
+                    >
+                      <div className="t11 cc" />
+                      {cDeleteCheck ? "삭제?" : null}
+                      <div className="t22 cc" />
+                    </div>
+                  </div>
+                ) : null}
+
+                <div
+                  className="icon2 likeButton"
+                  onClick={() => handlerCommentLike()}
+                >
+                  {likeCheck ? (
+                    <FontAwesomeIcon
+                      icon="fa-solid fa-heart"
+                      style={{ color: "red" }}
+                    />
+                  ) : (
+                    <FontAwesomeIcon icon="fa-heart-circle-plus" />
+                  )}
+                </div>
               </div>
             </div>
           ))

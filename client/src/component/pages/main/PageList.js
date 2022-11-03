@@ -38,7 +38,6 @@ const PageList = () => {
       setTap("SEARCH");
     }
   }, [filterList]);
-
   return (
     <PageListBox tap={tap} filterColor={filterList.length}>
       <div className="pageHeader">

@@ -1,7 +1,7 @@
 import { sign } from "./index";
 
 function registerInfo() {
-  return sign.post("info");
+  return sign.get("info");
 }
 
 function registerUser(userData) {

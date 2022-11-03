@@ -1,7 +1,7 @@
 import { comment } from "./index";
 
 const commentListCall = (postId) => {
-  return comment.get("list", postId);
+  return comment.get(`list?postId=${postId}`);
 };
 const commentWrite = (postData) => {
   return comment.post("write", postData);

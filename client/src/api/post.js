@@ -1,7 +1,7 @@
 import { post } from "./index";
 
 function postListCall() {
-  return post.post("list"); //http://localhost:3005/post/list
+  return post.get("list"); //http://localhost:3005/post/list
 }
 
 function postWrite(postData) {
@@ -17,7 +17,7 @@ function postDelete(postData) {
 }
 
 const postLike = (postId) => {
-  return post.post("like", postId);
+  return post.post(`like/${postId}`);
 };
 
 export { postListCall, postWrite, postUpdate, postDelete, postLike };
