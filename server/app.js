@@ -8,9 +8,11 @@ import dotenv from "dotenv";
 dotenv.config();
 import { sequelize } from "./src/models/index.js";
 import routes from "./src/routes/index.js";
+import { swaggerUi, specs } from './src/swagger/swagger.js';
 
 app.set("port", process.env.PORT || 3005);
 
+app.use('/', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

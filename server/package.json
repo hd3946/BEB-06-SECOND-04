@@ -40,6 +40,8 @@
     "@babel/preset-env": "^7.19.4",
     "babel-loader": "^9.0.1",
     "babel-plugin-module-resolver": "^4.1.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.5.0"
   }
 }
