@@ -1,13 +1,6 @@
-<<<<<<< HEAD
-import bcrypt from "bcrypt";
 import { db } from "../models/index.js";
 const { User } = db;
 import ganache from "../web3/web3.js";
-=======
-import { db } from '../models/index.js'
-const { User } = db
-import ganache  from "../web3/web3.js";
->>>>>>> 87ac09bd57e20cbfbe74fea69d12a648dda4de80
 const { getEthBalance, getTokenBalance, getNftBalance } = ganache;
 import ipfsUpload from "../web3/ipfs.js";
 import {
@@ -50,7 +43,6 @@ const signout = (req, res, next) => {
 };
 
 // POST 회원 가입 /signup
-<<<<<<< HEAD
 const signup = async function (req, res, next) {
   const { email, password, nickname, address } = req.body;
   console.log("signup 실행 데이터 체크", email, password, nickname, address);
@@ -70,32 +62,10 @@ const signup = async function (req, res, next) {
   } catch (err) {
     next(err);
   }
-=======
-const signup = async function (req, res, next) {  
-    const { email, password, nickname, address } = req.body;
-    console.log("signup 실행 데이터 체크", email, password, nickname, address);
-  
-    if (!(email && password && nickname && address))
-      return res.status(401).json("입력정보가 부족합니다");
-  
-    try {
-      //const hash = await bcrypt.hash(password, 10);
-      const makeUser = await createUser(email, password, nickname, address);
-  
-      return res.status(200).json({
-        status: true,
-        message: `user: ${nickname} is Signup Success`,
-        //token: token,  보류
-      });
-    } catch (err) {
-      next(err);
-    }
->>>>>>> 87ac09bd57e20cbfbe74fea69d12a648dda4de80
 };
 
 //get 유저정보 조회 /info
 const info = async (req, res, next) => {
-<<<<<<< HEAD
   if (!req.cookies.loginData)
     return res.status(401).json({
       status: false,
@@ -105,7 +75,6 @@ const info = async (req, res, next) => {
   const { id, address } = loginData;
   try {
     const postList = await getUserPost(id);
-    // const weiBalance = await web3.eth.getBalance(address);
     const ethBalance = await getEthBalance(address);
     const tokenBalance = await getTokenBalance(address);
     const nftBalance = await getNftBalance(address);
@@ -120,38 +89,11 @@ const info = async (req, res, next) => {
     });
   } catch (err) {
     console.error(err);
-    return res.status(400).json({ status: false, message: err.message });
+    return res.status(400).json({
+      status: false,
+      message: "유저정보 검색이 실패하였습니다",
+    });
   }
-=======
-    if (!req.cookies.loginData)
-      return res.status(401).json({
-        status: false,
-        message: "로그인이 필요합니다.",
-      });
-    const loginData = req.cookies.loginData;
-    const { id, address } = loginData;
-    try {
-      const postList = await getUserPost(id);
-      const ethBalance = await getEthBalance(address);
-      const tokenBalance = await getTokenBalance(address);
-      const nftBalance = await getNftBalance(address);
-      return res.status(200).json({
-        status: true,
-        message: "유저정보 검색",
-        loginData,
-        ethBalance,
-        tokenBalance,
-        nftBalance,
-        postList, //나의 게시글목록
-      });
-    } catch (err) {
-      console.error(err);
-      return res.status(400).json({ 
-        status: false, 
-        message: "유저정보 검색이 실패하였습니다" 
-      });
-    }
->>>>>>> 87ac09bd57e20cbfbe74fea69d12a648dda4de80
 };
 
 //POST 회원정보 수정 /edit upload.single("avatar")
