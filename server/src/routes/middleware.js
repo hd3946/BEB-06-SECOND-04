@@ -8,10 +8,18 @@ const isLoggedIn = (req, res, next) => {
   } else{
     next();
   }
-  
 }
 
-export { isLoggedIn }
+const isNotLoggedIn = (req, res, next) => {
+  if (!req.cookies.loginData){
+    next();
+  } else {
+    const message = '로그인한 상태입니다.';
+    res.json(`error=${message}`);
+  }
+};
+
+export { isLoggedIn, isNotLoggedIn }
 
 // exports.isLoggedIn = (req, res, next) => {
   
@@ -27,12 +35,5 @@ export { isLoggedIn }
 //   }
 // };
 
-// exports.isNotLoggedIn = (req, res, next) => {
-//   if (!req.isAuthenticated()) {
-//     next();
-//   } else {
-//     const message = '로그인한 상태입니다.';
-//     res.json(`error=${message}`);
-//   }
-// };
+
 

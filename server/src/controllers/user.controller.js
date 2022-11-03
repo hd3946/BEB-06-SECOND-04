@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import ganache  from "../web3/web3.js";
 const { getEthBalance, getTokenBalance, getNftBalance } = ganache;
 import ipfsUpload from "../web3/ipfs.js";
-//getUserData, createUser, getUserPost, updateUser
+import { getUserData, createUser, getUserPost, updateUser } from "../services/user.service.js";
 
 //POST 로그인 /signin
 const signin = async (req, res, next) => {

@@ -71,7 +71,7 @@ const getUserPost = async (userId) => {
             order: [['id', 'DESC']]
           },
         ],
-        where: { userId: id },
+        where: { userId: userId },
         order: [['id', 'DESC']]
       });
           return postList;
@@ -80,7 +80,7 @@ const getUserPost = async (userId) => {
     };
 };
 
-const updateUser = async (userId) => {
+const updateUser = async (profileUrl,userId) => {
     try{
         const update = await User.update(
             {

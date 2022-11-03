@@ -18,9 +18,9 @@ const web3 = new Web3('http://localhost:7545');
 /* Contract ABI setProvider */
 import Contract from 'web3-eth-contract';
 Contract.setProvider('http://localhost:7545');
-import tokenABI from '../../web3/tokenABI.js'; 
+import tokenABI from '../web3/tokenABI.js'; 
 const tokenContract = new Contract(tokenABI, tokenAddr);
-import nftABI from '../../web3/nftABI.js';
+import nftABI from '../web3/nftABI.js';
 const nftContract = new Contract(nftABI , nftAddr);
 
 
