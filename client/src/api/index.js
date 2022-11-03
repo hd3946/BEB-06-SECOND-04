@@ -6,11 +6,17 @@ function createInstanceWithAuth(url) {
   const instance = axios.create({
     baseURL: `http://localhost:3005/${url}`,
   });
-  console.log(instance.interceptors);
   return setInterceptors(instance);
 }
 
-export const instance = createInstanceWithAuth(); //http://localhost:3005/
-export const sign = createInstanceWithAuth("users"); // http://localhost:3005/users
-export const comment = createInstanceWithAuth("comment"); // http://localhost:3005/user
+//http://localhost:3005/
+export const instance = createInstanceWithAuth();
+
+// http://localhost:3005/users
+export const sign = createInstanceWithAuth("users");
+
+// http://localhost:3005/comment
+export const comment = createInstanceWithAuth("comment");
+
+// http://localhost:3005/post
 export const post = createInstanceWithAuth("post");

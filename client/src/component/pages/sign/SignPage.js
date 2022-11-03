@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import axios from "axios";
 import styled from "styled-components";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { check, filtering, info } from "../../../store/slice";
+import { useDispatch } from "react-redux";
+import { check, filtering } from "../../../store/slice";
 import { registerUser, loginUser, registerInfo } from "../../../api/sign";
+import { useRef } from "react";
 
 const SignPageBox = styled.div`
   position: fixed;
@@ -45,12 +45,13 @@ const SignPageBox = styled.div`
       transition: 0.3s;
 
       .signBodyBox {
+        position: relative;
         margin-top: 50px;
         .nb {
           display: flex;
           justify-content: center;
           align-items: center;
-          margin-top: 20px;
+          margin-top: 30px;
           .n {
             width: 100px;
             text-align: left;
@@ -63,12 +64,34 @@ const SignPageBox = styled.div`
             height: 30px;
           }
         }
+        .error {
+          position: absolute;
+          margin-top: 55px;
+          font-size: 14px;
+          color: red;
+        }
+        .errE {
+          display: ${(props) => (props.error.email ? "block" : "none")};
+        }
+        .errN {
+          display: ${(props) => (props.error.nickname ? "block" : "none")};
+        }
+        .errP {
+          display: ${(props) => (props.error.password ? "block" : "none")};
+        }
+        .errA {
+          display: ${(props) => (props.error.address ? "block" : "none")};
+        }
+
         .signBO {
           display: flex;
-          flex-direction: column;
+          flex-direction: ${(props) => (props.signUpCheck ? "row" : "column")};
           justify-content: center;
           align-items: center;
-          margin-top: ${(props) => (props.signUpCheck ? "80px" : "50px")};
+          transform: translateY(
+            ${(props) => (props.signUpCheck ? "30px" : "0px")}
+          );
+          margin-top: ${(props) => (props.signUpCheck ? "40px" : "50px")};
           transition: 0.3s;
 
           .signB {
@@ -89,7 +112,10 @@ const SignPageBox = styled.div`
           }
           .or {
             position: relative;
-            margin: 30px 0px;
+            margin: ${(props) => (props.signUpCheck ? "10px 0px" : "30px 0px")};
+            transform: translateY(
+              ${(props) => (props.signUpCheck ? "-40px" : "0px")}
+            );
 
             ::after {
               position: absolute;
@@ -115,17 +141,67 @@ const SignPageBox = styled.div`
 `;
 
 const SignPage = ({ control }) => {
+  const dispatch = useDispatch();
+  const idRef = useRef();
   const [signUpCheck, setSignUpCheck] = useState(false);
+  const [errorData, setErrorData] = useState({
+    dis: { email: false, address: false, nickname: false, password: false },
+    msg: { email: "", address: "", nickname: "", password: "" },
+  });
   const [userInfo, setUserInfo] = useState({
     email: "",
     address: "",
     nickname: "",
     password: "",
   });
-  const dispatch = useDispatch();
+
+  const inputCheck = (type) => {
+    const { email, nickname, password, address } = userInfo;
+    if (!email) {
+      setErrorData({
+        dis: { ...errorData.dis, email: true },
+        msg: { ...errorData.msg, email: "email을 입력해 주세요!" },
+      });
+      return false;
+    } else {
+      if (email.search(/@/g) === -1 || email.search(/[.]/g) === -1) {
+        setErrorData({
+          dis: { ...errorData.dis, email: true },
+          msg: { ...errorData.msg, email: "email 형식이 맞지 않습니다!" },
+        });
+        return false;
+      }
+    }
+
+    if (!nickname && type === "signup") {
+      setErrorData({
+        dis: { ...errorData.dis, nickname: true },
+        msg: { ...errorData.msg, nickname: "nickname을 입력해 주세요!" },
+      });
+      return false;
+    }
+    if (!password) {
+      setErrorData({
+        dis: { ...errorData.dis, password: true },
+        msg: { ...errorData.msg, password: "password를 입력해 주세요!" },
+      });
+      return false;
+    }
+    if (!address && type === "signup") {
+      setErrorData({
+        dis: { ...errorData.dis, address: true },
+        msg: { ...errorData.msg, address: "address를 입력해 주세요!" },
+      });
+      return false;
+    }
+    return true;
+  };
 
   const signin = async () => {
     try {
+      if (!inputCheck()) {
+        return;
+      }
       dispatch(check({ type: "loading" }));
 
       const userData = {
@@ -133,14 +209,14 @@ const SignPage = ({ control }) => {
         password: userInfo.password,
       };
 
-      const { data } = await loginUser(userData);
-      console.log(data);
-      if (data.status) {
+      const { status } = await loginUser(userData);
+
+      if (status === 200) {
         const userInfoData = await registerInfo();
         const { address, nickname, email, profileurl } =
           userInfoData.data.loginData;
 
-        // dispatch(filtering({ list: res.data.postList }));
+        dispatch(filtering({ list: userInfoData.data.postList }));
         localStorage.setItem(
           "userData",
           JSON.stringify({
@@ -155,51 +231,47 @@ const SignPage = ({ control }) => {
         dispatch(check({ type: "" }));
       } else {
         alert("로그인 실패!");
+        dispatch(check({ type: "" }));
       }
     } catch (err) {
       console.log(err);
+      dispatch(check({ type: "" }));
     }
   };
 
   const signup = async () => {
-    const userData = {
-      email: userInfo.email,
-      nickname: userInfo.nickname,
-      password: userInfo.password,
-      address: userInfo.address,
-    };
-
-    const { data } = await registerUser(userData);
-    console.log("회원가입 정보: ", data);
-
-    dispatch(check({ type: "loading" }));
-    axios
-      .post(
-        `http://localhost:3005/users/signup`,
-        {
-          email: userInfo.email,
-          nickname: userInfo.nickname,
-          password: userInfo.password,
-          address: userInfo.address,
-        },
-        { "Content-Type": "application/json", withCredentials: true }
-      )
-      .then((res) => {
-        dispatch(check({ type: "" }));
-        console.log(res);
-      })
-      .catch((err) => {
-        dispatch(check({ type: "" }));
-        alert(err);
-      });
+    try {
+      const { email, nickname, password, address } = userInfo;
+      if (!inputCheck("signup")) {
+        return;
+      }
+      dispatch(check({ type: "loading" }));
+      if (email && nickname && password && address) {
+        const { status } = await registerUser(userInfo);
+        if (status === 200) {
+          return dispatch(check({ type: "login" }));
+        }
+      }
+      dispatch(check({ type: "logout" }));
+    } catch (err) {
+      console.log(err);
+      dispatch(check({ type: "" }));
+    }
   };
 
   useEffect(() => {
     setSignUpCheck(control === "login" ? false : true);
   }, [control]);
 
+  useEffect(() => {
+    if (idRef.current) {
+      idRef.current.focus();
+    }
+  }, [control]);
+
   return (
     <SignPageBox
+      error={errorData.dis}
       signUpCheck={signUpCheck}
       onClick={(e) => {
         dispatch(check({ type: "" }));
@@ -217,13 +289,19 @@ const SignPage = ({ control }) => {
             <div className="emailBox nb">
               <div className="n">Email : </div>
               <input
+                ref={idRef}
                 type="email"
                 placeholder="email을 입력하세요!"
                 value={userInfo.email}
-                onChange={(e) =>
-                  setUserInfo({ ...userInfo, email: e.target.value })
-                }
+                onChange={(e) => {
+                  setErrorData({
+                    ...errorData,
+                    dis: { ...errorData.dis, email: false },
+                  });
+                  setUserInfo({ ...userInfo, email: e.target.value });
+                }}
               />
+              <div className="error errE">{errorData.msg.email}</div>
             </div>
             {signUpCheck ? (
               <div className="nickNameBox nb">
@@ -231,10 +309,15 @@ const SignPage = ({ control }) => {
                 <input
                   placeholder="별명을 입력하세요!"
                   value={userInfo.nickname}
-                  onChange={(e) =>
-                    setUserInfo({ ...userInfo, nickname: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setErrorData({
+                      ...errorData,
+                      dis: { ...errorData.dis, nickname: false },
+                    });
+                    setUserInfo({ ...userInfo, nickname: e.target.value });
+                  }}
                 />
+                <div className="error errN">{errorData.msg.nickname}</div>
               </div>
             ) : null}
             <div className="passwordBox nb">
@@ -243,51 +326,56 @@ const SignPage = ({ control }) => {
                 type={"password"}
                 placeholder="비밀번호를 입력하세요!"
                 value={userInfo.password}
-                onChange={(e) =>
-                  setUserInfo({ ...userInfo, password: e.target.value })
-                }
+                onChange={(e) => {
+                  setErrorData({
+                    ...errorData,
+                    dis: { ...errorData.dis, password: false },
+                  });
+                  setUserInfo({ ...userInfo, password: e.target.value });
+                }}
               />
+              <div className="error errP">{errorData.msg.password}</div>
             </div>
             {signUpCheck ? (
-              <div className="passwordBox nb">
+              <div className="addressBox nb">
                 <div className="n">address : </div>
                 <input
                   placeholder="주소를 입력하세요!"
                   value={userInfo.address}
-                  onChange={(e) =>
-                    setUserInfo({ ...userInfo, address: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setErrorData({
+                      ...errorData,
+                      dis: { ...errorData.dis, address: false },
+                    });
+                    setUserInfo({ ...userInfo, address: e.target.value });
+                  }}
                 />
+                <div className="error errA">{errorData.msg.address}</div>
               </div>
             ) : null}
 
             <div className="signBO">
-              {signUpCheck ? null : (
-                <div className="signB" onClick={() => signin()}>
-                  Sign In
-                </div>
-              )}
-              {signUpCheck ? null : <div className="or">or</div>}
+              <div
+                className="signB"
+                onClick={() => {
+                  if (!signUpCheck) {
+                    signin();
+                  } else {
+                    setSignUpCheck(false);
+                  }
+                }}
+              >
+                {signUpCheck ? "Go Sign In" : "Sign In"}
+              </div>
+
+              <div className="or">or</div>
               <div
                 className="signB"
                 onClick={() => {
                   if (signUpCheck) {
                     //회원 가입 요청
                     signup();
-                    setUserInfo({
-                      email: "",
-                      address: "",
-                      nickname: "",
-                      password: "",
-                    });
-                    setSignUpCheck(false);
                   } else {
-                    setUserInfo({
-                      email: "",
-                      address: "",
-                      nickname: "",
-                      password: "",
-                    });
                     setSignUpCheck(true);
                   }
                 }}

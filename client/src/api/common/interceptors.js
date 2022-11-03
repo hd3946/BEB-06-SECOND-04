@@ -5,7 +5,6 @@ export function setInterceptors(instance) {
       config.headers["Content-Type"] = "application/json; charset=utf-8";
       config.withCredentials = true;
       //config.headers.Authorization = store.state.token; // token
-      console.log(config);
       return config;
     },
     function (error) {

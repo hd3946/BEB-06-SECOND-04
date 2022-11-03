@@ -3,10 +3,10 @@ const router = express.Router();
 import dotenv from "dotenv";
 dotenv.config();
 
-import { db } from "../../models/index.js";
-const {  User, Post, Comment } = db;
+import { db, sequelize } from "../../models/index.js";
+const {  User, Post, Comment, CommentLike } = db;
 
-/* commnet API */
+/* comment API */
 router.get("/list", async (req, res, next) => {
   const postId = req.query.postId
   if (!postId) 
@@ -18,10 +18,20 @@ router.get("/list", async (req, res, next) => {
    const comments = await Comment.findAll({ 
      attributes: [['id', 'commentId'], 'content', 'createdAt', 'updatedAt', 'commenter', 'postId'], 
      include: 
-     { model: User, 
-       attributes: ['email', 'nickname']
+     [{ model: User, 
+       attributes: ['email', 'nickname', 'profileurl']
      },  
-     where: { postId } 
+     { model: CommentLike, 
+      // attributes: [ [ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
+      include: [
+        { model: User, 
+        attributes: ['email', 'nickname', 'profileurl']}
+      ],
+      order: [['id', 'DESC']]
+
+    }], 
+     where: { postId },
+     order: [['id', 'DESC']]
    })
    return res.status(200).json({
      status: true,
@@ -104,6 +114,48 @@ router.post("/delete", async (req, res, next) => {
         status: false,
         message: "Not Authorized",
       });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/like/:commentId", async (req, res, next) => {
+  if (!req.cookies.loginData)
+    return res.status(401).json("로그인되어 있지 않습니다.");
+  try {
+    const userId = req.cookies.loginData.id;
+    const commentId = req.params.commentId; //작성되지않은 commentId일시 에러발생
+    const isLiked = await CommentLike.findAll({ 
+      where: { LikeUSerId: userId, LikeCommentId: commentId }
+    })
+    if (isLiked.length === 0) {
+      const data = await CommentLike.create({
+        LikeUserId: userId,
+        LikeCommentId: commentId
+      });
+      const count = await CommentLike.findAll(({
+        attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
+        where: { LikeCommentId: commentId }
+      }))
+    return res.status(200).json({
+      status: true,
+      message: "liked",
+      count, //현재 코멘트 좋아요 갯수
+    })
+    } else {
+      const cancel = await CommentLike.destroy({ 
+        where: {LikeUSerId: userId, LikeCommentId: commentId}
+      })
+      const count = await CommentLike.findAll(({
+        attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
+        where: { LikeCommentId: commentId }
+      }))
+      return res.status(200).json({
+        status: true,
+        message: "cancel liked",
+        count, //현재 코멘트 좋아요 갯수
+      })
     }
   } catch (error) {
     next(error);

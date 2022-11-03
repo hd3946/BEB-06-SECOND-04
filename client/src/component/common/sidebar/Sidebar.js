@@ -4,13 +4,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { check, logout } from "../../../store/slice";
-import axios from "axios";
+import { check, logout, sideControl } from "../../../store/slice";
+import { validate } from "../../../libs/validate";
+import { logoutUser } from "../../../api/sign";
+import { useState } from "react";
 const StyledAll = styled.div`
   position: fixed;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  transition: 0.2s;
+  transform: ${(props) =>
+    props.hide ? "translateX(-225px)" : "translateX(0px)"};
 `;
 
 const StyledLogo = styled.div`
@@ -24,7 +29,18 @@ const StyledLogo = styled.div`
   display: inline-block;
   margin: 44px 30px 13px 91px;
   color: var(--mainColor);
-  /* color: #03a9f4; */
+  transition: 0.2s;
+  cursor: pointer;
+  div {
+    width: 100%;
+    height: 100%;
+  }
+  :hover {
+    width: 114px;
+    transform: translateX(-30px);
+    border: 2px solid #ff6d6d;
+    color: #ff6d6d;
+  }
 `;
 
 const StyledSidebar = styled.div`
@@ -36,6 +52,22 @@ const StyledSidebar = styled.div`
   height: 100vh;
   width: 14rem;
   background-color: #e0e0e0;
+
+  .hideButton {
+    position: absolute;
+    width: 30px;
+    height: 50px;
+    top: 0px;
+    left: 224px;
+    background-color: #c0c0c0;
+    font-size: 34px;
+    transition: 0.2s;
+
+    :hover {
+      background-color: #313131;
+      color: #c0c0c0;
+    }
+  }
 `;
 
 const StyledButton = styled.div`
@@ -68,28 +100,34 @@ const StyledButton2 = styled.div`
 
 function Sidebar() {
   const dispatch = useDispatch();
-  const { email, account, nickname } = useSelector((state) => {
-    return state.user;
-  });
 
-  const auth = localStorage.getItem("userData");
+  const { side } = useSelector((state) => state.state);
 
-  function handleLogout() {
-    axios
-      .post(`http://localhost:3005/users/signout`, { withCredentials: true })
-      .then((res) => {
-        localStorage.clear();
-        dispatch(logout());
-        alert("logout 완료");
-      });
-  }
+  const handleLogout = async () => {
+    await logoutUser();
+    localStorage.clear();
+    dispatch(logout());
+  };
 
-  // 로그인 확인
+  const git = () => {
+    window.open("https://github.com/codestates-beb/BEB-06-SECOND-04");
+  };
+
+  const hide = () => {
+    dispatch(sideControl());
+  };
 
   return (
-    <StyledAll>
+    <StyledAll hide={side}>
       <StyledSidebar>
-        <StyledLogo>F4</StyledLogo>
+        <StyledLogo onClick={() => git()}>
+          <div
+            onMouseOver={(e) => (e.target.innerText = "gitHub")}
+            onMouseOut={(e) => (e.target.innerText = "F4")}
+          >
+            F4
+          </div>
+        </StyledLogo>
         <div style={{ padding: "1px 10px 306px" }}>
           <Link to="/" style={{ textDecoration: "none" }}>
             <StyledButton>
@@ -101,28 +139,32 @@ function Sidebar() {
             </StyledButton>
           </Link>
 
-          <Link to="/mint" style={{ textDecoration: "none" }}>
-            <StyledButton>
-              <FontAwesomeIcon
-                icon={faImage}
-                style={{ color: "white", marginRight: "15px" }}
-              />
-              Minting
-            </StyledButton>
-          </Link>
-          <Link to="/mypage" style={{ textDecoration: "none" }}>
-            <StyledButton>
-              <FontAwesomeIcon
-                icon={faUser}
-                style={{ color: "white", marginRight: "15px" }}
-              />
-              Mypage
-            </StyledButton>
-          </Link>
+          {validate() ? (
+            <div>
+              <Link to="/mint" style={{ textDecoration: "none" }}>
+                <StyledButton>
+                  <FontAwesomeIcon
+                    icon={faImage}
+                    style={{ color: "white", marginRight: "15px" }}
+                  />
+                  Minting
+                </StyledButton>
+              </Link>
+              <Link to="/mypage" style={{ textDecoration: "none" }}>
+                <StyledButton>
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    style={{ color: "white", marginRight: "15px" }}
+                  />
+                  Mypage
+                </StyledButton>
+              </Link>
+            </div>
+          ) : null}
         </div>
 
         <div style={{ padding: "10px 10px 40px 10px" }}>
-          {auth ? (
+          {validate() ? (
             <a href="/" style={{ textDecoration: "none" }}>
               <StyledButton2
                 style={{ backgroundColor: "tomato", cursor: "pointer" }}
@@ -143,6 +185,13 @@ function Sidebar() {
               </StyledButton2>
             </div>
           )}
+          <div className="hideButton cc" onClick={() => hide()}>
+            {side ? (
+              <FontAwesomeIcon icon="fa-solid fa-chevron-right" />
+            ) : (
+              <FontAwesomeIcon icon="fa-solid fa-chevron-left" />
+            )}
+          </div>
         </div>
       </StyledSidebar>
     </StyledAll>

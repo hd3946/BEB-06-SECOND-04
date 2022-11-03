@@ -1,19 +1,26 @@
 // 로그인, 회원 가입, (ex) 회원 탈퇴
-import { post } from './index';
+import { post } from "./index";
 
-// 회원가입 API
-function registerUser(userData) {
-  return post.post('signup', userData);  // http://localhost:3005/post/signup
+// 전체 글 목록 가져오기
+function postListCall() {
+  return post.get("list"); //http://localhost:3005/post/list
 }
 
-// 로그인 API
-function loginUser(userData) {
-  return post.post('signin', userData);  
+// 글 작성
+function postWrite(postData) {
+  return post.post("write", postData);
 }
 
-// 로그아웃 API
-function logoutUser() {
-  return post.post('signout');
+// 글 수정
+function postUpdate(postData) {
+  console.log(postData);
+  return post.post("edit", postData);
 }
 
-export { registerUser, loginUser, logoutUser };
+// 글 삭제
+function postDelete(postData) {
+  console.log(postData);
+  return post.post("delete", postData);
+}
+
+export { postListCall, postWrite, postUpdate, postDelete };

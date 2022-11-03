@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import MainTop from "./MainTop";
+import SearchAndPost from "./SearchAndPost";
 import styled from "styled-components";
 import PageList from "./PageList";
 import { useDispatch } from "react-redux";
-import axios from "axios";
 import { postlist } from "../../../store/slice";
+import { postListCall } from "../../../api/post";
 
 const MainPageBox = styled.div`
   padding-top: 50px;
@@ -14,22 +14,18 @@ const MainPageBox = styled.div`
 const MainPage = () => {
   const dispatch = useDispatch();
 
-  const listUpdate = () => {
-    axios
-      .get(`http://localhost:3005/post/list`)
-      .then((res) => {
-        dispatch(postlist({ list: res.data.postList }));
-      })
-      .catch((err) => alert(err));
+  const listCall = async () => {
+    const { data } = await postListCall();
+    dispatch(postlist({ list: data.postList.reverse() }));
   };
 
   useEffect(() => {
-    listUpdate();
+    listCall();
   }, []);
 
   return (
     <MainPageBox>
-      <MainTop />
+      <SearchAndPost />
       <PageList />
     </MainPageBox>
   );

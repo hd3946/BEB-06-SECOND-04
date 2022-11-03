@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@fortawesome/fontawesome-free/js/all.js";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { filtering, postlist } from "../../../store/slice";
+import { check, filtering, postlist } from "../../../store/slice";
+import { postListCall, postWrite } from "../../../api/post";
+import { validate } from "../../../libs/validate";
 
-const MainTopBox = styled.div`
+const SearchAndPostBox = styled.div`
   .inputBox {
     width: 100%;
     height: 100px;
@@ -48,9 +49,7 @@ const MainTopBox = styled.div`
       align-items: flex-end;
 
       width: 100%;
-      //height: 120px;
       margin-top: 20px;
-      /* background-color: rgba(255, 106, 106, 0.493); */
 
       input {
         width: 325px;
@@ -58,9 +57,10 @@ const MainTopBox = styled.div`
         padding: 5px 5px;
         border: 1px solid rgba(155, 155, 155, 0.5);
         border-bottom: 0px;
+        background-color: ${(props) =>
+          props.inputCheck.title ? "rgb(253, 255, 224)" : "white"};
         transition: 0.2s;
         :focus {
-          background-color: rgba(189, 189, 189, 0.1);
           outline: none;
         }
       }
@@ -71,27 +71,37 @@ const MainTopBox = styled.div`
           props.active ? "5px 70px 0px 5px" : "0px 70px 0px 5px"};
         border: 1px solid rgba(155, 155, 155, 0.5);
         border-bottom: 0px;
+        background-color: ${(props) =>
+          props.inputCheck.content ? "rgb(253, 255, 224)" : "white"};
         transition: 0.3s;
         :focus {
-          background-color: rgb(243, 243, 243);
           outline: none;
         }
       }
       .buttonBox {
-        //position: absolute;
         right: 10px;
-
-        background-color: rgba(255, 106, 106, 0.493);
         button {
           width: 337px;
           height: 30px;
           color: white;
-          background-color: rgb(82, 192, 255);
+          ${(props) =>
+            props.inputCheck.title && props.inputCheck.content
+              ? "background-color: rgb(82, 192, 255)"
+              : "background-color: rgb(255, 82, 82)"};
           border: 1px solid rgba(155, 155, 155, 0.5);
           cursor: pointer;
           transition: 0.2s;
           :hover {
-            background-color: rgba(82, 192, 255, 0.8);
+            ${(props) =>
+              props.inputCheck.title && props.inputCheck.content
+                ? css`
+                    background-color: rgb(25, 171, 255);
+                    cursor: pointer;
+                  `
+                : css`
+                    background-color: rgb(255, 82, 82);
+                    cursor: not-allowed;
+                  `};
           }
         }
       }
@@ -99,59 +109,60 @@ const MainTopBox = styled.div`
   }
 `;
 
-const MainTop = () => {
+const SearchAndPost = () => {
   const dispatch = useDispatch();
-  const { nickname } = useSelector((state) => state.user);
   const { list } = useSelector((state) => state.post);
 
   const [active, setActive] = useState(false);
-  const [text, setText] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [postData, setPostData] = useState({
     title: "",
     content: "",
   });
+  const [inputCheck, setInputCheck] = useState({
+    title: false,
+    content: false,
+  });
 
-  const searchFilter = () => {
-    console.log("검색 버튼 누름!");
-    const test = list.filter((data, index) => data.nickname === text);
-    dispatch(
-      filtering({
-        list: test,
-      })
-    );
-    console.log(test);
-    console.log(text);
+  const searchFilter = (searchText) => {
+    dispatch(check({ type: "loading" }));
+    const filterList = list.filter((data, index) => {
+      return data.User.nickname === searchText;
+    });
+    dispatch(filtering({ list: filterList }));
+    setSearchText("");
+    dispatch(check({ type: "" }));
   };
-  // /post
-  const posting = () => {
-    console.log("포스팅 post 요청");
-    axios
-      .post(
-        `http://localhost:3005/post/write`,
-        {
-          title: postData.title,
-          content: postData.content,
-        },
-        { "Content-Type": "application/json", withCredentials: true }
-      )
-      .then((res) => {
-        console.log(res);
-        // dispatch()
-        return axios
-          .get(`http://localhost:3005/post/list`)
-          .then((res) => {
-            dispatch(postlist({ list: res.data.postList }));
-          })
-          .catch((err) => alert(err));
-      })
-      .catch((err) => alert(err));
+
+  const posting = async () => {
+    const { title, content } = inputCheck;
+
+    if (title && content) {
+      dispatch(check({ type: "loading" }));
+      const { status } = await postWrite(postData);
+
+      if (status) {
+        const { data } = await postListCall();
+        dispatch(postlist({ list: data.postList.reverse() }));
+        setPostData({
+          title: "",
+          content: "",
+        });
+        setInputCheck({
+          title: false,
+          content: false,
+        });
+        dispatch(check({ type: "" }));
+        window.location.href = `/`;
+      }
+    }
   };
 
   const enterAction = (type) => {
-    const { title, content: desc } = postData;
+    const { title, content } = postData;
     if (type === "search") {
-      searchFilter();
-    } else if (type === "desc" && title && desc) {
+      searchFilter(searchText);
+    } else if (type === "desc" && title && content) {
       // 제목과 내용이 다 있을 경우
       posting();
     } else if (type === "desc" && !title) {
@@ -161,54 +172,83 @@ const MainTop = () => {
   };
 
   return (
-    <MainTopBox active={active}>
+    <SearchAndPostBox active={active} inputCheck={inputCheck}>
       <div className="inputBox">
         <div className="search">
           <input
             placeholder="찾을 사람 검색!"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 enterAction("search");
               }
             }}
           />
-          <div className="iconBox cc" onClick={() => searchFilter()}>
+          <div className="iconBox cc" onClick={() => searchFilter(searchText)}>
             <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
           </div>
         </div>
 
         <div
           className="postingBox"
+          onClick={() => {
+            if (!validate()) {
+              dispatch(check({ type: "login" }));
+            }
+          }}
           onFocus={() => setActive(true)}
           onBlur={() => setActive(false)}
         >
           <input
-            placeholder="무슨일이 일어나고 있나요? (title)"
-            value={postData.title}
-            onChange={(e) =>
-              setPostData({ ...postData, title: e.target.value })
+            placeholder={
+              validate()
+                ? "무슨일이 일어나고 있나요? (title)"
+                : "로그인을 해주세요!"
             }
+            tabIndex={validate() ? 1 : -1}
+            value={postData.title}
+            onChange={(e) => {
+              if (e.target.value) {
+                setInputCheck({
+                  ...inputCheck,
+                  title: true,
+                });
+              } else {
+                setInputCheck({
+                  ...inputCheck,
+                  title: false,
+                });
+              }
+              setPostData({ ...postData, title: e.target.value });
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 enterAction("desc");
               }
             }}
           />
-          {/* <input
-            placeholder="당신의 지갑주소를 알려주세요 (address)"
-            value={postData.address}
-            onChange={(e) =>
-              setPostData({ ...postData, address: e.target.value })
-            }
-          /> */}
+
           <textarea
             placeholder="자세하게 말해주세요! (contant)"
             className="ta"
+            tabIndex={validate() ? 1 : -1}
             value={postData.content}
-            maxLength={50}
+            maxLength={150}
             onChange={(e) => {
+              if (e.target.value) {
+                setInputCheck({
+                  ...inputCheck,
+                  content: true,
+                });
+              } else {
+                setInputCheck({
+                  ...inputCheck,
+                  content: false,
+                });
+              }
               setPostData({
                 ...postData,
                 content: e.target.value.replace(/\n/g, ""),
@@ -221,12 +261,12 @@ const MainTop = () => {
             }}
           />
           <div className="buttonBox cc" onClick={() => posting()}>
-            <button>Enter</button>
+            <button tabIndex={-1}>Enter</button>
           </div>
         </div>
       </div>
-    </MainTopBox>
+    </SearchAndPostBox>
   );
 };
 
-export default MainTop;
+export default SearchAndPost;

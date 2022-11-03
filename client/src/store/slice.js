@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 
 export const userSlice = createSlice({
   name: "userSlice",
@@ -23,13 +23,18 @@ export const userSlice = createSlice({
 
 export const postSlice = createSlice({
   name: "postSlice",
-  initialState: { list: [], filterList: [], commentList: [] },
+  initialState: { list: [], filterList: [], detailPage: [], commentList: [] },
   reducers: {
     postlist: (state, action) => {
       state.list = action.payload.list;
     },
     filtering: (state, action) => {
       state.filterList = action.payload.list;
+    },
+    detailPageCall: (state, action) => {
+      state.detailPage = current(state.list).filter((data, index) => {
+        return String(data.postId) === action.payload.postId;
+      });
     },
     comment: (state, action) => {
       state.conmentList = action.payload.comment;
@@ -39,7 +44,7 @@ export const postSlice = createSlice({
 
 export const stateSlice = createSlice({
   name: "stateSlice",
-  initialState: { control: null },
+  initialState: { control: null, side: false },
   reducers: {
     check: (state, action) => {
       if (action.payload.type === "error") {
@@ -56,9 +61,12 @@ export const stateSlice = createSlice({
         state.control = null;
       }
     },
+    sideControl: (state, action) => {
+      state.side = !state.side;
+    },
   },
 });
 
 export const { info, logout } = userSlice.actions;
-export const { postlist, filtering } = postSlice.actions;
-export const { check } = stateSlice.actions;
+export const { postlist, filtering, detailPageCall } = postSlice.actions;
+export const { check, sideControl } = stateSlice.actions;
