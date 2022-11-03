@@ -1,11 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
 import React, { useCallback, useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { postDelete, postUpdate } from "../../../api/post";
+import { postDelete, postLike, postUpdate } from "../../../api/post";
 import { postValidate } from "../../../libs/validate";
 
 const PageBox = styled.div`
@@ -137,49 +136,15 @@ const Page = ({ data }) => {
   const [updateContent, setUpdateContent] = useState(content);
 
   // 좋아요 작업하기
-  const likeUp = () => {
-    // 좋아요
-    // 서버에서 좋아요 개수 업데이트
-    // 클라에선 임시로 클릭한 글 좋아요 + 1 해주기
-    // 이후 글 새롭게 받아오면 좋아요 적용된 글 받을 수 있음
-    axios
-      .post(
-        `http://localhost:3005/post`,
-        {
-          email: "redux에 저장된 로그인한 유저 email을 넣어주기",
-          contentId: "좋아요 누른 contentID",
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => alert(err));
-  };
-  // 좋아요 취소 ? 필요한가?
-  const likeCancel = () => {
-    // 좋아요 취소
-    // 로그인한 유저의 좋아요 목록을 조회해 해당 글 아이디가 있다면
-    // 좋아요 취소 버튼을 노출하고 likeCancel 함수 연결
-    axios
-      .put(
-        `http://localhost:3005/post`,
-        {
-          email: "redux에 저장된 로그인한 유저 email을 넣어주기",
-          contentId: "좋아요 누른 contentID",
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => alert(err));
+  const likeUp = async () => {
+    console.log("좋아요 클릭!");
+    // console.log(data);
+    //const { status } = await postLike(postId);
+    //if (status === 200) {
+    // 해당 글의 좋아요 수를 가져와 임시로 1 더해주기
+    // 좋아요 이후 홈으로가거나 사용자가 새로고침을 하면 1+가 업데이트 된 글을 가져옴
+    // 이렇게 하는 이유는 좋아요 누를 때 리랜더링을 줄이기 위해
+    //}
   };
 
   const postUpdateCall = async () => {
@@ -287,11 +252,6 @@ const Page = ({ data }) => {
               <div
                 className="icon"
                 onClick={() => {
-                  // if (path === "detail") {
-                  //   setUpdateToggle(!updateTogglem);
-                  // } else {
-                  //   window.location.href = `/detail?${postId}`;
-                  // }
                   setUpdateToggle(!updateTogglem);
                 }}
               >
@@ -303,11 +263,11 @@ const Page = ({ data }) => {
             </div>
           ) : null}
 
-          <div className="icon">
+          {/* <div className="icon">
             <FontAwesomeIcon icon="fa-regular fa-message" />
-          </div>
+          </div> */}
 
-          <div className="icon" onClick={() => likeUp()}>
+          <div className="icon likeButton" onClick={() => likeUp()}>
             <FontAwesomeIcon icon="fa-heart-circle-plus" />
           </div>
         </div>
