@@ -13,11 +13,13 @@ function postWrite(postData) {
 
 // 글 수정
 function postUpdate(postData) {
+  console.log(postData);
   return post.post("edit", postData);
 }
 
 // 글 삭제
 function postDelete(postData) {
+  console.log(postData);
   return post.post("delete", postData);
 }
 

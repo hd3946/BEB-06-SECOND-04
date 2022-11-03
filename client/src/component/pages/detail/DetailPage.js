@@ -1,9 +1,11 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { postListCall } from "../../../api/post";
+import { detailPageCall, postlist } from "../../../store/slice";
 import Page from "../../common/page/Page";
 
 const DetailPageBox = styled.div`
@@ -87,15 +89,14 @@ const DetailPageBox = styled.div`
 `;
 
 const DetailPage = () => {
+  const dispatch = useDispatch();
   const location = useLocation();
-  const { pageId, data } = location.state;
-  console.log(location);
-
+  const { search } = location;
+  const postId = search.slice(1);
   const [content, setContent] = useState("");
 
   const { nickname, img } = useSelector((state) => state.user);
-  const { commentList } = useSelector((state) => state.post);
-  console.log(commentList);
+  const { detailPage, commentList } = useSelector((state) => state.post);
 
   // 댓글 작성
   const commentWrite = () => {
@@ -148,13 +149,21 @@ const DetailPage = () => {
       .then((res) => console.log(res))
       .catch((err) => alert(err));
   };
-  // localStorage.setItem("text", "data");
-  // console.log(localStorage);
-  //  console.log(document.cookie);
+
+  useEffect(() => {
+    const test = async () => {
+      const { data } = await postListCall();
+      dispatch(postlist({ list: data.postList.reverse() }));
+      dispatch(detailPageCall({ postId }));
+    };
+    test();
+    return;
+  }, [postId]);
+
   return (
     <DetailPageBox className="cc">
       <div className="pageBox">
-        <Page pos="detail" data={data} />
+        {detailPage.length > 0 ? <Page data={detailPage[0]} /> : null}
       </div>
       {/* 댓글 박스 */}
       <div className="createReply">

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@fortawesome/fontawesome-free/js/all.js";
 import styled, { css } from "styled-components";
@@ -8,7 +7,7 @@ import { check, filtering, postlist } from "../../../store/slice";
 import { postListCall, postWrite } from "../../../api/post";
 import { validate } from "../../../libs/validate";
 
-const MainTopBox = styled.div`
+const SearchAndPostBox = styled.div`
   .inputBox {
     width: 100%;
     height: 100px;
@@ -50,9 +49,7 @@ const MainTopBox = styled.div`
       align-items: flex-end;
 
       width: 100%;
-      //height: 120px;
       margin-top: 20px;
-      /* background-color: rgba(255, 106, 106, 0.493); */
 
       input {
         width: 325px;
@@ -82,10 +79,7 @@ const MainTopBox = styled.div`
         }
       }
       .buttonBox {
-        //position: absolute;
         right: 10px;
-
-        //background-color: rgba(255, 106, 106, 0.493);
         button {
           width: 337px;
           height: 30px;
@@ -115,12 +109,12 @@ const MainTopBox = styled.div`
   }
 `;
 
-const MainTop = () => {
+const SearchAndPost = () => {
   const dispatch = useDispatch();
   const { list } = useSelector((state) => state.post);
 
   const [active, setActive] = useState(false);
-  const [text, setText] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [postData, setPostData] = useState({
     title: "",
     content: "",
@@ -130,13 +124,14 @@ const MainTop = () => {
     content: false,
   });
 
-  const searchFilter = () => {
-    const test = list.filter((data, index) => data.nickname === text);
-    dispatch(
-      filtering({
-        list: test,
-      })
-    );
+  const searchFilter = (searchText) => {
+    dispatch(check({ type: "loading" }));
+    const filterList = list.filter((data, index) => {
+      return data.User.nickname === searchText;
+    });
+    dispatch(filtering({ list: filterList }));
+    setSearchText("");
+    dispatch(check({ type: "" }));
   };
 
   const posting = async () => {
@@ -158,6 +153,7 @@ const MainTop = () => {
           content: false,
         });
         dispatch(check({ type: "" }));
+        window.location.href = `/`;
       }
     }
   };
@@ -165,7 +161,7 @@ const MainTop = () => {
   const enterAction = (type) => {
     const { title, content } = postData;
     if (type === "search") {
-      searchFilter();
+      searchFilter(searchText);
     } else if (type === "desc" && title && content) {
       // 제목과 내용이 다 있을 경우
       posting();
@@ -176,14 +172,14 @@ const MainTop = () => {
   };
 
   return (
-    <MainTopBox active={active} inputCheck={inputCheck}>
+    <SearchAndPostBox active={active} inputCheck={inputCheck}>
       <div className="inputBox">
         <div className="search">
           <input
             placeholder="찾을 사람 검색!"
-            value={text}
+            value={searchText}
             onChange={(e) => {
-              setText(e.target.value);
+              setSearchText(e.target.value);
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -191,7 +187,7 @@ const MainTop = () => {
               }
             }}
           />
-          <div className="iconBox cc" onClick={() => searchFilter()}>
+          <div className="iconBox cc" onClick={() => searchFilter(searchText)}>
             <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
           </div>
         </div>
@@ -240,7 +236,7 @@ const MainTop = () => {
             className="ta"
             tabIndex={validate() ? 1 : -1}
             value={postData.content}
-            maxLength={50}
+            maxLength={150}
             onChange={(e) => {
               if (e.target.value) {
                 setInputCheck({
@@ -269,8 +265,8 @@ const MainTop = () => {
           </div>
         </div>
       </div>
-    </MainTopBox>
+    </SearchAndPostBox>
   );
 };
 
-export default MainTop;
+export default SearchAndPost;

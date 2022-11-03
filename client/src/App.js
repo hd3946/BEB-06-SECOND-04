@@ -6,15 +6,21 @@ import Detail from "./component/pages/detail/DetailPage";
 import Mint from "./component/pages/minting/MintingPage";
 import Mypage from "./component/pages/mypage/MyPage";
 import Modal from "./component/common/modal/Modal";
+import { useSelector } from "react-redux";
 
 function App() {
+  // 메모 훅 사용해서 리랜더링 최소화 하기 (목요일 할 것)
+  const { side } = useSelector((state) => state.state);
+
   return (
     <div>
       <div>
         <BrowserRouter>
           <Sidebar />
           <Modal />
-          <div style={{ paddingLeft: "14rem" }}>
+          <div
+            style={{ paddingLeft: side ? "0rem" : "14rem", transition: "0.2s" }}
+          >
             <Routes>
               <Route path="/" element={<Main />}></Route>
               <Route path="/detail" element={<Detail />}></Route>

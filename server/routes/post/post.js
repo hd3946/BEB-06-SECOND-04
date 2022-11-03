@@ -1,6 +1,7 @@
-import express from 'express';
+import express from "express";
 const router = express.Router();
-import upload from './upload.js';
+import upload from "./upload.js";
+
 
 import { db, sequelize } from '../../models/index.js';
 const { User, Post, Comment, PostLike, CommentLike } = db; 
@@ -109,16 +110,18 @@ router.post("/edit", upload.single("post"), async (req, res, next) => {
     const { id } = req.cookies.loginData;
     const { postId, title, content } = req.body;
     const data = await Post.findOne({ where: { id: postId } });
-    const postingUser = data.toJSON().userId
-    if (postingUser === id) { //수정은 작성자만 가능
-      const update = data.update({ //update 날짜는 자동으로 변경
-          title: title,
-          content: content,
-      })
+    const postingUser = data.toJSON().userId;
+    if (postingUser === id) {
+      //수정은 작성자만 가능
+      const update = data.update({
+        //update 날짜는 자동으로 변경
+        title: title,
+        content: content,
+      });
       return res.status(200).json({
         status: true,
         message: "edit success",
-      })
+      });
     } else {
       return res.status(401).json({
         status: false,
@@ -138,7 +141,8 @@ router.post("/delete", upload.single("post"), async (req, res, next) => {
     const { postId } = req.body;
     const data = await Post.findOne({ where: { id: postId } });
     const postingUser = data.toJSON().userId;
-    if (postingUser === id) { //삭제는 작성자만 가능
+    if (postingUser === id) {
+      //삭제는 작성자만 가능
       data.destroy();
       return res.status(200).json({
         status: true,

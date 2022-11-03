@@ -247,13 +247,7 @@ const SignPage = ({ control }) => {
       }
       dispatch(check({ type: "loading" }));
       if (email && nickname && password && address) {
-        const userData = {
-          email,
-          nickname,
-          password,
-          address,
-        };
-        const { status } = await registerUser(userData);
+        const { status } = await registerUser(userInfo);
         if (status === 200) {
           return dispatch(check({ type: "login" }));
         }

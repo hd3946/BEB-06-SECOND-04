@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import MainTop from "./MainTop";
+import SearchAndPost from "./SearchAndPost";
 import styled from "styled-components";
 import PageList from "./PageList";
 import { useDispatch } from "react-redux";
@@ -25,7 +25,7 @@ const MainPage = () => {
 
   return (
     <MainPageBox>
-      <MainTop />
+      <SearchAndPost />
       <PageList />
     </MainPageBox>
   );
