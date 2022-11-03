@@ -1,12 +1,18 @@
-import { db } from "../models/index.js";
+import { db, sequelize } from "../models/index.js";
 const { User, Post, Comment, PostLike, CommentLike } = db; 
 
 const getPostList = async () => {
   try {
     const result = await Post.findAll({
-      attributes: [['id', 'postId'], 'title', 'content', 'createdAt', 'updatedAt' ],
-      include: 
-      [
+      attributes: [
+        ['id', 'postId'], 
+        'title', 
+        'content', 
+        'img',
+        'createdAt', 
+        'updatedAt' 
+      ],
+      include: [
         { model: User, 
           attributes: ['email', 'nickname', 'profileurl'] 
         },
@@ -19,21 +25,28 @@ const getPostList = async () => {
           order: [['id', 'DESC']]
         },
         { model: Comment,
-          attributes: [['id', 'commentId'], 'content', 'createdAt', 'updatedAt', 'commenter', 'postId'], 
-          include: 
-          [{ model: User, 
-            attributes: ['email', 'nickname'] 
-          },
-          { model: CommentLike, 
-            // attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
-            include: [
-              { model: User, 
-              attributes: ['email', 'nickname', 'profileurl']}
-            ],
-            order: [['id', 'DESC']]
-          }],
+          attributes: [
+            ["id", "commentId"],
+            "content",
+            "createdAt",
+            "updatedAt",
+            "commenter",
+            "postId",
+          ],
+          include: [
+            { model: User,
+               attributes: ["email", "nickname", 'profileurl']},
+            { model: CommentLike, 
+              // attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
+              include: [
+                { model: User, 
+                attributes: ['email', 'nickname', 'profileurl']}
+              ],
+              order: [['id', 'DESC']]
+            }
+          ],
           order: [['id', 'DESC']]
-        }
+        },
       ],
       order: [['id', 'DESC']]
     });
@@ -46,12 +59,13 @@ const getPostList = async () => {
 
 const createPost = async (title, content, img, userId) => {
   try {
-    await Post.create({
+   const data = await Post.create({
       title,
       content,
       img,
       userId,
     }); 
+    return data;
   } catch (e) {
     throw Error('Error Occur', e);
   }
@@ -61,7 +75,7 @@ const deletePost = async (postId, id) => {
   try {
     const data = await Post.findOne({ where: { id: postId , userId: id } });
     data.destroy();
-  } catch (error) {
+  } catch (e) {
     throw Error('Error Occur', e);
   }
 }
@@ -95,7 +109,7 @@ const countLike = async (userId, postId) => {
         })); 
         result.count = count;
         result.status = true;
-    }else{
+    } else {
         await PostLike.destroy({ 
             where: {LikeUSerId: userId, LikePostId: postId} 
         });

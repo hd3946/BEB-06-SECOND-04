@@ -1,4 +1,5 @@
-import bcrypt from "bcrypt";
+import { db } from '../models/index.js'
+const { User } = db
 import ganache  from "../web3/web3.js";
 const { getEthBalance, getTokenBalance, getNftBalance } = ganache;
 import ipfsUpload from "../web3/ipfs.js";
@@ -46,7 +47,7 @@ const signup = async function (req, res, next) {
   
     try {
       //const hash = await bcrypt.hash(password, 10);
-      const makeUser = await createUser(email,password,nickname,address);
+      const makeUser = await createUser(email, password, nickname, address);
   
       return res.status(200).json({
         status: true,
@@ -69,7 +70,6 @@ const info = async (req, res, next) => {
     const { id, address } = loginData;
     try {
       const postList = await getUserPost(id);
-      // const weiBalance = await web3.eth.getBalance(address);
       const ethBalance = await getEthBalance(address);
       const tokenBalance = await getTokenBalance(address);
       const nftBalance = await getNftBalance(address);
@@ -84,7 +84,10 @@ const info = async (req, res, next) => {
       });
     } catch (err) {
       console.error(err);
-      return res.status(400).json({ status: false, message: e.message });
+      return res.status(400).json({ 
+        status: false, 
+        message: "유저정보 검색이 실패하였습니다" 
+      });
     }
 };
   
