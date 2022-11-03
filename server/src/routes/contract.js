@@ -1,6 +1,9 @@
 import express from 'express';
 const router = express.Router();
 import dotenv from 'dotenv';
+import ganache from '../web3/web3.js'
+import upload from "./upload.js";
+import ipfsUpload from "../web3/ipfs.js";
 dotenv.config();
 
 /* contract & wallet Addr */
@@ -8,8 +11,8 @@ const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
 const serverAddr = process.env.SERVER_ADDRESS; //가나슈1
 const serverKey = process.env.SERVER_PRIVATE_KEY; //가나슈1 비밀키
-// const userAddr = process.env.USER_ADDRESS           //가나슈2
-// const userPassword = process.env.USER_PRIVATE_KEY       //생성된 지갑 비밀번호
+const userAddr = process.env.USER_ADDRESS           //가나슈2
+const userPassword = process.env.USER_PRIVATE_KEY       //생성된 지갑 비밀번호
 
 /* web.eth */
 import Web3  from 'web3';
@@ -18,9 +21,9 @@ const web3 = new Web3('http://localhost:7545');
 /* Contract ABI setProvider */
 import Contract from 'web3-eth-contract';
 Contract.setProvider('http://localhost:7545');
-import tokenABI from '../../web3/tokenABI.js'; 
+import tokenABI from '../web3/tokenABI.js'; 
 const tokenContract = new Contract(tokenABI, tokenAddr);
-import nftABI from '../../web3/nftABI.js';
+import nftABI from '../web3/nftABI.js';
 const nftContract = new Contract(nftABI , nftAddr);
 
 
@@ -73,28 +76,39 @@ router.post("/mint", async (req, res, next) => {
 
   ////////////////////////////////////////////////////////////////////////////
 
+  // if (!req.cookies.loginData)
+  //   return res.status(401).json("로그인되어 있지 않습니다.");
   try {
-    const userAddr = req.cookies.loginData.address;
-    if (!req.cookies.loginData.address)
-      return res.status(401).json("로그인되어 있지 않습니다.");
-    const tokenTransfer = await tokenContract.methods
-      .transfer(serverAddr, 1)
-      .send({ from: userAddr });
-    if (tokenTransfer) {
-      const nftMint = await nftContract.methods
-        .mintNFT(userAddr, "testURI")
-        .send({ from: serverAddr });
-      const nftTokenId = await nftContract.methods._tokenIds().call();
-      const nftBalance = await nftContract.methods.balanceOf(userAddr).call();
+    // const userAddr = req.cookies.loginData.address;
+    const { name, description, attributes } = req.body;
+    const tokenBalance = await ganache.getTokenBalance(userAddr);
+    console.log(tokenBalance)
+    if (tokenBalance > 9) {
+      const details = { name, description , attributes , image: "image" }
+      const tokenURI = await ipfsUpload(JSON.stringify(details));
+      // const tokenTransfer = await ganache.receiveToken(userAddr, 10);
+      console.log("contract", tokenURI)
+      const nftMint = await ganache.nftMinting(userAddr, tokenURI);
+      const nftTokenId = await ganache.getNftTokenId();
+      // const nftBalance = await ganache.getNftBalance(userAddr);
+      // const resfreshTokenBalance = await ganache.getTokenBalance(userAddr);
       //tokenId를 데이터베이스에 저장
 
       return res.status(200).json({
         status: true,
         messege: "success",
-        nftTokenId,
-        nftBalance,
+        // nftTokenId,
+        // nftBalance,
+        // tokenBalance: resfreshTokenBalance,
       });
-    }
+    } else {
+      const giveContribution = await ganache.giveContribution (userAddr, 10);
+      return res.status(401).json({
+      status: false,
+      messege: "Not enough tokens",
+      tokenBalance,
+      });
+     }
   } catch (error) {
     next(error);
   }
