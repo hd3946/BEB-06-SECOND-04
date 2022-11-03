@@ -6,9 +6,7 @@
   "description": "프로젝트2",
   "main": "app.js",
   "scripts": {
-    "build": "babel app.js -d dist",
-    "dev": "npm run build && nodemon dist/index.js",
-    "start": "nodemon --exec babel-node ./app.js"
+    "start": "nodemon ./app.js --exec babel-node"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
@@ -18,14 +16,17 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.0.3",
+    "esm": "^3.2.25",
     "express": "~4.16.1",
     "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
     "http-errors": "~1.6.3",
     "ipfs-core": "^0.17.0",
+    "ipfs-http-client": "^59.0.0",
     "morgan": "~1.9.1",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^2.3.3",
+    "nodemon": "^2.0.20",
     "openzeppelin-solidity": "4.6.0",
     "sequelize": "^6.25.3",
     "sequelize-cli": "^6.5.2",
@@ -38,8 +39,6 @@
     "@babel/node": "^7.20.0",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.19.4",
-    "babel-loader": "^9.0.1",
-    "babel-plugin-module-resolver": "^4.1.0",
-    "nodemon": "^2.0.20"
+    "babel-loader": "^9.0.1"
   }
 }

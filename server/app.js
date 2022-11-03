@@ -1,14 +1,13 @@
 import express from "express";
-const app = express();
 import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import dotenv from "dotenv";
 dotenv.config();
-import { sequelize } from "./src/models/index.js";
-import routes from "./src/routes/index.js";
+import { sequelize } from "./models/index.js";
 
+const app = express();
 app.set("port", process.env.PORT || 3005);
 
 app.use(logger("dev"));
@@ -19,11 +18,8 @@ app.use(cookieParser());
 
 const corsOption = {
   origin: "http://localhost:3000",
-  methods: 'POST,PUT,DELETE,GET',
   credentials: true, // true로 하면 설정한 내용을 response 헤더에 추가 해줍니다.
-  optionsSuccessStatus: 200,
 };
-
 app.use(cors(corsOption));
 
 sequelize
@@ -35,7 +31,15 @@ sequelize
     console.error(err);
   });
 
-app.use("/", routes);
+import usersRouter from "./routes/users/users.js";
+import postRouter from "./routes/post/post.js";
+import contractRouter from "./routes/contract/contract.js";
+import commentRouter from "./routes/comment/comment.js";
+// router
+app.use("/users", usersRouter);
+app.use("/post", postRouter);
+app.use("/comment", commentRouter);
+app.use("/contract", contractRouter);
 
 // error handler
 app.use((err, req, res, next) => {
@@ -44,7 +48,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  return res.status(404).send("invalid path");
+  return res.status(404).send("invailed path");
 });
 
 app.listen(app.get("port"), () => {
