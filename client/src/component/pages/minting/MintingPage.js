@@ -1,8 +1,8 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { check } from "../../../store/slice";
+import DragDrop from "./DragDrop";
 
 const MintingPageBox = styled.div`
   display: flex;
@@ -24,6 +24,7 @@ const MintingPageBox = styled.div`
     flex-direction: column;
     margin-top: 70px;
     text-align: center;
+
     .mintingText1 {
       font-size: 20px;
       font-weight: 500;
@@ -89,87 +90,38 @@ const MintingPageBox = styled.div`
         height: 40px;
         border: 0px;
         color: white;
-
         background-color: rgb(82, 192, 255);
+        transition: 0.2s;
+        cursor: pointer;
+
+        :hover {
+          color: #000000;
+          background-color: rgb(0, 162, 255);
+        }
       }
     }
   }
 `;
 
 const MintingPage = () => {
-  const [imageView, setImage] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
-  const [nftName, setNftName] = useState("");
-  const [description, setDescription] = useState("");
+  const [fileData, setFileData] = useState(null); // 이미지 데이터
+  const [nftName, setNftName] = useState(""); // nft 이름
+  const [description, setDescription] = useState(""); // nft 설명
   const dispatch = useDispatch();
-  const { control } = useSelector((state) => state.state);
-  const { email } = useSelector((state) => {
-    return state.user;
-  });
 
-  useEffect(() => {
-    if (!email) {
-      dispatch(check({ type: "login" }));
-    }
-  }, []);
+  // const uploadImage = (e) => {
+  //   let file = e.target.files[0];
+  //   const file_url = URL.createObjectURL(file);
+  //   document.querySelector(".uploadImage").src = file_url;
+  //   setImage(true);
+  //   console.log(file_url);
+  //   //blob:http://localhost:3000/aad74c35-6ea4-4745-b791-fdc827a52a59
+  // };
 
-  const handleNftName = (e) => {
-    setNftName(e.target.value);
-    console.log(e.target.value);
-  };
-
-  const handleDescription = (e) => {
-    setDescription(e.target.value);
-    console.log(e.target.value);
-  };
-
-  const uploadImage = (e) => {
-    let file = e.target.files[0];
-    const file_url = URL.createObjectURL(file);
-    document.querySelector(".uploadImage").src = file_url;
-    setImage(true);
-    console.log(file_url);
-    //blob:http://localhost:3000/aad74c35-6ea4-4745-b791-fdc827a52a59
-  };
-
-  const handlePost = (e) => {
-    // if (e.target.files[0]) {
-    //   const img = new FormData();
-    //   img.append("file", e.target.files[0]);
-
-    //   //value 확인
-    //   for (let value of FormData.values()) {
-    //     console.log(value);
-    //   }
-
-    //   axios
-    //     .post(
-    //       "http://localhost:3005/contract/mint",
-    //       { token: 1, balance: 1 },
-    //       { "Content-Type": "application/json", withCredentials: true }
-    //     )
-    //     .then((res) => {
-    //       console.log(res.data);
-    //     })
-    //     .catch((err) => {
-    //       console.error(err);
-    //     });
-    // }
+  const handleMint = (e) => {
+    // 민팅 API 작성하기!
     dispatch(check({ type: "loading" }));
-    axios
-      .post(
-        "http://localhost:3005/contract/mint",
-        { token: 1, balance: 1 },
-        { "Content-Type": "application/json", withCredentials: true }
-      )
-      .then((res) => {
-        dispatch(check({ type: "success" }));
-        console.log(res.data);
-      })
-      .catch((err) => {
-        dispatch(check({ type: "error" }));
-        console.error(err);
-      });
+    dispatch(check({ type: "" }));
   };
 
   return (
@@ -180,34 +132,25 @@ const MintingPage = () => {
       <div className="mintingBody cc">
         <div className="mintingText1">Create your own NFT</div>
         <div className="mintingText2">Minting per 1 FTC</div>
-        <div className="mintingImg">
-          <label className="file_box" htmlFor="ex_file">
-            <div className="file_label_div"></div>
-          </label>
-          <input
-            type="file"
-            id="ex_file"
-            onChange={uploadImage}
-            name="image"
-            style={{ display: "none" }}
-          ></input>
-          <img className={"uploadImage" + (imageView ? "on" : "")}></img>
-          {/* <img
-            src="https://img.icons8.com/pastel-glyph/2x/image-file.png"
-            alt="파일 아이콘"
-            class="image"
-          /> */}
-          <p class="message">Drag & Drops your files here</p>
-          {/* <div className="mintingImg cc"></div> */}
-        </div>
+
+        <DragDrop setFileData={setFileData} fileData={fileData} />
+
         <div className="mintingNFTName">
-          <input placeholder="NFT name" onChange={handleNftName} />
+          <input
+            placeholder="NFT name"
+            value={nftName}
+            onChange={(e) => setNftName(e.target.value)}
+          />
         </div>
         <div className="mintingNFTDesc">
-          <textarea placeholder="Description" onChange={handleDescription} />
+          <textarea
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </div>
         <div className="mintingB">
-          <button onClick={handlePost}>MINTING</button>
+          <button onClick={() => handleMint()}>MINTING</button>
         </div>
       </div>
     </MintingPageBox>
