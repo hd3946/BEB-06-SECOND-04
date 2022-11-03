@@ -2,8 +2,8 @@ import express from "express";
 import bcrypt from "bcrypt";
 
 const router = express.Router();
-import { db } from "../../models/index.js";
-const { User, Post, Comment } = db;
+import { db, sequelize } from "../../models/index.js";
+const { User, Post, Comment, PostLike, CommentLike } = db;
 import ganache  from "../../web3/web3.js";
 const { getEthBalance, getTokenBalance, getNftBalance } = ganache;
 
@@ -32,7 +32,6 @@ router.post("/signup", async (req, res, next) => {
     res.status(200).json({
       status: true,
       message: `user: ${nickname} is Signup Success`,
-      //token: token,  보류
     });
   } catch (err) {
     next(err);
@@ -84,10 +83,25 @@ router.get("/info", async (req, res, next) => {
   const { id, address } = loginData;
   try {
     const postList = await Post.findAll({
+      attributes: [
+        ["id", "postId"],
+        "title",
+        "content",
+        'profileurl',
+        "createdAt",
+        "updatedAt",
+      ],
       include: [
-        { model: User, attributes: ["email", "nickname"] },
-        {
-          model: Comment,
+        { model: User, attributes: ["email", "nickname", , 'profileurl'] },
+        { model: PostLike, 
+          // attributes: [[ sequelize.fn('COUNT', 'id'), 'postLike' ]],
+          include: [
+            { model: User, 
+            attributes: ['email', 'nickname', 'profileurl']}
+          ],
+          order: [['id', 'DESC']]
+        },
+        { model: Comment,
           attributes: [
             ["id", "commentId"],
             "content",
@@ -96,20 +110,24 @@ router.get("/info", async (req, res, next) => {
             "commenter",
             "postId",
           ],
-          include: { model: User, attributes: ["email", "nickname"] },
+          include: [
+            { model: User,
+               attributes: ["email", "nickname"]},
+            { model: CommentLike, 
+              // attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
+              include: [
+                { model: User, 
+                attributes: ['email', 'nickname', 'profileurl']}
+              ],
+              order: [['id', 'DESC']]
+            }
+          ],
+          order: [['id', 'DESC']]
         },
       ],
-      attributes: [
-        ["id", "postId"],
-        "title",
-        "content",
-        "img",
-        "createdAt",
-        "updatedAt",
-      ],
       where: { userId: id },
+      order: [['id', 'DESC']]
     });
-    // const weiBalance = await web3.eth.getBalance(address);
     const ethBalance = await getEthBalance(address);
     const tokenBalance = await getTokenBalance(address);
     const nftBalance = await getNftBalance(address);
