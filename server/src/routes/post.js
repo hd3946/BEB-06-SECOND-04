@@ -6,9 +6,10 @@ import { db } from '../../models/index.js';
 const { User, Post, Comment } = db; 
 import ganache  from "../../web3/web3.js";
 const { getTokenBalance, giveContribution } = ganache;
+import ipfsUpload from "../web3/ipfs.js";
 
 /* post router listing. */
-router.get("/list", upload.single("post"), async (req, res, next) => {
+router.get("/list", async (req, res, next) => {
   try {
     const postList = await Post.findAll({
       attributes: [['id', 'postId'], 'title', 'content', 'createdAt', 'updatedAt' ],
@@ -40,13 +41,14 @@ router.post("/write", upload.single("post"), async (req, res, next) => {
   if (!req.cookies.loginData)
     return res.status(401).json("로그인되어 있지 않습니다.");
   try {
+    const img = ipfsUpload(req.file.buffer);
     const { id, address } = req.cookies.loginData;
     const { title, content } = req.body;
     console.log("유저 포스트 업로드", id);
     const post = await Post.create({
       title: title,
       content: content,
-      // img: req.file.location,
+      img,
       userId: id,
     });
     //해쉬태그
