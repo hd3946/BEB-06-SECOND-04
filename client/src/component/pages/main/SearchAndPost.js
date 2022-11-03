@@ -129,7 +129,8 @@ const SearchAndPost = () => {
     const filterList = list.filter((data, index) => {
       return data.User.nickname === searchText;
     });
-    dispatch(filtering({ list: filterList }));
+
+    dispatch(filtering({ list: filterList.reverse() }));
     setSearchText("");
     dispatch(check({ type: "" }));
   };
