@@ -2,37 +2,49 @@ import express from "express";
 const router = express.Router();
 import upload from "./upload.js";
 
-import { db } from "../../models/index.js";
-const { User, Post, Comment } = db;
-import ganache from "../../web3/web3.js";
+
+import { db, sequelize } from '../../models/index.js';
+const { User, Post, Comment, PostLike, CommentLike } = db; 
+import ganache  from "../../web3/web3.js";
 const { getTokenBalance, giveContribution } = ganache;
+import ipfsUpload from "../web3/ipfs.js";
 
 /* post router listing. */
-router.get("/list", upload.single("post"), async (req, res, next) => {
+router.get("/list", async (req, res, next) => {
   try {
     const postList = await Post.findAll({
-      attributes: [
-        ["id", "postId"],
-        "title",
-        "content",
-        "createdAt",
-        "updatedAt",
-      ],
-      include: [
-        { model: User, attributes: ["email", "nickname"] },
-        {
-          model: Comment,
-          attributes: [
-            ["id", "commentId"],
-            "content",
-            "createdAt",
-            "updatedAt",
-            "commenter",
-            "postId",
-          ],
-          include: { model: User, attributes: ["email", "nickname"] },
+      attributes: [['id', 'postId'], 'title', 'content', 'createdAt', 'updatedAt' ],
+      include: 
+      [
+        { model: User, 
+          attributes: ['email', 'nickname', 'profileurl'] 
         },
+        { model: PostLike, 
+          // attributes: [[ sequelize.fn('COUNT', 'id'), 'postLike' ]],
+          include: [
+            { model: User, 
+            attributes: ['email', 'nickname', 'profileurl']}
+          ],
+          order: [['id', 'DESC']]
+        },
+        { model: Comment,
+          attributes: [['id', 'commentId'], 'content', 'createdAt', 'updatedAt', 'commenter', 'postId'], 
+          include: 
+          [{ model: User, 
+            attributes: ['email', 'nickname'] 
+          },
+          { model: CommentLike, 
+            // attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
+            include: [
+              { model: User, 
+              attributes: ['email', 'nickname', 'profileurl']}
+            ],
+            order: [['id', 'DESC']]
+          }],
+          order: [['id', 'DESC']]
+        }
       ],
+      order: [['id', 'DESC']]
     });
     return res.status(200).json({
       status: true,
@@ -48,13 +60,14 @@ router.post("/write", upload.single("post"), async (req, res, next) => {
   if (!req.cookies.loginData)
     return res.status(401).json("로그인되어 있지 않습니다.");
   try {
+    const img = ipfsUpload(req.file.buffer);
     const { id, address } = req.cookies.loginData;
     const { title, content } = req.body;
     console.log("유저 포스트 업로드", id);
     const post = await Post.create({
       title: title,
       content: content,
-      // img: req.file.location,
+      img,
       userId: id,
     });
     //해쉬태그
@@ -147,5 +160,48 @@ router.post("/delete", upload.single("post"), async (req, res, next) => {
     next(error);
   }
 });
+
+router.post("/like/:postId", async (req, res, next) => {
+  if (!req.cookies.loginData)
+    return res.status(401).json("로그인되어 있지 않습니다.");
+  try {
+    const userId = req.cookies.loginData.id;
+    const postId = req.params.postId; //작성되지 않은 postId일시 에러발생
+    const isLiked = await PostLike.findAll({ 
+      where: { LikeUSerId: userId, LikePostId: postId }
+    })
+    if (isLiked.length === 0) {
+      const data = await PostLike.create({
+        LikeUserId: userId,
+        LikePostId: postId
+      });
+      const count = await PostLike.findAll(({
+        attributes: [[ sequelize.fn('COUNT', 'id'), 'postLike' ]],
+        where: { LikePostId: postId }
+      }))
+    return res.status(200).json({
+      status: true,
+      message: "liked",
+      count, //현재 게시글 좋아요 갯수
+    })
+    } else {
+      const cancel = await PostLike.destroy({ 
+        where: {LikeUSerId: userId, LikePostId: postId} 
+      })
+      const count = await PostLike.findAll(({
+        attributes: [[ sequelize.fn('COUNT', 'id'), 'postLike' ]],
+        where: { LikePostId: postId }
+      }))
+      return res.status(200).json({
+        status: true,
+        message: "cancel liked",
+        count, //현재 게시글 좋아요 갯수
+      })
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 export default router;
