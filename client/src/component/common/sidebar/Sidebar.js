@@ -16,6 +16,7 @@ const StyledAll = styled.div`
   transition: 0.2s;
   transform: ${(props) =>
     props.hide ? "translateX(-225px)" : "translateX(0px)"};
+  z-index: 10;
 `;
 
 const StyledLogo = styled.div`

@@ -1,5 +1,12 @@
 import express from "express";
-import { signin, signout, signup, info, edit, follow } from "../controllers/user.controller.js";
+import {
+  signin,
+  signout,
+  signup,
+  info,
+  edit,
+  follow,
+} from "../controllers/user.controller.js";
 import upload from "./upload.js";
 const router = express.Router();
 

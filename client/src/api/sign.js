@@ -1,7 +1,7 @@
 import { sign } from "./index";
 
 function registerInfo() {
-  return sign.get("info");
+  return sign.post("info");
 }
 
 function registerUser(userData) {
@@ -12,8 +12,12 @@ function loginUser(userData) {
   return sign.post("signin", userData);
 }
 
+function updateProfileUser(imgData) {
+  return sign.post("signintes", imgData);
+}
+
 function logoutUser() {
   return sign.post("signout");
 }
 
-export { registerInfo, registerUser, loginUser, logoutUser };
+export { registerInfo, registerUser, loginUser, updateProfileUser, logoutUser };

@@ -1,7 +1,7 @@
 import { post } from "./index";
 
 function postListCall() {
-  return post.get("list"); //http://localhost:3005/post/list
+  return post.post("list"); //http://localhost:3005/post/list
 }
 
 function postWrite(postData) {
