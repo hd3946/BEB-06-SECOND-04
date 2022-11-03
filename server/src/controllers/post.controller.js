@@ -16,13 +16,11 @@ const listPost = async (req, res, next) => {
  
 //POST /write
 const writePost = async (req, res, next) => {
-    console.log("유저 포스트 업로드", id);
-    
     const { id, address } = req.cookies.loginData;
     const { title, content } = req.body;
-    const img = ipfsUpload(req.file.buffer);
+    // req.file.buffer
+    const img = await ipfsUpload('img');
     const post = await createPost(title, content, img, id);
-
     if (post) {
       //게시글 하나 작성할때마다 토큰을 하나 전송
       const transferToken = await giveContribution(address, 1); //user에게 token 1개를 전송

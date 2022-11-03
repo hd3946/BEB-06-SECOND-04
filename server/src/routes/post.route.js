@@ -5,7 +5,7 @@ import { isLoggedIn } from "./middleware.js";
 import { listPost, writePost, editPost ,deletedPost, likePost } from "../controllers/post.controller.js"
 
 /* post router listing. */
-router.post("/list", listPost);
+router.get("/list", listPost);
 router.post("/write", isLoggedIn, writePost);
 router.post("/edit", isLoggedIn, upload.single("post"), editPost);
 router.post("/delete", isLoggedIn, deletedPost);

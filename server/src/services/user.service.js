@@ -1,19 +1,19 @@
 import { db } from "../models/index.js";
-const { User, Post, Comment } = db;
+const { User, Post, PostLike, Comment, CommentLike } = db;
 
 const getUserData = async (email, password) => {
-    try{
+    try {
         const data = await User.findOne({
             where: { email, password },
         });
-        return data;
-    }catch (e){
-        throw Error('Error Occur', e);
+      return data;
+    } catch (e) {
+      throw Error('Error Occur', e);
     };
 };
 
-const createUser = async (email, nickname, password, address) => {
-    try{
+const createUser = async (email, password, nickname, address) => {
+    try {
         const result = await User.create({
             email,
             nickname,
@@ -21,24 +21,24 @@ const createUser = async (email, nickname, password, address) => {
             address,
         });
         return result;
-    }catch (e){
-        throw Error('Error Occur', e);
+    } catch (e) {
+      throw Error('Error Occur.', e);
     };
 };
 
 const getUserPost = async (userId) => {
-    try{
+    try {
       const postList = await Post.findAll({
         attributes: [
           ["id", "postId"],
           "title",
           "content",
-          'profileurl',
+          'img',
           "createdAt",
           "updatedAt",
         ],
         include: [
-          { model: User, attributes: ["email", "nickname", , 'profileurl'] },
+          { model: User, attributes: ["email", "nickname", 'profileurl']},
           { model: PostLike, 
             // attributes: [[ sequelize.fn('COUNT', 'id'), 'postLike' ]],
             include: [
@@ -58,7 +58,7 @@ const getUserPost = async (userId) => {
             ],
             include: [
               { model: User,
-                 attributes: ["email", "nickname"]},
+                 attributes: ["email", "nickname", 'profileurl']},
               { model: CommentLike, 
                 // attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
                 include: [
@@ -74,14 +74,14 @@ const getUserPost = async (userId) => {
         where: { userId: userId },
         order: [['id', 'DESC']]
       });
-          return postList;
-    }catch (e){
-        throw Error('Error while Paginating Users');
+      return postList;
+    } catch (e) {
+      throw Error('Error while Paginating Users', e);
     };
 };
 
 const updateUser = async (profileUrl,userId) => {
-    try{
+    try {
         const update = await User.update(
             {
               profileurl:profileUrl,
@@ -93,7 +93,7 @@ const updateUser = async (profileUrl,userId) => {
             }
           );
         return update;
-    }catch (e){
+    } catch (e){
         throw Error('Error Occur', e);
     };
 };

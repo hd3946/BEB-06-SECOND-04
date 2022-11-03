@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/signin", signin);
 router.post("/signout", signout);
 router.post("/signup", signup);
-router.post("/info", info);
+router.get("/info", info);
 router.post("/edit", edit);
 router.post("/follow/:id", upload.single("post"), follow);
 
