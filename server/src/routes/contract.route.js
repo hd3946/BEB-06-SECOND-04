@@ -1,10 +1,13 @@
-import express, { json } from 'express';
+import express from 'express';
 const router = express.Router();
 import dotenv from 'dotenv';
 import ganache from '../web3/web3.js'
 import upload from "./upload.js";
 import ipfsUpload from "../web3/ipfs.js";
 dotenv.config();
+
+import { db, sequelize } from "../models/index.js";
+const { User, Post, Comment, PostLike, CommentLike, Token } = db; 
 
 /* contract & wallet Addr */
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
@@ -61,12 +64,12 @@ router.post("/token", async (req, res, next) => {
 
 /* mint NFT */
 router.post("/mint", async (req, res, next) => {
-  if (!req.cookies.loginData)
-    return res.status(401).json("로그인되어 있지 않습니다.");
+  // if (!req.cookies.loginData)
+  //   return res.status(401).json("로그인되어 있지 않습니다.");
   try {
-    const userAddr = req.cookies.loginData.address;
+    const { id, address } = req.cookies.loginData;
     const { name, description, attributes } = req.body;
-    const tokenBalance = await ganache.getTokenBalance(userAddr);
+    const tokenBalance = await ganache.getTokenBalance(address);
     console.log("보유중인 토큰", tokenBalance)
     if (tokenBalance > 0) {
       const details = { 
@@ -75,17 +78,17 @@ router.post("/mint", async (req, res, next) => {
         "attributes": attributes , 
       }
       const jsonData = JSON.stringify(details);
-      console.log(jsonData)
       const tokenURI = await ipfsUpload(jsonData);
-      const tokenTransfer = await ganache.receiveToken(userAddr, 1); //1개로 교환가능
-      const nftMint = await ganache.nftMinting(userAddr, tokenURI);
+      const tokenTransfer = await ganache.receiveToken(address, 1); //1개로 교환가능
+      const nftMint = await ganache.nftMinting(address, tokenURI);
       const nftTokenId = await ganache.getNftTokenId();
-      const nftBalance = await ganache.getNftBalance(userAddr);
-      const resfreshTokenBalance = await ganache.getTokenBalance(userAddr);
-      //tokenId를 데이터베이스에 저장
-
+      const nftBalance = await ganache.getNftBalance(address);
+      const resfreshTokenBalance = await ganache.getTokenBalance(address);
+      await Token.create({
+        tokenId: nftTokenId,
+        userId: id,
+      }); 
       return res.status(200).json({
-
         status: true,
         messege: "success",
         nftTokenId,
@@ -93,15 +96,15 @@ router.post("/mint", async (req, res, next) => {
         tokenBalance: resfreshTokenBalance,
       });
     } else {
-      const tokenTransfer = await ganache.giveContribution(userAddr, 10);
+      const tokenTransfer = await ganache.giveContribution(address, 10); //test용
       return res.status(401).json({
       status: false,
       messege: "Not enough tokens",
       tokenBalance,
       });
      }
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 });
  
