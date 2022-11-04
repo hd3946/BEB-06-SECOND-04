@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { json } from 'express';
 const router = express.Router();
 import dotenv from 'dotenv';
 import ganache from '../web3/web3.js'
@@ -69,8 +69,14 @@ router.post("/mint", async (req, res, next) => {
     const tokenBalance = await ganache.getTokenBalance(userAddr);
     console.log("보유중인 토큰", tokenBalance)
     if (tokenBalance > 0) {
-      const details = { name, description , attributes , image: "image" }
-      const tokenURI = await ipfsUpload(JSON.stringify(details));
+      const details = { 
+        "name": name, 
+        "description": description , 
+        "attributes": attributes , 
+      }
+      const jsonData = JSON.stringify(details);
+      console.log(jsonData)
+      const tokenURI = await ipfsUpload(jsonData);
       const tokenTransfer = await ganache.receiveToken(userAddr, 1); //1개로 교환가능
       const nftMint = await ganache.nftMinting(userAddr, tokenURI);
       const nftTokenId = await ganache.getNftTokenId();
@@ -79,6 +85,7 @@ router.post("/mint", async (req, res, next) => {
       //tokenId를 데이터베이스에 저장
 
       return res.status(200).json({
+
         status: true,
         messege: "success",
         nftTokenId,
@@ -86,6 +93,7 @@ router.post("/mint", async (req, res, next) => {
         tokenBalance: resfreshTokenBalance,
       });
     } else {
+      const tokenTransfer = await ganache.giveContribution(userAddr, 10);
       return res.status(401).json({
       status: false,
       messege: "Not enough tokens",

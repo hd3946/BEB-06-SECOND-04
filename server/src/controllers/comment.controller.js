@@ -80,7 +80,7 @@ const deletedComment = async (req, res, next) => {
       message: "delete success",
     }); 
 
-  } catch (error) {
+  } catch (err) {
     return res.status(401).json({
       status: false,
       message: "Not Authorized",
@@ -111,8 +111,8 @@ const likeComment = async (req, res, next) => {
       });
     }
    
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 

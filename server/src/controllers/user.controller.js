@@ -114,7 +114,7 @@ const edit = async (req, res, next) => {
       }
     } catch (err) {
       console.error(err);
-      next();
+      next(err);
     }
 };
   
@@ -124,13 +124,13 @@ const follow = async (req, res, next) => {
       const user = await User.findOne({ where: { id: req.user.id } });
       if (user) {
         await user.addFollowing(parseInt(req.params.id, 10));
-        res.send('success');
+        return res.send('success');
       } else {
-        res.status(404).send('no user');
+        return res.status(404).send('no user');
       }
-    } catch (error) {
-      console.error(error);
-      next(error);
+    } catch (err) {
+      console.error(err);
+      next(err);
     }
 };
  

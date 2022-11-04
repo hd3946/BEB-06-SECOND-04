@@ -5,6 +5,7 @@ import { getPostList, createPost, updatePost, deletePost, countLike } from '../s
 
 // GET /list
 const listPost = async (req, res, next) => {
+  try {
     const postList = await getPostList();
 
     return res.status(200).json({
@@ -12,10 +13,14 @@ const listPost = async (req, res, next) => {
         message: "전제글목록 검색",
         postList, //최신게시글목록
     });
+  } catch (err) {
+    next(err);
+  }
 } 
  
 //POST /write
 const writePost = async (req, res, next) => {
+  try {
     const { id, address } = req.cookies.loginData;
     const { title, content } = req.body;
     // req.file.buffer
@@ -38,68 +43,74 @@ const writePost = async (req, res, next) => {
         tokenBalance: tokenBalance,
       });
     }
+  } catch (err) {
+    next(err);
+  }
 }
   
 // POST "/edit"
 const editPost = async (req, res, next) => {
-    try {
-        const { id } = req.cookies.loginData;
-        const { postId, title, content } = req.body;
-        await updatePost(postId, id, title, content);
-        
-        return res.status(200).json({
-          status: true,
-          message: "edit success",
-        });
-      } catch (error) {
-        return res.status(401).json({
-          status: false,
-          message: "Not Authorized",
-        });
-      }
+  try {
+    const { id } = req.cookies.loginData;
+    const { postId, title, content } = req.body;
+    await updatePost(postId, id, title, content);
+    
+    return res.status(200).json({
+      status: true,
+      message: "edit success",
+    });
+  } catch (err) {
+    return res.status(401).json({
+      status: false,
+      message: "Not Authorized",
+    });
+  }
 } 
 
 // POST /delete  
 const deletedPost = async (req, res, next) => {
-    try {
-        const { id } = req.cookies.loginData;
-        const { postId } = req.body;
-        await deletePost(postId, id);
-    
-        return res.status(200).json({
-          status: true,
-          message: "delete success",
-        });
-       
-      } catch (error) {
-        return res.status(401).json({
-          status: false,
-          message: "Not Authorized",
-        });
-      }
+  try {
+      const { id } = req.cookies.loginData;
+      const { postId } = req.body;
+      await deletePost(postId, id);
+  
+      return res.status(200).json({
+        status: true,
+        message: "delete success",
+      });
+     
+  } catch (err) {
+    return res.status(401).json({
+      status: false,
+      message: "Not Authorized",
+    });
+  }
 } 
   
 //POST "/like/:postId" ,
 const likePost = async (req, res, next) => {
+  try {
     const userId = req.cookies.loginData.id;
     const postId = req.params.postId; //작성되지 않은 postId일시 에러발생
 
     const data = await countLike(userId, postId);
 
-    if(data.status){
-        return res.status(200).json({
-            status: true,
-            message: "liked",
-            count: data.count, //현재 게시글 좋아요 갯수
-        });
-    }
-    else{
-        return res.status(200).json({
-            status: true,
-            message: "cancel liked",
-            count: data.count, //현재 게시글 좋아요 갯수
-        });
+    if (data.status) {
+      return res.status(200).json({
+          status: true,
+          message: "liked",
+          count: data.count, //현재 게시글 좋아요 갯수
+      });
+    } else {
+      return res.status(200).json({
+          status: true,
+          message: "cancel liked",
+          count: data.count, //현재 게시글 좋아요 갯수
+      });
     } 
+  } catch (err) {
+    next(err);
+  }
 }
 
 export { listPost, writePost, editPost , deletedPost, likePost }
