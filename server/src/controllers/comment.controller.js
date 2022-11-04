@@ -80,7 +80,7 @@ const deletedComment = async (req, res, next) => {
       message: "delete success",
     }); 
 
-  } catch (error) {
+  } catch (err) {
     return res.status(401).json({
       status: false,
       message: "Not Authorized",
@@ -96,14 +96,14 @@ const likeComment = async (req, res, next) => {
     const userId = req.cookies.loginData.id;
     const commentId = req.params.commentId; //작성되지않은 commentId일시 에러발생
     
-    const data = countComment(userId, commentId);
-    if(data.status){
+    const data = await countComment(userId, commentId);
+    if (data.status) {
       return res.status(200).json({
         status: true,
         message: "liked",
         count: data.count, //현재 코멘트 좋아요 갯수
       });
-    }else{
+    } else {
       return res.status(200).json({
         status: true,
         message: "cancel liked",
@@ -111,8 +111,8 @@ const likeComment = async (req, res, next) => {
       });
     }
    
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 

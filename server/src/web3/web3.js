@@ -10,8 +10,9 @@ const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
 const serverAddr = process.env.SERVER_ADDRESS;             //가나슈1
 const serverKey = process.env.SERVER_PRIVATE_KEY;          //가나슈1 비밀키
-// const userAddr = process.env.USER_ADDRESS               //가나슈2
-// const userPassword = process.env.USER_PRIVATE_KEY       //가나슈2 비밀키
+const userAddr = process.env.USER_ADDRESS               //가나슈2
+const userPassword = process.env.USER_PRIVATE_KEY       //가나슈2 비밀키
+
 
 /* setProvider & ABI */
 const web3 = new Web3('http://localhost:7545');
@@ -56,9 +57,11 @@ const getNftTokenId = async () => { //가장 최근에 만들어진 tokenId값
 }
 
 const nftMinting = async (address, tokenURI) => {
-  console.log('token', tokenURI)
+  console.log("NFT가 발행중입니다");
+  console.log("User", address);
+  console.log("tokenURI", tokenURI);
 
-  const nftMint = await nftContract.methods.mintNFT(address,"QmRVoEmiuQtjMq3xvkBWcG3xHFZBNZH1D9VKgKDowvkWRk").send({ from: serverAddr });
+  const nftMint = await nftContract.methods.mintNFT(address, tokenURI).send({ from: serverAddr, gasLimit: 200000});
   return nftMint;
 }
 
