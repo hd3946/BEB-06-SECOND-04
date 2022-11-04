@@ -27,7 +27,6 @@ Contract.setProvider("http://localhost:7545");
 import tokenABI from "../web3/tokenABI.js";
 const tokenContract = new Contract(tokenABI, tokenAddr);
 import nftABI from "../web3/nftABI.js";
-import e from "express";
 const nftContract = new Contract(nftABI, nftAddr);
 
 ///////////////////////////////////////////////////////////////////////////
