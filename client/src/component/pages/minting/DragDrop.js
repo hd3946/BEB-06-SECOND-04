@@ -42,10 +42,7 @@ const DragDropBox = styled.div`
   }
 `;
 
-const DragDrop = ({ setFileData, fileData }) => {
-  const [imgURL, setImgURL] = useState(null);
-  //imgURL base64 엄청 긴..
-  console.log(imgURL);
+const DragDrop = ({ setFileData, fileData, imgURL, setImageUrl }) => {
   const dragRef = useRef(null);
   const dispatch = useDispatch();
 
@@ -64,7 +61,7 @@ const DragDrop = ({ setFileData, fileData }) => {
       reader.readAsDataURL(file); // URL get
       return new Promise((resolve) => {
         reader.onload = () => {
-          setImgURL(reader.result);
+          setImageUrl(reader.result);
           resolve();
           setFileData(selectFiles[0]);
           dispatch(check({ type: "" }));
@@ -146,7 +143,7 @@ const DragDrop = ({ setFileData, fileData }) => {
           <div
             className="close"
             onClick={() => {
-              setImgURL(null);
+              setImageUrl(null);
               setFileData(null);
             }}
           >
