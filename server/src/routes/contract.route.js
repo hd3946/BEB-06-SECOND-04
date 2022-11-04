@@ -27,6 +27,7 @@ Contract.setProvider("http://localhost:7545");
 import tokenABI from "../web3/tokenABI.js";
 const tokenContract = new Contract(tokenABI, tokenAddr);
 import nftABI from "../web3/nftABI.js";
+import e from "express";
 const nftContract = new Contract(nftABI, nftAddr);
 
 ///////////////////////////////////////////////////////////////////////////
@@ -61,18 +62,19 @@ router.post("/token", async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////
 
 /* mint NFT */
-router.post("/mint", async (req, res, next) => {
+router.post("/mint", upload.single('image'), async (req, res, next) => {
   if (!req.cookies.loginData)
     return res.status(401).json("로그인되어 있지 않습니다.");
   try {
     const { id, address } = req.cookies.loginData;
-    const { name, description, attributes, file } = req.body;
+    const { name, description, attributes } = req.body;
+    const file = req.file;
 
     const tokenBalance = await ganache.getTokenBalance(address);
     console.log("보유중인 토큰", tokenBalance);
     if (tokenBalance > 0) {
-      const imgURI = await ipfsUpload(file);
-      console.log(imgURI);
+      const imgURI = await ipfsUpload(file ? file.buffer : "empty");
+      console.log("imgURI", imgURI)
       const details = {
         name: name,
         description: description,
