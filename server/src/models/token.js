@@ -25,6 +25,6 @@ export default class Token extends Sequelize.Model {
   }
 
   static associate(db) {
-    
+    db.Token.belongsTo(db.User, { foreignKey: 'userId', targetKey: 'id', onDelete: 'cascade', onUpdate: 'cascade' });
   }
 };
