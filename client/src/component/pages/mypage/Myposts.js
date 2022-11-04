@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import { postlist } from "../../../store/slice";
+import { postListCall } from "../../../api/post";
 
 const MypostsBox = styled.div`
   width: 100%;
@@ -55,17 +58,30 @@ const MypostsBox = styled.div`
 `;
 
 const Myposts = () => {
+  const dispatch = useDispatch();
   const { list } = useSelector((state) => state.post);
+  const listCall = async () => {
+    const { data } = await postListCall();
+    dispatch(postlist({ list: data.postList }));
+  };
+
+  const myList = list.filter(
+    (a) => a.User.email === JSON.parse(localStorage["userData"]).email
+  );
+
+  useEffect(() => {
+    listCall(); // mypage에서 새로고침 되면 list 가 empty .. 한번더 call
+  }, []);
 
   return (
     <MypostsBox>
       <div className="mypostsHeader">My Posts</div>
       <div className="mypostsList">
-        {list.length > 0 ? (
-          list.map((data, index) => (
+        {myList.length > 0 ? (
+          myList.map((data, index) => (
             <Link to={"/detail"} key={index} state={{ pageId: 0, data: data }}>
               <div className="mypost" key={index}>
-                <div className="mypostIndex">#{data.id}</div>
+                <div className="mypostIndex">#{data.postId}</div>
                 <div className="mypostdesc">{data.content}</div>
                 <div className="mypostDay">{data.createdAt.slice(0, 10)}</div>
               </div>
