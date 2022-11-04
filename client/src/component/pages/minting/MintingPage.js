@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { check } from "../../../store/slice";
 import DragDrop from "./DragDrop";
+import axios from "axios";
 
 const MintingPageBox = styled.div`
   display: flex;
@@ -107,8 +108,14 @@ const MintingPage = () => {
   const [fileData, setFileData] = useState(null); // 이미지 데이터
   const [nftName, setNftName] = useState(""); // nft 이름
   const [description, setDescription] = useState(""); // nft 설명
+  const [imgURL, setImgURL] = useState(null); //imgURL base64
   const dispatch = useDispatch();
 
+  console.log(fileData);
+  //DragDrop 에서 imgURL 바꿔 줄 수 있는 함수
+  const setImageUrl = (data) => {
+    setImgURL(data);
+  };
   // const uploadImage = (e) => {
   //   let file = e.target.files[0];
   //   const file_url = URL.createObjectURL(file);
@@ -119,8 +126,47 @@ const MintingPage = () => {
   // };
 
   const handleMint = (e) => {
-    // 민팅 API 작성하기!
     dispatch(check({ type: "loading" }));
+
+    //base64 blob으로 바꿔주기
+    // const byteString = atob(imgURL.split(",")[1]);
+    // const ab = new ArrayBuffer(byteString.length);
+    // const ia = new Uint8Array(ab);
+    // for (let i = 0; i < byteString.length; i++) {
+    //   ia[i] = byteString.charCodeAt(i);
+    // }
+
+    // const blob = new Blob([ia], {
+    //   type: "image/jpeg",
+    // });
+    // const file = new File([blob], "image.jpg");
+    // console.log(file);
+
+    let formData = new FormData(); //formdata object
+
+    // formData.append("url", fileData);
+    formData.append("name", nftName);
+    formData.append("description", description);
+    formData.append("attributes", "attributes"); //attributes 만들기
+    formData.append("image", fileData);
+
+    // FormData의 value 확인
+    for (let value of formData.values()) {
+      console.log(value);
+    }
+
+    const config = {
+      "Content-Type": "multipart/form-data",
+      withCredentials: true,
+    };
+
+    axios
+      .post("http://localhost:3005/contract/mint", formData, config)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.err);
+
     dispatch(check({ type: "" }));
   };
 
@@ -133,7 +179,12 @@ const MintingPage = () => {
         <div className="mintingText1">Create your own NFT</div>
         <div className="mintingText2">Minting per 1 FTC</div>
 
-        <DragDrop setFileData={setFileData} fileData={fileData} />
+        <DragDrop
+          setFileData={setFileData}
+          fileData={fileData}
+          imgURL={imgURL}
+          setImageUrl={setImageUrl}
+        />
 
         <div className="mintingNFTName">
           <input
