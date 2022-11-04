@@ -1,12 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
 import React, { useCallback, useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { postDelete, postUpdate } from "../../../api/post";
-import { postValidate } from "../../../libs/validate";
+import {
+  postDelete,
+  postLike,
+  postListCall,
+  postUpdate,
+} from "../../../api/post";
+import { loginInfo, postValidate, validate } from "../../../libs/validate";
+import { detailPageCall, postlist } from "../../../store/slice";
 
 const PageBox = styled.div`
   width: 100%;
@@ -49,13 +55,12 @@ const PageBox = styled.div`
         left: -60px;
         width: 110%;
 
-        margin: 20px 0px 20px 0px;
+        margin: 20px 0px 10px 0px;
       }
       .updateContentBox {
         height: 100%;
         textarea {
           font-size: 16px;
-          margin-bottom: 0px;
           padding: 0px;
           border: 0px;
           background-color: antiquewhite;
@@ -64,7 +69,6 @@ const PageBox = styled.div`
         }
         .updateButton {
           height: 30px;
-          margin: 0;
           border: 1px solid black;
           background-color: antiquewhite;
           font-size: 18px;
@@ -79,20 +83,22 @@ const PageBox = styled.div`
   }
 
   .pageImgBox {
-    margin-top: 15px;
+    margin-top: 10px;
     background-color: rgba(82, 192, 255, 0.6);
   }
 
   .pageEtcBox {
     position: relative;
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
+    justify-content: space-between;
     margin: 10px 0px 10px 0px;
     .pageRorLBox {
-      position: absolute;
+      //position: absolute;
       left: 0px;
       display: flex;
       justify-content: space-between;
+
       .count {
         display: flex;
         align-items: center;
@@ -104,6 +110,7 @@ const PageBox = styled.div`
     .pageiconBox {
       display: flex;
       justify-content: space-between;
+
       .icon {
         display: flex;
         justify-content: center;
@@ -118,9 +125,48 @@ const PageBox = styled.div`
           background-color: rgba(0, 0, 0, 0.1);
         }
       }
+
       .delete {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        color: red;
+        font-weight: 700;
         :hover {
-          background-color: rgba(255, 0, 0, 0.5);
+          background-color: rgba(255, 0, 0, 0.3);
+        }
+
+        .t1 {
+          position: absolute;
+          right: 50%;
+          width: 50px;
+          height: 50px;
+          overflow: hidden;
+          transition: 0.3s;
+          transform: ${(props) =>
+            props.deleteCheck ? "translateX(-30px)" : null};
+
+          ::before {
+            position: absolute;
+            right: -11px;
+            content: "🗑️";
+          }
+        }
+        .t2 {
+          position: absolute;
+          left: 50%;
+          width: 50px;
+          height: 50px;
+          overflow: hidden;
+          transition: 0.3s;
+          transform: ${(props) =>
+            props.deleteCheck ? "translateX(30px)" : null};
+          ::after {
+            position: absolute;
+            left: -11px;
+            content: "🗑️";
+          }
         }
       }
     }
@@ -132,54 +178,24 @@ const Page = ({ data }) => {
   const location = useLocation();
   const { pathname } = location;
   const path = pathname.slice(1);
-  const { content, postId, title, User } = data;
-  const [updateTogglem, setUpdateToggle] = useState(false);
+  const { content, postId, title, User, PostLikes, Comments, img } = data;
+  const [updateToggle, setUpdateToggle] = useState(false);
   const [updateContent, setUpdateContent] = useState(content);
-
-  // 좋아요 작업하기
-  const likeUp = () => {
-    // 좋아요
-    // 서버에서 좋아요 개수 업데이트
-    // 클라에선 임시로 클릭한 글 좋아요 + 1 해주기
-    // 이후 글 새롭게 받아오면 좋아요 적용된 글 받을 수 있음
-    axios
-      .post(
-        `http://localhost:3005/post`,
-        {
-          email: "redux에 저장된 로그인한 유저 email을 넣어주기",
-          contentId: "좋아요 누른 contentID",
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => alert(err));
-  };
-  // 좋아요 취소 ? 필요한가?
-  const likeCancel = () => {
-    // 좋아요 취소
-    // 로그인한 유저의 좋아요 목록을 조회해 해당 글 아이디가 있다면
-    // 좋아요 취소 버튼을 노출하고 likeCancel 함수 연결
-    axios
-      .put(
-        `http://localhost:3005/post`,
-        {
-          email: "redux에 저장된 로그인한 유저 email을 넣어주기",
-          contentId: "좋아요 누른 contentID",
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => alert(err));
+  const [deleteCheck, setDeleteCheck] = useState(false);
+  const [likeCheck, setLikeCheck] = useState(false);
+  console.log(data);
+  const dispatch = useDispatch();
+  const postLikeUp = async () => {
+    const { status } = await postLike(postId);
+    if (status) {
+      const pL = await postListCall();
+      dispatch(postlist({ list: pL.data.postList }));
+      if (path === "detail") {
+        window.location.href = `/detail?${postId}`;
+      } else {
+        setLikeCheck(false);
+      }
+    }
   };
 
   const postUpdateCall = async () => {
@@ -214,17 +230,29 @@ const Page = ({ data }) => {
   }, []);
 
   useEffect(() => {
-    if (updateTogglem && textareaRef.current) {
+    if (updateToggle && textareaRef.current) {
       textareaRef.current.focus();
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight + "px";
-    } else if (!updateTogglem) {
+    } else if (!updateToggle) {
       setUpdateContent(data.content);
     }
-  }, [updateTogglem]);
+  }, [updateToggle]);
+
+  useEffect(() => {
+    const signData = loginInfo();
+    if (!likeCheck) {
+      for (let like of PostLikes) {
+        if (like.User.nickname === signData.nickname) {
+          setLikeCheck(true);
+          return;
+        }
+      }
+    }
+  }, [PostLikes]);
 
   return (
-    <PageBox path={path}>
+    <PageBox path={path} deleteCheck={deleteCheck} likeCheck={likeCheck}>
       <div className="pageHeader">
         <div className="pageUserProfileBox cc">
           <img src="" alt="Profile" />
@@ -233,7 +261,7 @@ const Page = ({ data }) => {
           <Link
             to={`/detail?${postId}`}
             onClick={(e) => {
-              if (path === "detail" || updateTogglem) {
+              if (path === "detail" || updateToggle) {
                 e.preventDefault();
               }
             }}
@@ -243,7 +271,7 @@ const Page = ({ data }) => {
               <div className="pageUsertitle">{title}</div>
             </div>
           </Link>
-          {updateTogglem ? (
+          {updateToggle ? (
             <div className="updateContentBox">
               <textarea
                 ref={textareaRef}
@@ -267,19 +295,16 @@ const Page = ({ data }) => {
         </div>
       </div>
 
-      {data.img ? (
+      {img ? (
         <div className="pageImgBox">
-          <img src={data.img} alt="img 공간" />
+          <img src={img} alt="img 공간" />
         </div>
       ) : null}
-
       <div className="pageEtcBox">
-        {path === "detail" ? (
-          <div className="pageRorLBox">
-            <div className="count">0 Reply</div>
-            <div className="count">0 Likes</div>
-          </div>
-        ) : null}
+        <div className="pageRorLBox">
+          <div className="count">{Comments.length} Reply</div>
+          <div className="count">{PostLikes.length} Likes</div>
+        </div>
 
         <div className="pageiconBox">
           {postValidate(User.nickname) ? (
@@ -287,29 +312,45 @@ const Page = ({ data }) => {
               <div
                 className="icon"
                 onClick={() => {
-                  // if (path === "detail") {
-                  //   setUpdateToggle(!updateTogglem);
-                  // } else {
-                  //   window.location.href = `/detail?${postId}`;
-                  // }
-                  setUpdateToggle(!updateTogglem);
+                  setUpdateToggle(!updateToggle);
                 }}
               >
                 <FontAwesomeIcon icon="fa-solid fa-pen" />
               </div>
-              <div className="icon delete" onClick={() => postDeleteCall()}>
-                <FontAwesomeIcon icon="fa-solid fa-trash" />
+              <div
+                className="icon delete"
+                onClick={(e) => {
+                  if (!deleteCheck) {
+                    setDeleteCheck(true);
+                  } else if (deleteCheck) {
+                    postDeleteCall();
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (deleteCheck) {
+                    setDeleteCheck(false);
+                  }
+                }}
+              >
+                <div className="t1 cc" />
+                {deleteCheck ? "삭제?" : null}
+                <div className="t2 cc" />
               </div>
             </div>
           ) : null}
 
-          <div className="icon">
-            <FontAwesomeIcon icon="fa-regular fa-message" />
-          </div>
-
-          <div className="icon" onClick={() => likeUp()}>
-            <FontAwesomeIcon icon="fa-heart-circle-plus" />
-          </div>
+          {validate() ? (
+            <div className="icon likeButton" onClick={() => postLikeUp()}>
+              {likeCheck ? (
+                <FontAwesomeIcon
+                  icon="fa-solid fa-heart"
+                  style={{ color: "red" }}
+                />
+              ) : (
+                <FontAwesomeIcon icon="fa-heart-circle-plus" />
+              )}
+            </div>
+          ) : null}
         </div>
       </div>
     </PageBox>

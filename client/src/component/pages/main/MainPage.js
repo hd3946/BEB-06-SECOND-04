@@ -16,7 +16,7 @@ const MainPage = () => {
 
   const listCall = async () => {
     const { data } = await postListCall();
-    dispatch(postlist({ list: data.postList.reverse() }));
+    dispatch(postlist({ list: data.postList }));
   };
 
   useEffect(() => {

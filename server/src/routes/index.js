@@ -1,9 +1,9 @@
 import express from "express"; 
 const router = express.Router(); 
 
-import users from "./users.route.js"; 
+import usersRouter from "./users.route.js"; 
 import postRouter from "./post.route.js";
-import contractRouter from "./contract.js";
+import contractRouter from "./contract.route.js";
 import commentRouter from "./comment.route.js";
 
 /**
@@ -13,12 +13,12 @@ import commentRouter from "./comment.route.js";
  *   description: 유저 추가 수정 삭제 조회
  */
 
-router.use("/users", users); 
+router.use("/users", usersRouter); 
 
 /**
  * @swagger
  * tags:
- *  name: Posts
+ *  name: Posts 
  *  description: 게시글 추가 수정 삭제 조회
  */
 

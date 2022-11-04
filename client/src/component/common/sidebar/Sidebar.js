@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { check, logout, sideControl } from "../../../store/slice";
 import { validate } from "../../../libs/validate";
 import { logoutUser } from "../../../api/sign";
-import { useState } from "react";
+
 const StyledAll = styled.div`
   position: fixed;
   margin: 0;
@@ -16,6 +16,7 @@ const StyledAll = styled.div`
   transition: 0.2s;
   transform: ${(props) =>
     props.hide ? "translateX(-225px)" : "translateX(0px)"};
+  z-index: 10;
 `;
 
 const StyledLogo = styled.div`
@@ -52,7 +53,6 @@ const StyledSidebar = styled.div`
   height: 100vh;
   width: 14rem;
   background-color: #e0e0e0;
-
   .hideButton {
     position: absolute;
     width: 30px;
@@ -62,7 +62,6 @@ const StyledSidebar = styled.div`
     background-color: #c0c0c0;
     font-size: 34px;
     transition: 0.2s;
-
     :hover {
       background-color: #313131;
       color: #c0c0c0;

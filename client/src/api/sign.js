@@ -1,24 +1,23 @@
-// 로그인, 회원 가입, (ex) 회원 탈퇴
 import { sign } from "./index";
 
-// 회원가입 API
 function registerInfo() {
   return sign.get("info");
 }
 
-// 회원가입 API
 function registerUser(userData) {
   return sign.post("signup", userData);
 }
 
-// 로그인 API
 function loginUser(userData) {
   return sign.post("signin", userData);
 }
 
-// 로그아웃 API
+function updateProfileUser(imgData) {
+  return sign.post("signintes", imgData);
+}
+
 function logoutUser() {
   return sign.post("signout");
 }
 
-export { registerInfo, registerUser, loginUser, logoutUser };
+export { registerInfo, registerUser, loginUser, updateProfileUser, logoutUser };

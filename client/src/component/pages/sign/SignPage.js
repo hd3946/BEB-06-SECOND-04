@@ -213,13 +213,14 @@ const SignPage = ({ control }) => {
 
       if (status === 200) {
         const userInfoData = await registerInfo();
-        const { address, nickname, email, profileurl } =
+        const { address, nickname, email, profileurl, id } =
           userInfoData.data.loginData;
 
         dispatch(filtering({ list: userInfoData.data.postList }));
         localStorage.setItem(
           "userData",
           JSON.stringify({
+            id,
             nickname,
             email,
             profileImg: profileurl,

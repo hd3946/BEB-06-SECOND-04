@@ -1,8 +1,9 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { check } from "../../../store/slice";
+import DragDrop from "./DragDrop";
+import axios from "axios";
 
 const MintingPageBox = styled.div`
   display: flex;
@@ -24,6 +25,7 @@ const MintingPageBox = styled.div`
     flex-direction: column;
     margin-top: 70px;
     text-align: center;
+
     .mintingText1 {
       font-size: 20px;
       font-weight: 500;
@@ -89,87 +91,83 @@ const MintingPageBox = styled.div`
         height: 40px;
         border: 0px;
         color: white;
-
         background-color: rgb(82, 192, 255);
+        transition: 0.2s;
+        cursor: pointer;
+
+        :hover {
+          color: #000000;
+          background-color: rgb(0, 162, 255);
+        }
       }
     }
   }
 `;
 
 const MintingPage = () => {
-  const [imageView, setImage] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
-  const [nftName, setNftName] = useState("");
-  const [description, setDescription] = useState("");
+  const [fileData, setFileData] = useState(null); // 이미지 데이터
+  const [nftName, setNftName] = useState(""); // nft 이름
+  const [description, setDescription] = useState(""); // nft 설명
+  const [imgURL, setImgURL] = useState(null); //imgURL base64
   const dispatch = useDispatch();
-  const { control } = useSelector((state) => state.state);
-  const { email } = useSelector((state) => {
-    return state.user;
-  });
 
-  useEffect(() => {
-    if (!email) {
-      dispatch(check({ type: "login" }));
-    }
-  }, []);
-
-  const handleNftName = (e) => {
-    setNftName(e.target.value);
-    console.log(e.target.value);
+  console.log(fileData);
+  //DragDrop 에서 imgURL 바꿔 줄 수 있는 함수
+  const setImageUrl = (data) => {
+    setImgURL(data);
   };
+  // const uploadImage = (e) => {
+  //   let file = e.target.files[0];
+  //   const file_url = URL.createObjectURL(file);
+  //   document.querySelector(".uploadImage").src = file_url;
+  //   setImage(true);
+  //   console.log(file_url);
+  //   //blob:http://localhost:3000/aad74c35-6ea4-4745-b791-fdc827a52a59
+  // };
 
-  const handleDescription = (e) => {
-    setDescription(e.target.value);
-    console.log(e.target.value);
-  };
-
-  const uploadImage = (e) => {
-    let file = e.target.files[0];
-    const file_url = URL.createObjectURL(file);
-    document.querySelector(".uploadImage").src = file_url;
-    setImage(true);
-    console.log(file_url);
-    //blob:http://localhost:3000/aad74c35-6ea4-4745-b791-fdc827a52a59
-  };
-
-  const handlePost = (e) => {
-    // if (e.target.files[0]) {
-    //   const img = new FormData();
-    //   img.append("file", e.target.files[0]);
-
-    //   //value 확인
-    //   for (let value of FormData.values()) {
-    //     console.log(value);
-    //   }
-
-    //   axios
-    //     .post(
-    //       "http://localhost:3005/contract/mint",
-    //       { token: 1, balance: 1 },
-    //       { "Content-Type": "application/json", withCredentials: true }
-    //     )
-    //     .then((res) => {
-    //       console.log(res.data);
-    //     })
-    //     .catch((err) => {
-    //       console.error(err);
-    //     });
-    // }
+  const handleMint = (e) => {
     dispatch(check({ type: "loading" }));
+
+    //base64 blob으로 바꿔주기
+    // const byteString = atob(imgURL.split(",")[1]);
+    // const ab = new ArrayBuffer(byteString.length);
+    // const ia = new Uint8Array(ab);
+    // for (let i = 0; i < byteString.length; i++) {
+    //   ia[i] = byteString.charCodeAt(i);
+    // }
+
+    // const blob = new Blob([ia], {
+    //   type: "image/jpeg",
+    // });
+    // const file = new File([blob], "image.jpg");
+    // console.log(file);
+
+    let formData = new FormData(); //formdata object
+
+    // formData.append("url", fileData);
+    formData.append("name", nftName);
+    formData.append("description", description);
+    formData.append("attributes", "attributes"); //attributes 만들기
+    formData.append("image", fileData);
+
+    // FormData의 value 확인
+    for (let value of formData.values()) {
+      console.log(value);
+    }
+
+    const config = {
+      "Content-Type": "multipart/form-data",
+      withCredentials: true,
+    };
+
     axios
-      .post(
-        "http://localhost:3005/contract/mint",
-        { token: 1, balance: 1 },
-        { "Content-Type": "application/json", withCredentials: true }
-      )
+      .post("http://localhost:3005/contract/mint", formData, config)
       .then((res) => {
-        dispatch(check({ type: "success" }));
-        console.log(res.data);
+        console.log(res);
       })
-      .catch((err) => {
-        dispatch(check({ type: "error" }));
-        console.error(err);
-      });
+      .catch((err) => console.err);
+
+    dispatch(check({ type: "" }));
   };
 
   return (
@@ -180,34 +178,30 @@ const MintingPage = () => {
       <div className="mintingBody cc">
         <div className="mintingText1">Create your own NFT</div>
         <div className="mintingText2">Minting per 1 FTC</div>
-        <div className="mintingImg">
-          <label className="file_box" htmlFor="ex_file">
-            <div className="file_label_div"></div>
-          </label>
-          <input
-            type="file"
-            id="ex_file"
-            onChange={uploadImage}
-            name="image"
-            style={{ display: "none" }}
-          ></input>
-          <img className={"uploadImage" + (imageView ? "on" : "")}></img>
-          {/* <img
-            src="https://img.icons8.com/pastel-glyph/2x/image-file.png"
-            alt="파일 아이콘"
-            class="image"
-          /> */}
-          <p class="message">Drag & Drops your files here</p>
-          {/* <div className="mintingImg cc"></div> */}
-        </div>
+
+        <DragDrop
+          setFileData={setFileData}
+          fileData={fileData}
+          imgURL={imgURL}
+          setImageUrl={setImageUrl}
+        />
+
         <div className="mintingNFTName">
-          <input placeholder="NFT name" onChange={handleNftName} />
+          <input
+            placeholder="NFT name"
+            value={nftName}
+            onChange={(e) => setNftName(e.target.value)}
+          />
         </div>
         <div className="mintingNFTDesc">
-          <textarea placeholder="Description" onChange={handleDescription} />
+          <textarea
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </div>
         <div className="mintingB">
-          <button onClick={handlePost}>MINTING</button>
+          <button onClick={() => handleMint()}>MINTING</button>
         </div>
       </div>
     </MintingPageBox>

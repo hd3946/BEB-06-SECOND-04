@@ -21,3 +21,9 @@ export const postValidate = (postNickname) => {
     return false;
   }
 };
+
+export const loginInfo = () => {
+  if (JSON.parse(localStorage["userData"] !== undefined)) {
+    return JSON.parse(localStorage["userData"]);
+  }
+};

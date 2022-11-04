@@ -1,11 +1,12 @@
-import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { commentListCall, commentWrite } from "../../../api/comment";
 import { postListCall } from "../../../api/post";
 import { detailPageCall, postlist } from "../../../store/slice";
+import Comment from "../../common/comment/Comment";
 import Page from "../../common/page/Page";
 
 const DetailPageBox = styled.div`
@@ -55,37 +56,6 @@ const DetailPageBox = styled.div`
       }
     }
   }
-  .replyList {
-    flex-direction: column;
-    width: 100%;
-    margin-top: 25px;
-    .replyHeader {
-      display: flex;
-      width: 600px;
-      margin-top: 30px;
-      .replyUserProfileBox {
-        object-fit: cover;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background-color: rgba(82, 192, 255, 0.6);
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-      .replyUserBox {
-        width: 90%;
-        margin-left: 10px;
-        .replyUserName {
-          font-weight: 500;
-        }
-        .replyUserDesc {
-          margin-top: 10px;
-        }
-      }
-    }
-  }
 `;
 
 const DetailPage = () => {
@@ -94,71 +64,46 @@ const DetailPage = () => {
   const { search } = location;
   const postId = search.slice(1);
   const [content, setContent] = useState("");
+  const [commentList, setCommentList] = useState([]);
+  const [commentLender, setCommentLender] = useState(false);
 
-  const { nickname, img } = useSelector((state) => state.user);
-  const { detailPage, commentList } = useSelector((state) => state.post);
-
-  // 댓글 작성
-  const commentWrite = () => {
-    axios
-      .delete(
-        `http://localhost:3005/comment/write`,
-        {
-          nickname,
-          content,
-          img,
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => console.log(res))
-      .catch((err) => alert(err));
+  const { detailPage } = useSelector((state) => state.post);
+  console.log(commentList);
+  const handlerCommentList = async () => {
+    const { status, data } = await commentListCall(postId);
+    if (status) {
+      setCommentList(data.comments);
+      setCommentLender(false);
+    }
   };
 
-  //수정
-  const commentEdit = () => {
-    axios
-      .put(
-        `http://localhost:3005/comment/edit`,
-        {
-          content: "수정한 comment",
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => console.log(res))
-      .catch((err) => alert(err));
-  };
-  //삭제
-  const commentDelete = () => {
-    axios
-      .delete(
-        `http://localhost:3005/comment/delete`,
-        {
-          commentId: "선택한 contentId",
-        },
-        {
-          "Content-Type": "application/json",
-          withCredentials: true,
-        }
-      )
-      .then((res) => console.log(res))
-      .catch((err) => alert(err));
+  const handlerCommentWrite = async () => {
+    const { status } = await commentWrite({ postId, content });
+    if (status) {
+      setCommentLender(true);
+      setContent("");
+    }
   };
 
   useEffect(() => {
-    const test = async () => {
-      const { data } = await postListCall();
-      dispatch(postlist({ list: data.postList.reverse() }));
-      dispatch(detailPageCall({ postId }));
+    const detailPostCall = async () => {
+      const { status, data } = await postListCall();
+      if (status) {
+        dispatch(postlist({ list: data.postList }));
+        dispatch(detailPageCall({ postId }));
+      }
     };
-    test();
+    detailPostCall();
+    handlerCommentList();
+
     return;
   }, [postId]);
+
+  useEffect(() => {
+    if (commentLender) {
+      handlerCommentList();
+    }
+  }, [commentLender]);
 
   return (
     <DetailPageBox className="cc">
@@ -177,27 +122,22 @@ const DetailPage = () => {
           <img src="" alt="프사" />
         </div>
         <div className="createReplyB replyIn">
-          <button onClick={() => commentWrite()}>reply</button>
+          <button onClick={() => handlerCommentWrite()}>reply</button>
         </div>
       </div>
-      <div className="replyList cc">
-        {/* page 컴포넌트 사용 고려하기 */}
-        {commentList.length > 0 ? (
-          commentList.map((data, index) => (
-            <div className="replyHeader" key={index}>
-              <div className="replyUserProfileBox">
-                <img src={data.img} alt="Profile" />
-              </div>
-              <div className="replyUserBox">
-                <div className="replyUserName">{data.nickname}</div>
-                <div className="replyUserDesc">{data.comment}</div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div>작성된 댓글이 없습니다!</div>
-        )}
-      </div>
+      {commentList.length > 0 ? (
+        commentList.map((comment, index) => (
+          <Comment
+            key={index}
+            postId={postId}
+            comment={comment}
+            commentLender={commentLender}
+            setCommentLender={setCommentLender}
+          />
+        ))
+      ) : (
+        <div>작성된 댓글이 없습니다!</div>
+      )}
     </DetailPageBox>
   );
 };

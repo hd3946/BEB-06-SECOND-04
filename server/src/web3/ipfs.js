@@ -1,15 +1,13 @@
-import * as IPFS from "ipfs-core";
-import fs from 'fs';   
+import { create as ipfsHttpClient } from 'ipfs-http-client';
 
-const node = await IPFS.create();
-//fileName filePath
+const ipfs = ipfsHttpClient('/ip4/127.0.0.1/tcp/5001');
+
 const ipfsUpload = async (url) => { 
-  //const image = fs.readFileSync("./Image/metamask.png"); 
-  const addFile = await node.add(url);
+  const addFile = await ipfs.add(url);
   const initUri = "https://ipfs.io/ipfs/";
   const mkUrl = initUri + addFile.cid;
-  //console.log(mkUrl);
   return mkUrl;
 }
+
 export default ipfsUpload; 
 
