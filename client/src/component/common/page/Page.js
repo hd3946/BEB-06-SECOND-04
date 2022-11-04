@@ -11,6 +11,7 @@ import {
   postListCall,
   postUpdate,
 } from "../../../api/post";
+import { usePost } from "../../../hooks/usePostFilter";
 import { loginInfo, postValidate, validate } from "../../../libs/validate";
 import { filtering, postlist } from "../../../store/slice";
 
@@ -183,9 +184,8 @@ const Page = ({ data }) => {
   const [updateContent, setUpdateContent] = useState(content);
   const [deleteCheck, setDeleteCheck] = useState(false);
   const [likeCheck, setLikeCheck] = useState(false);
-
   const { searchText } = useSelector((state) => state.state);
-
+  console.log(content);
   const dispatch = useDispatch();
   const postLikeUp = async () => {
     const { status } = await postLike(postId);

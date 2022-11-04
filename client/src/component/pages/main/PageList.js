@@ -5,6 +5,7 @@ import Page from "../../common/page/Page";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useEffect } from "react";
+import { usePost } from "../../../hooks/usePostFilter";
 
 const PageListBox = styled.div`
   display: flex;
@@ -32,6 +33,10 @@ const PageListBox = styled.div`
 const PageList = () => {
   const [tap, setTap] = useState("ALL");
   const { list, filterList } = useSelector((state) => state.post);
+
+  // const [filterList, allList] = usePost("on");
+  // console.log(allList);
+  // console.log(filterList);
 
   useEffect(() => {
     if (filterList.length > 0) {
