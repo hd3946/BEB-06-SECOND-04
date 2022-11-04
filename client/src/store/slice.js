@@ -44,7 +44,7 @@ export const postSlice = createSlice({
 
 export const stateSlice = createSlice({
   name: "stateSlice",
-  initialState: { control: null, side: false },
+  initialState: { control: null, side: false, searchText: false },
   reducers: {
     check: (state, action) => {
       if (action.payload.type === "error") {
@@ -64,9 +64,16 @@ export const stateSlice = createSlice({
     sideControl: (state, action) => {
       state.side = !state.side;
     },
+    searchControl: (state, action) => {
+      if (action.payload.searchText) {
+        state.searchText = action.payload.searchText;
+      } else {
+        state.searchText = false;
+      }
+    },
   },
 });
 
 export const { info, logout } = userSlice.actions;
 export const { postlist, filtering, detailPageCall } = postSlice.actions;
-export const { check, sideControl } = stateSlice.actions;
+export const { check, sideControl, searchControl } = stateSlice.actions;

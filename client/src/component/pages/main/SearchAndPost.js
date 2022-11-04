@@ -3,7 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@fortawesome/fontawesome-free/js/all.js";
 import styled, { css } from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { check, filtering, postlist } from "../../../store/slice";
+import {
+  check,
+  filtering,
+  postlist,
+  searchControl,
+} from "../../../store/slice";
 import { postListCall, postWrite } from "../../../api/post";
 import { validate } from "../../../libs/validate";
 
@@ -130,6 +135,7 @@ const SearchAndPost = () => {
       return data.User.nickname === searchText;
     });
 
+    dispatch(searchControl({ searchText }));
     dispatch(filtering({ list: filterList.reverse() }));
     setSearchText("");
     dispatch(check({ type: "" }));

@@ -38,7 +38,7 @@ const PageList = () => {
       setTap("SEARCH");
     }
   }, [filterList]);
-  console.log(filterList);
+
   return (
     <PageListBox tap={tap} filterColor={filterList.length}>
       <div className="pageHeader">
@@ -55,11 +55,14 @@ const PageList = () => {
           SEARCH
         </div>
       </div>
+
       {tap === "ALL" ? (
         list.length > 0 ? (
           list.map((data, index) => <Page key={index} data={data} />)
         ) : (
-          <div>작성된 글이 없어요!</div>
+          <div className="cc" style={{ height: "150px" }}>
+            작성된 글이 없어요!
+          </div>
         )
       ) : filterList.length > 0 ? (
         filterList.map((data, index) => <Page key={index} data={data} />)

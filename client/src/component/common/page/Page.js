@@ -12,7 +12,7 @@ import {
   postUpdate,
 } from "../../../api/post";
 import { loginInfo, postValidate, validate } from "../../../libs/validate";
-import { detailPageCall, postlist } from "../../../store/slice";
+import { filtering, postlist } from "../../../store/slice";
 
 const PageBox = styled.div`
   width: 100%;
@@ -183,13 +183,23 @@ const Page = ({ data }) => {
   const [updateContent, setUpdateContent] = useState(content);
   const [deleteCheck, setDeleteCheck] = useState(false);
   const [likeCheck, setLikeCheck] = useState(false);
-  console.log(data);
+
+  const { searchText } = useSelector((state) => state.state);
+
   const dispatch = useDispatch();
   const postLikeUp = async () => {
     const { status } = await postLike(postId);
     if (status) {
       const pL = await postListCall();
       dispatch(postlist({ list: pL.data.postList }));
+      if (searchText) {
+        const filterList = pL.data.postList.filter((data, index) => {
+          return data.User.nickname === searchText;
+        });
+
+        dispatch(filtering({ list: filterList.reverse() }));
+      }
+
       if (path === "detail") {
         window.location.href = `/detail?${postId}`;
       } else {
@@ -241,7 +251,7 @@ const Page = ({ data }) => {
 
   useEffect(() => {
     const signData = loginInfo();
-    if (!likeCheck) {
+    if (!likeCheck && signData) {
       for (let like of PostLikes) {
         if (like.User.nickname === signData.nickname) {
           setLikeCheck(true);
