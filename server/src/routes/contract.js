@@ -84,8 +84,7 @@ router.post("/mint", async (req, res, next) => {
       const resfreshTokenBalance = await ganache.getTokenBalance(userAddr);
       //tokenId를 데이터베이스에 저장
 
-      return res.status(200).json({
-
+      return res.status(200).json({ 
         status: true,
         messege: "success",
         nftTokenId,

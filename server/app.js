@@ -12,7 +12,6 @@ import { swaggerUi, specs } from './src/swagger/swagger.js';
 
 app.set("port", process.env.PORT || 3005);
 
-app.use('/', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -38,6 +37,7 @@ sequelize
   });
 
 app.use("/", routes);
+app.use('/index', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 
 // error handler
 app.use((err, req, res, next) => {
