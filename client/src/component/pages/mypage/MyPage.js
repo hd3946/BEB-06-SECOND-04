@@ -60,7 +60,7 @@ const MypageBox = styled.div`
         justify-content: flex-end;
         align-items: center;
         right: 0px;
-        margin: 5px 10px;
+        margin: -19px 10px;
         transform: translateX(-10px);
         .coinIcon {
           width: 50px;
@@ -74,6 +74,8 @@ const MypageBox = styled.div`
           font-size: 18px;
           font-weight: 600;
         }
+      }
+      .editPhoto {
       }
       .faucetEth {
         position: absolute;
@@ -132,16 +134,17 @@ const Mypage = () => {
               }}
             >
               {nickname ? nickname.charAt(0).toUpperCase() : "?"}
-              <FontAwesomeIcon
-                icon={faCamera}
-                style={{ color: "white", size: "2px" }}
-              />
             </div>
             {/* <img src="" alt="프사"></img> */}
           </div>
         </div>
         <div className="headerLine" />
       </div>
+      <FontAwesomeIcon
+        icon={faCamera}
+        className="editPhoto"
+        style={{ padding: "14px", cursor: "pointer" }}
+      />
 
       <div className="mypageBody">
         <div className="mypageProfile">

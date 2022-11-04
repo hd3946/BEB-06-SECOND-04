@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { postlist } from "../../../store/slice";
@@ -8,7 +10,7 @@ import { postListCall } from "../../../api/post";
 
 const MypostsBox = styled.div`
   width: 100%;
-  margin-top: 30px;
+  margin-top: -16px;
   a {
     text-decoration: none;
     color: black;
@@ -20,8 +22,10 @@ const MypostsBox = styled.div`
   .mypostsList {
     height: 203px;
     margin-top: 10px;
-    border: 1px solid black;
+    border: 0px;
+    border-radius: 12px;
     overflow-y: auto;
+    background-color: #228fff26;
 
     .mypost {
       display: flex;
@@ -75,7 +79,9 @@ const Myposts = () => {
 
   return (
     <MypostsBox>
-      <div className="mypostsHeader">My Posts</div>
+      <div className="mypostsHeader">
+        <FontAwesomeIcon icon="fa-regular fa-envelope" /> My Post Box
+      </div>
       <div className="mypostsList">
         {myList.length > 0 ? (
           myList.map((data, index) => (

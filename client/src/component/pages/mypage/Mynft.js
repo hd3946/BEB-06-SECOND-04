@@ -1,5 +1,7 @@
 import axios from "axios";
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { useState } from "react";
 import { useEffect } from "react";
 import styled from "styled-components";
@@ -27,7 +29,7 @@ const MynftBox = styled.div`
       height: 180px;
       background-color: #bbd0ff;
       border: 1px solid black;
-      margin: 0px 10px 10px 0px;
+      margin: 0px 24px 10px 0px;
       cursor: pointer;
       transition: 0.2s;
       :hover {
@@ -66,7 +68,9 @@ const Mynft = () => {
 
   return (
     <MynftBox>
-      <div className="myNftHeader">My NFT</div>
+      <div className="myNftHeader">
+        <FontAwesomeIcon icon={faImage} /> My NFT Box
+      </div>
       <div className="myNftList">
         {nftList.length > 0 ? (
           nftList.map((data, index) => (
