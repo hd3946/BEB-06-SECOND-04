@@ -13,7 +13,8 @@ const commentDelete = (commentId) => {
   return comment.post("delete", commentId);
 };
 const commentLike = (commentId) => {
-  return comment.post("like", commentId);
+  console.log(commentId);
+  return comment.post(`like/${commentId}`);
 };
 
 export {

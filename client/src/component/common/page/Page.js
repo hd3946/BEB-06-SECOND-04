@@ -11,7 +11,7 @@ import {
   postListCall,
   postUpdate,
 } from "../../../api/post";
-import { loginInfo, postValidate } from "../../../libs/validate";
+import { loginInfo, postValidate, validate } from "../../../libs/validate";
 import { detailPageCall, postlist } from "../../../store/slice";
 
 const PageBox = styled.div`
@@ -90,10 +90,11 @@ const PageBox = styled.div`
   .pageEtcBox {
     position: relative;
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
+    justify-content: space-between;
     margin: 10px 0px 10px 0px;
     .pageRorLBox {
-      position: absolute;
+      //position: absolute;
       left: 0px;
       display: flex;
       justify-content: space-between;
@@ -182,7 +183,7 @@ const Page = ({ data }) => {
   const [updateContent, setUpdateContent] = useState(content);
   const [deleteCheck, setDeleteCheck] = useState(false);
   const [likeCheck, setLikeCheck] = useState(false);
-
+  console.log(data);
   const dispatch = useDispatch();
   const postLikeUp = async () => {
     const { status } = await postLike(postId);
@@ -301,7 +302,7 @@ const Page = ({ data }) => {
       ) : null}
       <div className="pageEtcBox">
         <div className="pageRorLBox">
-          <div className="count">0 Reply</div>
+          <div className="count">{Comments.length} Reply</div>
           <div className="count">{PostLikes.length} Likes</div>
         </div>
 
@@ -338,16 +339,18 @@ const Page = ({ data }) => {
             </div>
           ) : null}
 
-          <div className="icon likeButton" onClick={() => postLikeUp()}>
-            {likeCheck ? (
-              <FontAwesomeIcon
-                icon="fa-solid fa-heart"
-                style={{ color: "red" }}
-              />
-            ) : (
-              <FontAwesomeIcon icon="fa-heart-circle-plus" />
-            )}
-          </div>
+          {validate() ? (
+            <div className="icon likeButton" onClick={() => postLikeUp()}>
+              {likeCheck ? (
+                <FontAwesomeIcon
+                  icon="fa-solid fa-heart"
+                  style={{ color: "red" }}
+                />
+              ) : (
+                <FontAwesomeIcon icon="fa-heart-circle-plus" />
+              )}
+            </div>
+          ) : null}
         </div>
       </div>
     </PageBox>
