@@ -44,7 +44,8 @@ const DragDropBox = styled.div`
 
 const DragDrop = ({ setFileData, fileData }) => {
   const [imgURL, setImgURL] = useState(null);
-
+  //imgURL base64 엄청 긴..
+  console.log(imgURL);
   const dragRef = useRef(null);
   const dispatch = useDispatch();
 

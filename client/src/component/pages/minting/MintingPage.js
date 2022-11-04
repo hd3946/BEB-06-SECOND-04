@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { check } from "../../../store/slice";
 import DragDrop from "./DragDrop";
+import axios from "axios";
 
 const MintingPageBox = styled.div`
   display: flex;
@@ -119,8 +120,31 @@ const MintingPage = () => {
   // };
 
   const handleMint = (e) => {
-    // 민팅 API 작성하기!
     dispatch(check({ type: "loading" }));
+    console.log(fileData);
+    // 민팅 API 작성하기!
+    let formData = {}; //formdata object
+
+    // formData.append("url", fileData);
+    formData.name = nftName;
+    formData.description = description;
+    formData.attributes = ""; //attributes 만들기
+    formData.file = fileData.name;
+
+    console.log(formData);
+
+    const config = {
+      "Content-Type": "application/json",
+      withCredentials: true,
+    };
+
+    axios
+      .post("http://localhost:3005/contract/mint", formData, config)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.err);
+
     dispatch(check({ type: "" }));
   };
 
