@@ -84,7 +84,7 @@ const deletedComment = async (req, res, next) => {
       status: true,
       message: "delete success",
     });
-  } catch (error) {
+  } catch (err) {
     return res.status(401).json({
       status: false,
       message: "Not Authorized",
@@ -114,8 +114,8 @@ const likeComment = async (req, res, next) => {
         count: data.count, //현재 코멘트 좋아요 갯수
       });
     }
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 

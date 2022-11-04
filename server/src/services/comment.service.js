@@ -2,46 +2,38 @@ import { db, sequelize } from "../models/index.js";
 const { User, Comment, CommentLike } = db;
 
 const getCommentList = async (postId) => {
-  try {
-    const result = await Comment.findAll({
-      attributes: [
-        ["id", "commentId"],
-        "content",
-        "createdAt",
-        "updatedAt",
-        "commenter",
-        "postId",
-      ],
-      include: [
-        { model: User, attributes: ["email", "nickname", "profileurl"] },
-        {
-          model: CommentLike,
-          // attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
-          include: [
-            { model: User, attributes: ["email", "nickname", "profileurl"] },
-          ],
-          order: [["id", "DESC"]],
-        },
-      ],
-      where: { postId },
-      order: [["id", "DESC"]],
-    });
-    return result;
-  } catch (e) {
-    throw Error("Error Occur", e);
-  }
+  const result = await Comment.findAll({
+    attributes: [
+      ["id", "commentId"],
+      "content",
+      "createdAt",
+      "updatedAt",
+      "commenter",
+      "postId",
+    ],
+    include: [
+      { model: User, attributes: ["email", "nickname", "profileurl"] },
+      {
+        model: CommentLike,
+        // attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
+        include: [
+          { model: User, attributes: ["email", "nickname", "profileurl"] },
+        ],
+        order: [["id", "DESC"]],
+      },
+    ],
+    where: { postId },
+    order: [["id", "DESC"]],
+  });
+  return result;
 };
 
 const createComment = async (content, postId, id) => {
-  try {
-    await Comment.create({
-      content,
-      commenter: id, //작성자
-      postId, //게시글 위치 (삭제된 게시글이면 에러발생)
-    });
-  } catch (e) {
-    throw Error("Error Occur", e);
-  }
+  await Comment.create({
+    content,
+    commenter: id, //작성자
+    postId, //게시글 위치 (삭제된 게시글이면 에러발생)
+  });
 };
 
 const updateComment = async (commentId, id, content) => {
@@ -63,37 +55,32 @@ const deleteComment = async (commentId, id) => {
 
 const countComment = async (userId, commentId) => {
   const result = {};
-  try {
-    const isLiked = await CommentLike.findAll({
+  const isLiked = await CommentLike.findAll({
+    where: { LikeUserId: userId, LikeCommentId: commentId },
+  });
+  if (isLiked.length === 0) {
+    await CommentLike.create({
+      LikeUserId: userId,
+      LikeCommentId: commentId,
+    });
+    const count = await CommentLike.findAll({
+      attributes: [[sequelize.fn("COUNT", "id"), "commentLike"]],
+      where: { LikeCommentId: commentId },
+    });
+    result.count = count;
+    result.status = true;
+  } else {
+    await CommentLike.destroy({
       where: { LikeUserId: userId, LikeCommentId: commentId },
     });
-    if (isLiked.length === 0) {
-      await CommentLike.create({
-        LikeUserId: userId,
-        LikeCommentId: commentId,
-      });
-      const count = await CommentLike.findAll({
-        attributes: [[sequelize.fn("COUNT", "id"), "commentLike"]],
-        where: { LikeCommentId: commentId },
-      });
-      result.count = count;
-      result.status = true;
-    } else {
-      await CommentLike.destroy({
-        where: { LikeUserId: userId, LikeCommentId: commentId },
-      });
-      const count = await CommentLike.findAll({
-        attributes: [[sequelize.fn("COUNT", "id"), "commentLike"]],
-        where: { LikeCommentId: commentId },
-      });
-      result.count = count;
-      result.status = false;
-    }
-    return result;
-  } catch (e) {
-    console.log(e);
-    throw Error("Error Occur", e);
+    const count = await CommentLike.findAll({
+      attributes: [[sequelize.fn("COUNT", "id"), "commentLike"]],
+      where: { LikeCommentId: commentId },
+    });
+    result.count = count;
+    result.status = false;
   }
+  return result;
 };
 
 export {

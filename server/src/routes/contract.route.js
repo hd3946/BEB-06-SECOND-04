@@ -6,12 +6,15 @@ import upload from "./upload.js";
 import ipfsUpload from "../web3/ipfs.js";
 dotenv.config();
 
+import { db, sequelize } from "../models/index.js";
+const { User, Post, Comment, PostLike, CommentLike, Token } = db; 
+
 /* contract & wallet Addr */
 const tokenAddr = process.env.TOKEN_CONTRACT_ADDRESS;
 const nftAddr = process.env.NFT_CONTRACT_ADDRESS;
 const serverAddr = process.env.SERVER_ADDRESS; //가나슈1
 const serverKey = process.env.SERVER_PRIVATE_KEY; //가나슈1 비밀키
-const userAddr = process.env.USER_ADDRESS           //가나슈2
+// const userAddr = process.env.USER_ADDRESS           //가나슈2
 const userPassword = process.env.USER_PRIVATE_KEY       //생성된 지갑 비밀번호
 
 /* web.eth */
@@ -61,56 +64,47 @@ router.post("/token", async (req, res, next) => {
 
 /* mint NFT */
 router.post("/mint", async (req, res, next) => {
-  /** account methods **/
-  // const wallet = await web3.eth.personal.newAccount(userPassword) //지갑생성
-  // const unlock = await web3.eth.personal.unlockAccount(userAddr, userPassword)
-
-  /** Token methods **/
-  // const tokenBalance = await tokenContract.methods.balanceOf(userAddr).call()
-  // const tokenTransfer = await tokenContract.methods.transfer(serverAddr, 1).send({ from: userAddr })
-
-  /** NFT methods **/
-  // const nftMint = await nftContract.methods.mintNFT(serverAddr, "testURI").send({ from: serverAddr })
-  // const nftBalance = await nftContract.methods.balanceOf(serverAddr ).call()
-  // const nftTokenId = await nftContract.methods._tokenIds().call()
-
-  ////////////////////////////////////////////////////////////////////////////
-
   // if (!req.cookies.loginData)
   //   return res.status(401).json("로그인되어 있지 않습니다.");
   try {
-    // const userAddr = req.cookies.loginData.address;
+    const { id, address } = req.cookies.loginData;
     const { name, description, attributes } = req.body;
-    const tokenBalance = await ganache.getTokenBalance(userAddr);
-    console.log(tokenBalance)
-    if (tokenBalance > 9) {
-      const details = { name, description , attributes , image: "image" }
-      const tokenURI = await ipfsUpload(JSON.stringify(details));
-      // const tokenTransfer = await ganache.receiveToken(userAddr, 10);
-      console.log("contract", tokenURI)
-      const nftMint = await ganache.nftMinting(userAddr, tokenURI);
+    const tokenBalance = await ganache.getTokenBalance(address);
+    console.log("보유중인 토큰", tokenBalance)
+    if (tokenBalance > 0) {
+      const details = { 
+        "name": name, 
+        "description": description , 
+        "attributes": attributes , 
+      }
+      const jsonData = JSON.stringify(details);
+      const tokenURI = await ipfsUpload(jsonData);
+      const tokenTransfer = await ganache.receiveToken(address, 1); //1개로 교환가능
+      const nftMint = await ganache.nftMinting(address, tokenURI);
       const nftTokenId = await ganache.getNftTokenId();
-      // const nftBalance = await ganache.getNftBalance(userAddr);
-      // const resfreshTokenBalance = await ganache.getTokenBalance(userAddr);
-      //tokenId를 데이터베이스에 저장
-
+      const nftBalance = await ganache.getNftBalance(address);
+      const resfreshTokenBalance = await ganache.getTokenBalance(address);
+      await Token.create({
+        tokenId: nftTokenId,
+        userId: id,
+      }); 
       return res.status(200).json({
         status: true,
         messege: "success",
-        // nftTokenId,
-        // nftBalance,
-        // tokenBalance: resfreshTokenBalance,
+        nftTokenId,
+        nftBalance,
+        tokenBalance: resfreshTokenBalance,
       });
     } else {
-      const giveContribution = await ganache.giveContribution (userAddr, 10);
+      const tokenTransfer = await ganache.giveContribution(address, 10); //test용
       return res.status(401).json({
       status: false,
       messege: "Not enough tokens",
       tokenBalance,
       });
      }
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 });
  
