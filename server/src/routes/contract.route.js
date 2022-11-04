@@ -29,6 +29,7 @@ const tokenContract = new Contract(tokenABI, tokenAddr);
 import nftABI from "../web3/nftABI.js";
 const nftContract = new Contract(nftABI, nftAddr);
 
+
 ///////////////////////////////////////////////////////////////////////////
 
 /* eth faucet */
@@ -59,6 +60,30 @@ router.post("/token", async (req, res, next) => {
 });
 
 ///////////////////////////////////////////////////////////////////////////
+
+router.get("/mynft", upload.single('image'), async (req, res, next) => {
+  if (!req.cookies.loginData)
+    return res.status(401).json("로그인되어 있지 않습니다.");
+  try {
+    const { id } = req.cookies.loginData;
+    const find = await Token.findAll({ userId: id});
+    let myToken = [];
+    for ( const data of find ) {
+      myToken.push({tokenId: data.toJSON().tokenId});
+    }
+    for ( const obj of myToken ) {
+      const metaData = await ganache.getMetaData(obj.tokenId);
+      obj.metaData = metaData.data;
+    } 
+    return res.status(200).json({
+      status: true,
+      messege: "search my NFT",
+      myToken,
+    });
+  } catch (err) {
+    next(err);
+  }  
+});
 
 /* mint NFT */
 router.post("/mint", upload.single('image'), async (req, res, next) => {
