@@ -2,7 +2,7 @@ import { db } from "../models/index.js";
 const { User } = db;
 import ganache from "../web3/web3.js";
 const { getEthBalance, getTokenBalance, getNftBalance } = ganache;
-import ipfsUpload from "../web3/ipfs.js";
+import { imgUpload } from "../web3/ipfs.js";
 import {
   getUserData,
   createUser,
@@ -99,11 +99,11 @@ const info = async (req, res, next) => {
 //POST 회원정보 수정 /edit upload.single("avatar")
 const edit = async (req, res, next) => {
   try {
-    console.log("프로필 이미지 업로드", req.file.location, req.file.buffer);
-    const profileUrl = await ipfsUpload(req.file.buffer);
+    console.log("프로필 이미지 업로드", req.file);
+    const profileUrl = await imgUpload(req.file ? req.file.buffer : req.file);
     const loginData = req.cookies.loginData;
     const { id } = loginData;
-    const result = await updateUser(id);
+    const result = await updateUser(profileUrl, id);
 
     console.log("결과", result);
 

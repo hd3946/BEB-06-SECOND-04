@@ -3,7 +3,7 @@ const router = express.Router();
 import dotenv from "dotenv";
 import ganache from "../web3/web3.js";
 import upload from "./upload.js";
-import ipfsUpload from "../web3/ipfs.js";
+import { imgUpload, jsonUpload } from "../web3/ipfs.js";
 dotenv.config();
 
 import { db, sequelize } from "../models/index.js";
@@ -97,7 +97,7 @@ router.post("/mint", upload.single('image'), async (req, res, next) => {
     const tokenBalance = await ganache.getTokenBalance(address);
     console.log("보유중인 토큰", tokenBalance);
     if (tokenBalance > 0) {
-      const imgURI = await ipfsUpload(file ? file.buffer : "empty");
+      const imgURI = await imgUpload(file ? file.buffer : file);
       console.log("imgURI", imgURI)
       const details = {
         name: name,
@@ -106,7 +106,7 @@ router.post("/mint", upload.single('image'), async (req, res, next) => {
         attributes: attributes,
       };
       const jsonData = JSON.stringify(details);
-      const tokenURI = await ipfsUpload(jsonData);
+      const tokenURI = await jsonUpload(jsonData);
       const tokenTransfer = await ganache.receiveToken(address, 1); //1개로 교환가능
       const nftMint = await ganache.nftMinting(address, tokenURI);
       const nftTokenId = await ganache.getNftTokenId();
