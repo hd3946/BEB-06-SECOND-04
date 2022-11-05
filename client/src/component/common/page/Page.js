@@ -185,7 +185,7 @@ const Page = ({ data }) => {
   const [deleteCheck, setDeleteCheck] = useState(false);
   const [likeCheck, setLikeCheck] = useState(false);
   const { searchText } = useSelector((state) => state.state);
-  console.log(content);
+  // console.log(content);
   const dispatch = useDispatch();
   const postLikeUp = async () => {
     const { status } = await postLike(postId);
