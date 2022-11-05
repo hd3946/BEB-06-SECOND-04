@@ -57,7 +57,6 @@ const signup = async function (req, res, next) {
     return res.status(200).json({
       status: true,
       message: `user: ${nickname} is Signup Success`,
-      //token: token,  보류
     });
   } catch (err) {
     next(err);

@@ -14,7 +14,7 @@ const transfer = async (req, res, next) => {
       const refreshTokenBalance = await ganache.getTokenBalance(userAddr);
       return res.status(200).json({ 
         status: true,
-        messege: `transfer to userAddr:${address}} || ${balance} Token.`,
+        messege: `transfer to userAddr:${address} || ${balance} Token.`,
         tokenBalance: refreshTokenBalance,
       });
     } else {
