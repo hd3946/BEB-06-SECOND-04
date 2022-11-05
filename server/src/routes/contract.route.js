@@ -51,12 +51,30 @@ router.post("/eth", async (req, res, next) => {
 
 /* transfer token  */
 router.post("/token", async (req, res, next) => {
-  const transferToken = await tokenContract.methods
-    .transfer(userAddr, 1)
-    .send({ from: serverAddr }); //from에게 token를 전송
-  const tokenBalance = await tokenContract.methods.balanceOf(userAddr).call();
-  console.log(`transfer to userAddr:${userAddr} || 1 Token.`);
-  res.status(200).send({ tokenBalance });
+  if (!req.cookies.loginData)
+    return res.status(401).json("로그인되어 있지 않습니다.");
+  try {
+    const userAddr = req.cookies.loginData.address;
+    const { address, balance } = req.body; 
+    const tokenBalance = await ganache.getTokenBalance(userAddr);
+    if(tokenBalance >= Number(balance)) {
+      const transferToken = await ganache.tradeToken(userAddr, address, balance)
+      const refreshTokenBalance = await ganache.getTokenBalance(userAddr);
+      return res.status(200).json({ 
+        status: true,
+        messege: `transfer to userAddr:${address}} || ${balance} Token.`,
+        tokenBalance: refreshTokenBalance,
+      });
+    } else {
+      return res.status(401).json({ 
+        status: false,
+        messege: `Not enough Token`,
+        tokenBalance,
+      })
+    } 
+  } catch (err) {
+    next(err);
+  }
 });
 
 ///////////////////////////////////////////////////////////////////////////

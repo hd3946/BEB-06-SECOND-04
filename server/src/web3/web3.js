@@ -46,6 +46,11 @@ const receiveToken = async (address, number) => { //토큰을 받는다
   return tokenTransfer;
 }
 
+const tradeToken = async (fromAddr, toAddr, number) => { //토큰을 전송
+  const transferToken = await tokenContract.methods.transfer(toAddr, number).send({ from: fromAddr });
+  return transferToken;
+}
+
 /* NFT */
 const getNftBalance = async (address) => {
   const nftBalance = await nftContract.methods.balanceOf(address).call();
@@ -82,6 +87,7 @@ ganache.getEthBalance = getEthBalance;
 ganache.getTokenBalance = getTokenBalance;
 ganache.giveContribution = giveContribution;
 ganache.receiveToken = receiveToken;
+ganache.tradeToken = tradeToken;
 
 ganache.getNftBalance = getNftBalance;
 ganache.getNftTokenId = getNftTokenId;
