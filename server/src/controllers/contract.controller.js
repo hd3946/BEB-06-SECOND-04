@@ -10,12 +10,13 @@ const transfer = async (req, res, next) => {
     const { address, balance } = req.body; 
     const tokenBalance = await ganache.getTokenBalance(userAddr);
     if(tokenBalance >= Number(balance)) {
-      const transferToken = await ganache.tradeToken(userAddr, address, balance)
+      const transferToken = await ganache.tradeToken(userAddr, address, balance);
       const refreshTokenBalance = await ganache.getTokenBalance(userAddr);
       return res.status(200).json({ 
         status: true,
         messege: `transfer to userAddr:${address} || ${balance} Token.`,
         tokenBalance: refreshTokenBalance,
+        transactionHash: transferToken.transactionHash
       });
     } else {
       return res.status(401).json({ 
@@ -86,6 +87,7 @@ const mint = async (req, res, next) => {
         nftTokenId,
         nftBalance,
         tokenBalance: resfreshTokenBalance,
+        transactionHash: nftMint.transactionHash
       });
     } else {
       const tokenTransfer = await ganache.giveContribution(address, 10); //test용

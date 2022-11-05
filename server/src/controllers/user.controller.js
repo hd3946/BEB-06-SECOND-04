@@ -1,5 +1,6 @@
 import { db } from "../models/index.js";
 const { User } = db;
+import jwt from "jsonwebtoken";
 import ganache from "../web3/web3.js";
 const { getEthBalance, getTokenBalance, getNftBalance } = ganache;
 import { imgUpload } from "../web3/ipfs.js";
@@ -17,13 +18,14 @@ const signin = async (req, res, next) => {
   if (!(email && password))
     return res.status(401).json("입력정보가 부족합니다");
   try {
-    const userData = await getUserData(email, password);
+    const userData = await (await getUserData(email, password)).toJSON();
     delete userData.password; //비밀번호 삭제
     delete userData.deletedAt;
-    res.cookie("loginData", userData, {
-      maxAge: 3 * 60 * 60 * 1000,
+    const loginData = jwt.sign(userData, process.env.ACCESS_SECRET);
+    res.cookie("loginData", loginData, {
+      maxAge: 3 * 60 * 60 * 1000, //3시간유효
       httpOnly: false,
-    }); //3시간유효
+    }); 
     console.log("로그인 성공");
     return res.status(200).json({
       status: true,
@@ -66,6 +68,7 @@ const signup = async function (req, res, next) {
 //get 유저정보 조회 /info
 const info = async (req, res, next) => {
   const loginData = req.cookies.loginData;
+  console.log(loginData)
   const { id, address } = loginData;
   try {
     const postList = await getUserPost(id);
