@@ -13,7 +13,6 @@ import {
 const listPost = async (req, res, next) => {
   try {
     const postList = await getPostList();
-
     return res.status(200).json({
       status: true,
       message: "전제글목록 검색",

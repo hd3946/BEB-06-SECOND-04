@@ -66,11 +66,6 @@ const signup = async function (req, res, next) {
 
 //get 유저정보 조회 /info
 const info = async (req, res, next) => {
-  if (!req.cookies.loginData)
-    return res.status(401).json({
-      status: false,
-      message: "로그인이 필요합니다.",
-    });
   const loginData = req.cookies.loginData;
   const { id, address } = loginData;
   try {

@@ -1,4 +1,6 @@
 import express from "express";
+const router = express.Router();
+import { isLoggedIn } from "./middleware.js";
 import {
   signin,
   signout,
@@ -8,7 +10,7 @@ import {
   follow,
 } from "../controllers/user.controller.js";
 import upload from "./upload.js";
-const router = express.Router();
+
 
 /* users router listing. */
 
@@ -40,8 +42,8 @@ const router = express.Router();
 router.post("/signin", signin);
 router.post("/signout", signout);
 router.post("/signup", signup);
-router.get("/info", info);
-router.post("/edit", edit);
-router.post("/follow/:id", upload.single("post"), follow);
+router.get("/info", isLoggedIn, info);
+router.post("/edit",isLoggedIn, edit);
+router.post("/follow/:id",isLoggedIn, upload.single("post"), follow);
 
 export default router;
