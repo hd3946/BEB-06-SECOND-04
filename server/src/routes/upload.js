@@ -1,6 +1,5 @@
 import multer from 'multer';
 import path from 'path';
-//var fs = require('fs');  
 import dotenv from 'dotenv';
 dotenv.config();
 

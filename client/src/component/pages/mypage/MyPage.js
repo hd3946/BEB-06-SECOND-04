@@ -1,12 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Mynft from "./Mynft";
 import Myposts from "./Myposts";
 import Send from "./Send";
-import { info } from "../../../store/slice";
+import axios from "axios";
 
 const MypageBox = styled.div`
   display: flex;
@@ -43,6 +42,15 @@ const MypageBox = styled.div`
       z-index: -10;
     }
   }
+  .edit-BTN {
+    font-size: 14px;
+    color: white;
+    background-color: tomato;
+    border-radius: 7px;
+    cursor: pointer;
+    z-index: 10;
+    margin: 14px 1px 15px;
+  }
 
   .mypageBody {
     display: flex;
@@ -56,13 +64,13 @@ const MypageBox = styled.div`
       width: 100%;
       height: 150px;
       text-align: center;
-      /* align-items: center; */
+
       .mypageMyCoin {
         display: flex;
         justify-content: flex-end;
         align-items: center;
         right: 0px;
-        margin: 5px 10px;
+        margin: -19px 10px;
         transform: translateX(-10px);
         .coinIcon {
           width: 50px;
@@ -77,17 +85,7 @@ const MypageBox = styled.div`
           font-weight: 600;
         }
       }
-      .faucetEth {
-        position: absolute;
-        top: 70px;
-        right: -50px;
-        font-size: 18px;
-      }
-      .faucetButton {
-        position: absolute;
-        top: 116px;
-        right: -53px;
-      }
+
       button {
         width: 64px;
         height: 34px;
@@ -105,32 +103,57 @@ const MypageBox = styled.div`
 `;
 
 const Mypage = () => {
-  const dispatch = useDispatch();
-  const [userAddr, setUserAddr] = useState("");
-  const { email, account, nickname, balance } = useSelector(
-    (state) => state.user
-  );
-
+  const [nickname, setNickname] = useState("");
+  const [account, setAccount] = useState("");
+  const [tokenBalance, setTokenBalance] = useState(0);
+  const [myimgURL, setMyImgURL] = useState(""); // base64
+  const [myFile, setMyFile] = useState(); //file 형식
+  const [sendImg, setSendImg] = useState(false); //axios img
+  console.log(JSON.parse(localStorage["userData"]));
   useEffect(() => {
-    getToken();
+    getMyInfo();
   }, []);
 
-  function getToken() {
-    axios
-      .get(`http://localhost:3005/users/info`, {
-        "Content-Type": "application/json",
-        withCredentials: true,
-      })
-      .then((res) =>
-        dispatch(
-          info({
-            email: res.data.loginData.email,
-            account: res.data.loginData.address,
-            nickname: res.data.loginData.nickname,
-            balance: res.data.ethBalance,
-          })
-        )
-      );
+  function getMyInfo() {
+    setNickname(JSON.parse(localStorage["userData"]).nickname);
+    setAccount(JSON.parse(localStorage["userData"]).address);
+    setTokenBalance(JSON.parse(localStorage["userData"]).tokenBalance);
+    setMyImgURL(JSON.parse(localStorage["userData"]).profileImg);
+  }
+
+  //edit profile photo
+  const onChangeProfile = async (e) => {
+    console.log(e.target.files[0]);
+    const reader = new FileReader();
+    reader.readAsDataURL(e.target.files[0]);
+    return new Promise((resolve) => {
+      reader.onload = () => {
+        setMyImgURL(reader.result);
+        resolve();
+        setMyFile(e.target.files[0]);
+        setSendImg(true);
+      };
+    });
+  };
+
+  function editBTN() {
+    //Todo: 서버에 imgurl 보내주기
+    // let formData = new FormData();
+    // formData.append("image", myFile);
+    // const config = {
+    //   "Content-Type": "multipart/form-data",
+    //   withCredentials: true,
+    // };
+    // axios
+    //   .post("http://localhost:3005/users/edit", formData, config)
+    //   .then((res) => {
+    //     res.data;
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    console.log("완료");
+    setSendImg(false);
   }
 
   return (
@@ -147,13 +170,40 @@ const Mypage = () => {
                 height: "57px",
               }}
             >
-              {nickname ? nickname.charAt(0).toUpperCase() : "?"}
+              {nickname && !myimgURL ? nickname.charAt(0).toUpperCase() : null}
             </div>
-            {/* <img src="" alt="프사"></img> */}
+            {myimgURL && (
+              <img
+                src={myimgURL}
+                style={{ borderRadius: "50%", width: "80px", height: "80px" }}
+                alt="프사"
+              ></img>
+            )}
           </div>
         </div>
         <div className="headerLine" />
       </div>
+      {sendImg ? (
+        <div className="edit-BTN" onClick={editBTN}>
+          수정
+        </div>
+      ) : (
+        <div>
+          {" "}
+          <label className="input-file-BTN" for="input-file">
+            <FontAwesomeIcon
+              icon={faCamera}
+              style={{ padding: "14px", cursor: "pointer" }}
+            />
+          </label>
+          <input
+            type="file"
+            id="input-file"
+            style={{ display: "none" }}
+            onChange={onChangeProfile}
+          ></input>
+        </div>
+      )}
 
       <div className="mypageBody">
         <div className="mypageProfile">
@@ -165,7 +215,7 @@ const Mypage = () => {
                 color="#555555"
               />
             </div>
-            <div className="coinSymbol">{balance ? balance : 0} FTC</div>
+            <div className="coinSymbol">{tokenBalance} FTC</div>
           </div>
           <div className="mypageName">{nickname}</div>
           <div className="mypageAccount">{account}</div>

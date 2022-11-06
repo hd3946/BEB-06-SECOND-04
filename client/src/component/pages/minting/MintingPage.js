@@ -116,14 +116,6 @@ const MintingPage = () => {
   const setImageUrl = (data) => {
     setImgURL(data);
   };
-  // const uploadImage = (e) => {
-  //   let file = e.target.files[0];
-  //   const file_url = URL.createObjectURL(file);
-  //   document.querySelector(".uploadImage").src = file_url;
-  //   setImage(true);
-  //   console.log(file_url);
-  //   //blob:http://localhost:3000/aad74c35-6ea4-4745-b791-fdc827a52a59
-  // };
 
   const handleMint = (e) => {
     dispatch(check({ type: "loading" }));
@@ -164,6 +156,7 @@ const MintingPage = () => {
       .post("http://localhost:3005/contract/mint", formData, config)
       .then((res) => {
         console.log(res);
+        dispatch(check({ type: "success" }));
       })
       .catch((err) => console.err);
 
