@@ -28,8 +28,9 @@ const MynftBox = styled.div`
       width: 145px;
       height: 180px;
       background-color: #bbd0ff;
-      border: 1px solid black;
-      margin: 0px 24px 10px 0px;
+      border: 0.5px solid black;
+      border-radius: 5px;
+      margin: 5px 17px 10px 0px;
       cursor: pointer;
       transition: 0.2s;
       :hover {
@@ -53,12 +54,14 @@ const Mynft = () => {
 
   // 임시 nft 받아오기
   const nftCall = () => {
+    console.log("nft 받아오자");
     axios
-      .get(
-        `https://testnets-api.opensea.io/api/v1/assets?asset_contract_address=0x941c64F524E55b46717Db8AC77c85e973DFEC2c5&order_direction=desc&offset=2&limit=20&include_orders=false`
-      )
+      .get("http://localhost:3005/contract/mynft", {
+        withCredentials: true,
+      })
       .then((res) => {
-        setNftList(res.data.assets);
+        console.log(res.data);
+        // setNftList(res.data);
       });
   };
 
