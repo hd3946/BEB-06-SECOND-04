@@ -1,6 +1,6 @@
 import ganache from "../web3/web3.js";
 const { getTokenBalance, giveContribution } = ganache;
-import ipfsUpload from "../web3/ipfs.js";
+import { imgUpload } from "../web3/ipfs.js";
 import {
   getPostList,
   createPost,
@@ -13,7 +13,6 @@ import {
 const listPost = async (req, res, next) => {
   try {
     const postList = await getPostList();
-
     return res.status(200).json({
       status: true,
       message: "전제글목록 검색",
@@ -29,8 +28,7 @@ const writePost = async (req, res, next) => {
   try {
     const { id, address } = req.cookies.loginData;
     const { title, content } = req.body;
-    // req.file.buffer
-    const img = await ipfsUpload("img");
+    const img = await imgUpload(req.file ? req.file.buffer : req.file);
     const post = await createPost(title, content, img, id);
     if (post) {
       //게시글 하나 작성할때마다 토큰을 하나 전송
