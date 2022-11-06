@@ -68,10 +68,10 @@ const getUserPost = async (userId) => {
   return postList;
 };
 
-const updateUser = async (profileUrl,userId) => {
+const updateUser = async (profileUrl, userId) => {
   const update = await User.update(
       {
-        profileurl:profileUrl,
+        profileurl: profileUrl,
       },
       {
         where: {

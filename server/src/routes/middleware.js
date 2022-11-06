@@ -1,3 +1,6 @@
+import jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const isLoggedIn = (req, res, next) => {
   if (!req.cookies.loginData){
@@ -6,6 +9,10 @@ const isLoggedIn = (req, res, next) => {
       message: "로그인이 필요합니다.",
     });
   } else {
+    req.cookies.loginData = jwt.verify(
+      req.cookies.loginData, 
+      process.env.ACCESS_SECRET
+    );
     next();
   }
 }

@@ -3,6 +3,7 @@ import Contract from 'web3-eth-contract';
 import dotenv from 'dotenv';
 import tokenABI from './tokenABI.js';
 import nftABI from './nftABI.js';
+import axios from 'axios';
 dotenv.config();
 
 /* contract & wallet Addr */
@@ -45,6 +46,11 @@ const receiveToken = async (address, number) => { //토큰을 받는다
   return tokenTransfer;
 }
 
+const tradeToken = async (fromAddr, toAddr, number) => { //토큰을 전송
+  const transferToken = await tokenContract.methods.transfer(toAddr, number).send({ from: fromAddr });
+  return transferToken;
+}
+
 /* NFT */
 const getNftBalance = async (address) => {
   const nftBalance = await nftContract.methods.balanceOf(address).call();
@@ -65,15 +71,28 @@ const nftMinting = async (address, tokenURI) => {
   return nftMint;
 }
 
+const getMetaData = async (tokenId) => {
+  const tokenURI = await nftContract.methods.tokenURI(tokenId).call();
+  const metaData = await axios({ 
+    method: 'GET',
+    url: tokenURI,
+    headers: {accept: 'applycation/json'},
+    withCredential: true,
+  });
+  return metaData;
+}
+
 ganache.getEthBalance = getEthBalance;
 
 ganache.getTokenBalance = getTokenBalance;
 ganache.giveContribution = giveContribution;
 ganache.receiveToken = receiveToken;
+ganache.tradeToken = tradeToken;
 
 ganache.getNftBalance = getNftBalance;
 ganache.getNftTokenId = getNftTokenId;
 ganache.nftMinting = nftMinting;
+ganache.getMetaData = getMetaData;
 
 
 export default ganache;

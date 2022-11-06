@@ -1,12 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Mynft from "./Mynft";
 import Myposts from "./Myposts";
 import Send from "./Send";
-import { info } from "../../../store/slice";
 
 const MypageBox = styled.div`
   display: flex;
@@ -62,7 +60,7 @@ const MypageBox = styled.div`
         justify-content: flex-end;
         align-items: center;
         right: 0px;
-        margin: 5px 10px;
+        margin: -19px 10px;
         transform: translateX(-10px);
         .coinIcon {
           width: 50px;
@@ -76,6 +74,8 @@ const MypageBox = styled.div`
           font-size: 18px;
           font-weight: 600;
         }
+      }
+      .editPhoto {
       }
       .faucetEth {
         position: absolute;
@@ -105,32 +105,18 @@ const MypageBox = styled.div`
 `;
 
 const Mypage = () => {
-  const dispatch = useDispatch();
-  const [userAddr, setUserAddr] = useState("");
-  const { email, account, nickname, balance } = useSelector(
-    (state) => state.user
-  );
+  const [nickname, setNickname] = useState("");
+  const [account, setAccount] = useState("");
+  const [tokenBalance, setTokenBalance] = useState(0);
 
   useEffect(() => {
     getToken();
   }, []);
 
   function getToken() {
-    axios
-      .get(`http://localhost:3005/users/info`, {
-        "Content-Type": "application/json",
-        withCredentials: true,
-      })
-      .then((res) =>
-        dispatch(
-          info({
-            email: res.data.loginData.email,
-            account: res.data.loginData.address,
-            nickname: res.data.loginData.nickname,
-            balance: res.data.ethBalance,
-          })
-        )
-      );
+    setNickname(JSON.parse(localStorage["userData"]).nickname);
+    setAccount(JSON.parse(localStorage["userData"]).address);
+    setTokenBalance(JSON.parse(localStorage["userData"]).tokenBalance);
   }
 
   return (
@@ -154,6 +140,11 @@ const Mypage = () => {
         </div>
         <div className="headerLine" />
       </div>
+      <FontAwesomeIcon
+        icon={faCamera}
+        className="editPhoto"
+        style={{ padding: "14px", cursor: "pointer" }}
+      />
 
       <div className="mypageBody">
         <div className="mypageProfile">
@@ -165,7 +156,7 @@ const Mypage = () => {
                 color="#555555"
               />
             </div>
-            <div className="coinSymbol">{balance ? balance : 0} FTC</div>
+            <div className="coinSymbol">{tokenBalance} FTC</div>
           </div>
           <div className="mypageName">{nickname}</div>
           <div className="mypageAccount">{account}</div>

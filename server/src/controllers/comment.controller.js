@@ -30,8 +30,6 @@ const listComment = async (req, res, next) => {
 
 //POST /write
 const writeComment = async (req, res, next) => {
-  if (!req.cookies.loginData)
-    return res.status(401).json("로그인되어 있지 않습니다.");
   try {
     const { id } = req.cookies.loginData;
     const { postId, content } = req.body;
@@ -50,8 +48,6 @@ const writeComment = async (req, res, next) => {
 
 //POST /edit
 const editComment = async (req, res, next) => {
-  if (!req.cookies.loginData)
-    return res.status(401).json("로그인되어 있지 않습니다.");
   try {
     const { id } = req.cookies.loginData;
     const { commentId, content } = req.body;
@@ -73,8 +69,6 @@ const editComment = async (req, res, next) => {
 
 //POST /delete
 const deletedComment = async (req, res, next) => {
-  if (!req.cookies.loginData)
-    return res.status(401).json("로그인되어 있지 않습니다.");
   try {
     const { id } = req.cookies.loginData;
     const { commentId } = req.body;
@@ -94,8 +88,6 @@ const deletedComment = async (req, res, next) => {
 
 //POST like/:commentId
 const likeComment = async (req, res, next) => {
-  if (!req.cookies.loginData)
-    return res.status(401).json("로그인되어 있지 않습니다.");
   try {
     const userId = req.cookies.loginData.id;
     const commentId = req.params.commentId; //작성되지않은 commentId일시 에러발생

@@ -241,7 +241,7 @@ const Page = ({ data }) => {
 
   useEffect(() => {
     const signData = loginInfo();
-    if (!likeCheck) {
+    if (!likeCheck && signData) {
       for (let like of PostLikes) {
         if (like.User.nickname === signData.nickname) {
           setLikeCheck(true);
