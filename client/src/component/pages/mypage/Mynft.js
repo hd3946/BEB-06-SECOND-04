@@ -60,26 +60,25 @@ const Mynft = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data);
-        // setNftList(res.data);
+        console.log(res.data.myToken);
+        setNftList(res.data.myToken);
       });
   };
 
-  // useEffect(() => {
-  //   nftCall();
-  // }, []);
+  useEffect(() => {
+    nftCall();
+  }, []);
 
   return (
     <MynftBox>
       <div className="myNftHeader">
         <FontAwesomeIcon icon={faImage} /> My NFT Box
-        <button onClick={nftCall}></button>
       </div>
       <div className="myNftList">
         {nftList.length > 0 ? (
           nftList.map((data, index) => (
             <div className="myNft cc" key={index}>
-              <img src={data.image_url} alt={data.name} />
+              <img src={data.metaData.image} />
             </div>
           ))
         ) : (
