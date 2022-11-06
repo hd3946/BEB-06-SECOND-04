@@ -2,10 +2,9 @@ import { db } from "../models/index.js";
 const { User, Post, PostLike, Follow, Comment, CommentLike } = db;
 
 const getUserData = async (email, password) => {
-  const data = await User.findOne({
+  return await User.findOne({
       where: { email, password },
   });
-  return data;
 };
 
 const createUser = async (email, password, nickname, address) => {
@@ -84,13 +83,16 @@ const updateUser = async (profileUrl, userId) => {
 
 // POST /user/follow
 const followUser = async (userId, followerId) => {
+ 
   const result = {}; 
-  const user = await User.findOne({ where: { id: userId } });
-    if (user) {
-      const checkFollow = await Follow.findOne({ where: { followingId: userId } });
+  const user = await User.findOne({ 
+    where: { id: userId }
+  });
+    if (user) { 
+      const checkFollow = await user.hasFollowing(parseInt(followerId, 10)); 
       // 존재할경우 삭제
       if(checkFollow){
-        await checkFollow.destroy();
+        await user.removeFollowing(parseInt(followerId, 10));
       }else{
         await user.addFollowing(parseInt(followerId, 10));
       }

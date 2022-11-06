@@ -26,7 +26,7 @@ const signin = async (req, res, next) => {
     res.cookie("loginData", loginData, {
       maxAge: 3 * 60 * 60 * 1000, //3시간유효
       httpOnly: false,
-    }); 
+    });
     console.log("로그인 성공");
     return res.status(200).json({
       status: true,
@@ -126,8 +126,10 @@ const edit = async (req, res, next) => {
 
 // POST follow 기능 /follow/:id
 const follow = async (req, res, next) => {
+  const loginData = req.cookies.loginData;
+  const { id } = loginData;
   try {
-    const result = await followUser();
+    const result = await followUser(id, req.params.id);
     if(result){
       return res.status(200).json({
         status: true,

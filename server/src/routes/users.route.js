@@ -27,6 +27,7 @@ router.post("/follow/:id",isLoggedIn, upload.single("post"), follow);
  *      summary: "로그인"
  *      description: "서버에 Post방식으로 데이터를 전송하여 DB 유저 정보 저장~!"
  *      tags: [Users]
+ * 
  *      parameters:  [
  *           {
  *               "name": "email",
@@ -34,38 +35,16 @@ router.post("/follow/:id",isLoggedIn, upload.single("post"), follow);
  *               "description": "input your email, it is an unique value",
  *               "required": true,
  *               "schema": {
- *                   "type": "string",
- *                   "example": "email@naver.com"
- *               }
- *           },
- *           {
- *               "name": "nickname",
- *               "in": "body",
- *               "description": "input your nickname",
- *               "required": true,
- *               "schema": {
- *                   "type": "string",
- *                   "example": "Fantastic4"
- *               }
- *           },
- *           {
- *               "name": "password",
- *               "in": "body",
- *               "description": "input your password",
- *               "required": true,
- *               "schema": {
- *                   "type": "string",
- *                   "example": "password"
- *               }
- *           },
- *           {
- *               "name": "address",
- *               "in": "body",
- *               "description": "Ganache Address",
- *               "required": true,
- *               "schema": {
- *                   "type": "string",
- *                   "example": "0x00"
+ *                    "type": "object",
+ *                    "properties": {
+ *                        "email": {
+ *                          "type": string,
+ *                          "example": "email@naver.com"
+ *                        },
+ *                        "password":{
+ *                          "type": string,
+ *                        }
+ *                      }
  *               }
  *           }
  *       ]
