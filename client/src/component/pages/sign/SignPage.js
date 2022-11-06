@@ -210,7 +210,6 @@ const SignPage = ({ control }) => {
       };
 
       const { status } = await loginUser(userData);
-
       if (status === 200) {
         const userInfoData = await registerInfo();
         const { address, nickname, email, profileurl, id } =
