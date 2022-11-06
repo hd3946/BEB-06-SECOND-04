@@ -65,14 +65,15 @@ const Mynft = () => {
       });
   };
 
-  useEffect(() => {
-    nftCall();
-  }, []);
+  // useEffect(() => {
+  //   nftCall();
+  // }, []);
 
   return (
     <MynftBox>
       <div className="myNftHeader">
         <FontAwesomeIcon icon={faImage} /> My NFT Box
+        <button onClick={nftCall}></button>
       </div>
       <div className="myNftList">
         {nftList.length > 0 ? (

@@ -25,7 +25,7 @@ const signin = async (req, res, next) => {
     res.cookie("loginData", loginData, {
       maxAge: 3 * 60 * 60 * 1000, //3시간유효
       httpOnly: false,
-    }); 
+    });
     console.log("로그인 성공");
     return res.status(200).json({
       status: true,
@@ -68,7 +68,6 @@ const signup = async function (req, res, next) {
 //get 유저정보 조회 /info
 const info = async (req, res, next) => {
   const loginData = req.cookies.loginData;
-  console.log(loginData)
   const { id, address } = loginData;
   try {
     const postList = await getUserPost(id);

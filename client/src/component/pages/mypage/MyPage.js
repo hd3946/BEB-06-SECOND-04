@@ -145,7 +145,7 @@ const Mypage = () => {
     //   withCredentials: true,
     // };
     // axios
-    //   .post("http://localhost:3005/users/img", formData, config)
+    //   .post("http://localhost:3005/users/edit", formData, config)
     //   .then((res) => {
     //     res.data;
     //   })

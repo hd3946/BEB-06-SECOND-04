@@ -7,24 +7,28 @@ const { User, Post, Comment, PostLike, CommentLike, Token } = db;
 const transfer = async (req, res, next) => {
   try {
     const userAddr = req.cookies.loginData.address;
-    const { address, balance } = req.body; 
+    const { address, balance } = req.body;
     const tokenBalance = await ganache.getTokenBalance(userAddr);
-    if(tokenBalance >= Number(balance)) {
-      const transferToken = await ganache.tradeToken(userAddr, address, balance);
+    if (tokenBalance >= Number(balance)) {
+      const transferToken = await ganache.tradeToken(
+        userAddr,
+        address,
+        balance
+      );
       const refreshTokenBalance = await ganache.getTokenBalance(userAddr);
-      return res.status(200).json({ 
+      return res.status(200).json({
         status: true,
         messege: `transfer to userAddr:${address} || ${balance} Token.`,
         tokenBalance: refreshTokenBalance,
-        transactionHash: transferToken.transactionHash
+        transactionHash: transferToken.transactionHash,
       });
     } else {
-      return res.status(401).json({ 
+      return res.status(401).json({
         status: false,
         messege: `Not enough Token`,
         tokenBalance,
-      })
-    } 
+      });
+    }
   } catch (err) {
     next(err);
   }
@@ -33,15 +37,15 @@ const transfer = async (req, res, next) => {
 const myNFT = async (req, res, next) => {
   try {
     const { id } = req.cookies.loginData;
-    const find = await Token.findAll({ userId: id});
+    const find = await Token.findAll({ userId: id });
     let myToken = [];
-    for ( const data of find ) {
-      myToken.push({tokenId: data.toJSON().tokenId});
+    for (const data of find) {
+      myToken.push({ tokenId: data.toJSON().tokenId });
     }
-    for ( const obj of myToken ) {
+    for (const obj of myToken) {
       const metaData = await ganache.getMetaData(obj.tokenId);
       obj.metaData = metaData.data;
-    } 
+    }
     return res.status(200).json({
       status: true,
       messege: "search my NFT",
@@ -63,7 +67,7 @@ const mint = async (req, res, next) => {
     console.log("보유중인 토큰", tokenBalance);
     if (tokenBalance > 0) {
       const imgURI = await imgUpload(file ? file.buffer : file);
-      console.log("imgURI", imgURI)
+      console.log("imgURI", imgURI);
       const details = {
         name: name,
         description: description,
@@ -87,7 +91,7 @@ const mint = async (req, res, next) => {
         nftTokenId,
         nftBalance,
         tokenBalance: resfreshTokenBalance,
-        transactionHash: nftMint.transactionHash
+        transactionHash: nftMint.transactionHash,
       });
     } else {
       const tokenTransfer = await ganache.giveContribution(address, 10); //test용
