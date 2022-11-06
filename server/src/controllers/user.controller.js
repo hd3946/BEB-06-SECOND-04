@@ -9,6 +9,7 @@ import {
   createUser,
   getUserPost,
   updateUser,
+  followUser,
 } from "../services/user.service.js";
 
 //POST 로그인 /signin
@@ -41,7 +42,10 @@ const signin = async (req, res, next) => {
 const signout = (req, res, next) => {
   res.cookie("loginData", null, { maxAge: 0, httpOnly: true }); //쿠키삭제
   console.log("로그아웃되었습니다");
-  return res.status(200).json("logout ok");
+  return res.status(200).json({
+    status: true,
+    message: "logout ok",
+  });
 };
 
 // POST 회원 가입 /signup
@@ -123,11 +127,14 @@ const edit = async (req, res, next) => {
 // POST follow 기능 /follow/:id
 const follow = async (req, res, next) => {
   try {
-    const user = await User.findOne({ where: { id: req.user.id } });
-    if (user) {
-      await user.addFollowing(parseInt(req.params.id, 10));
-      return res.send("success");
-    } else {
+    const result = await followUser();
+    if(result){
+      return res.status(200).json({
+        status: true,
+        message: "unfollow/follow - success",
+      }); 
+    }
+    else{
       return res.status(404).send("no user");
     }
   } catch (err) {
