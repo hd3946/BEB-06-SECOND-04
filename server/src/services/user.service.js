@@ -4,6 +4,10 @@ const { User, Post, PostLike, Follow, Comment, CommentLike } = db;
 const getUserData = async (email, password) => {
   return await User.findOne({
       where: { email, password },
+      include: [ 
+        { model: User, attributes: ['id', "email", "nickname"], as: 'Followers'},
+        { model: User, attributes: ['id', "email", "nickname"], as: 'Followings'},
+      ]
   });
 };
 
@@ -27,14 +31,11 @@ const getUserPost = async (userId) => {
       "createdAt",
       "updatedAt",
     ],
-    include: [
+    include: [ 
       { model: User, attributes: ["email", "nickname", 'profileurl']},
       { model: PostLike, 
         // attributes: [[ sequelize.fn('COUNT', 'id'), 'postLike' ]],
-        include: [
-          { model: User, 
-          attributes: ['email', 'nickname', 'profileurl']}
-        ],
+        include: [{ model: User, attributes: ['email', 'nickname', 'profileurl']}],
         order: [['id', 'DESC']]
       },
       { model: Comment,
@@ -47,8 +48,7 @@ const getUserPost = async (userId) => {
           "postId",
         ],
         include: [
-          { model: User,
-             attributes: ["email", "nickname", 'profileurl']},
+          { model: User, attributes: ["email", "nickname", 'profileurl']},
           { model: CommentLike, 
             // attributes: [[ sequelize.fn('COUNT', 'id'), 'commentLike' ]],
             include: [
@@ -83,7 +83,6 @@ const updateUser = async (profileUrl, userId) => {
 
 // POST /user/follow
 const followUser = async (userId, followerId) => {
- 
   const result = {}; 
   const user = await User.findOne({ 
     where: { id: userId }

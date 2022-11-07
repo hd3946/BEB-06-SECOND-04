@@ -73,7 +73,7 @@ const signup = async function (req, res, next) {
 const info = async (req, res, next) => {
   const loginData = req.cookies.loginData;
   const { id, address } = loginData;
-  try {
+  try { 
     const postList = await getUserPost(id);
     const ethBalance = await getEthBalance(address);
     const tokenBalance = await getTokenBalance(address);
