@@ -14,14 +14,14 @@ const transfer = async (req, res, next) => {
       const refreshTokenBalance = await ganache.getTokenBalance(userAddr);
       return res.status(200).json({ 
         status: true,
-        messege: `transfer to userAddr:${address} || ${balance} Token.`,
+        message: `transfer to userAddr:${address} || ${balance} Token.`,
         tokenBalance: refreshTokenBalance,
         transactionHash: transferToken.transactionHash
       });
     } else {
       return res.status(401).json({ 
         status: false,
-        messege: `Not enough Token`,
+        message: `Not enough Token`,
         tokenBalance,
       })
     } 
@@ -44,7 +44,7 @@ const myNFT = async (req, res, next) => {
     } 
     return res.status(200).json({
       status: true,
-      messege: "search my NFT",
+      message: "search my NFT",
       myToken,
     });
   } catch (err) {
@@ -76,24 +76,24 @@ const mint = async (req, res, next) => {
       const nftMint = await ganache.nftMinting(address, tokenURI);
       const nftTokenId = await ganache.getNftTokenId();
       const nftBalance = await ganache.getNftBalance(address);
-      const resfreshTokenBalance = await ganache.getTokenBalance(address);
+      const refreshTokenBalance = await ganache.getTokenBalance(address);
       await Token.create({
         tokenId: nftTokenId,
         userId: id,
       });
       return res.status(200).json({
         status: true,
-        messege: "success",
+        message: "success",
         nftTokenId,
         nftBalance,
-        tokenBalance: resfreshTokenBalance,
+        tokenBalance: refreshTokenBalance,
         transactionHash: nftMint.transactionHash
       });
     } else {
       const tokenTransfer = await ganache.giveContribution(address, 10); //test용
       return res.status(401).json({
         status: false,
-        messege: "Not enough tokens",
+        message: "Not enough tokens",
         tokenBalance,
       });
     }
