@@ -30,8 +30,6 @@ const writePost = async (req, res, next) => {
     const { title, content } = req.body;
     const img = await imgUpload(req.file ? req.file.buffer : req.file);
     const post = await createPost(title, content, img, id);
-    console.log("-----------------------");
-    console.log(img);
     if (post) {
       //게시글 하나 작성할때마다 토큰을 하나 전송
       const transferToken = await giveContribution(address, 1); //user에게 token 1개를 전송
