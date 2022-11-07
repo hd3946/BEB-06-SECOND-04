@@ -42,7 +42,9 @@
 <br />
 
 ### IPFS Desktop CORS setting
-<img src='../.github/ipfs_setting.png' width = 800 alt = 'IPFS_Setting_png'/>
+<p align="center">
+  <img src='../.github/ipfs_setting.png' width = 800 alt = 'IPFS_Setting_png'/>
+</p>
 
 
 <br />
