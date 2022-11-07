@@ -86,7 +86,7 @@ const Myposts = () => {
       <div className="mypostsList">
         {myList.length > 0 ? (
           myList.map((data, index) => (
-            <Link to={"/detail"} key={index} state={{ pageId: 0, data: data }}>
+            <Link to={"/detail"} key={index} state={{ data: data }}>
               <div className="mypost" key={index}>
                 <div className="mypostIndex">#{data.postId}</div>
                 <div className="mypostdesc">{data.content}</div>

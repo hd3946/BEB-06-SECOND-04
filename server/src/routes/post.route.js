@@ -12,7 +12,7 @@ import {
 
 /* post router listing. */
 router.get("/list", listPost);
-router.post("/write", isLoggedIn, writePost);
+router.post("/write", isLoggedIn, upload.single("image"), writePost);
 router.post("/edit", isLoggedIn, upload.single("image"), editPost);
 router.post("/delete", isLoggedIn, deletedPost);
 router.post("/like/:postId", isLoggedIn, likePost);
