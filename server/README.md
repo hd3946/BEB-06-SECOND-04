@@ -1,8 +1,8 @@
-## Getting Start Server
+### Getting Start Server
 <br />
 
 
-## Require 
+### Require 
 -----
 > IPFS Desktop [Install](https://ipfs.tech/#install) <br />
 > Ganache [Intall](https://trufflesuite.com/ganache) <br />
@@ -13,7 +13,7 @@
 
 <br />
 
-## Step <br />
+### Step <br />
 -----
 #### 1. `npm install` <br />
 #### 2. Ganache 실행 (Default. PORT: 7545, NetworkID 5777)
@@ -51,7 +51,7 @@
 <br />
 
 -----
-> ## version 
+> ### version 
 -----
 <pre>
 web3 v1.8.0

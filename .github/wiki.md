@@ -11,7 +11,7 @@
 
  
 ### 🛠&nbsp;Wireframe
-[More Information](https://github.com/codestates-beb/BEB-06-SECOND-04/tree/main/.github/wireFrame.md)
+[More Information](https://github.com/codestates-beb/BEB-06-SECOND-04/blob/main/.github/wireFrame/wireFrame.md)
 <br />
 
 <br />
