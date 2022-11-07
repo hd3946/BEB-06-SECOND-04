@@ -5,6 +5,7 @@ import PageList from "./PageList";
 import { useDispatch } from "react-redux";
 import { postlist } from "../../../store/slice";
 import { postListCall } from "../../../api/post";
+import { usePost } from "../../../hooks/usePostFilter";
 
 const MainPageBox = styled.div`
   padding-top: 50px;

@@ -72,7 +72,6 @@ const signup = async function (req, res, next) {
 //get 유저정보 조회 /info
 const info = async (req, res, next) => {
   const loginData = req.cookies.loginData;
-  console.log(loginData)
   const { id, address } = loginData;
   try {
     const postList = await getUserPost(id);

@@ -43,15 +43,16 @@ const MypostsBox = styled.div`
       .mypostIndex {
         width: 50px;
         margin-left: 10px;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 500;
       }
       .mypostdesc {
+        font-size: 15px;
         width: 550px;
       }
       .mypostDay {
         width: 150px;
-        font-size: 18px;
+        font-size: 15px;
         font-weight: 500;
       }
     }

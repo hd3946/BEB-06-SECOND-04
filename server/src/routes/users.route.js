@@ -147,7 +147,7 @@ router.post("/follow/:id",isLoggedIn, follow);
  *             content:
  *              application/json:
  *                  schema:
- *                      type: object   
+ *                      type: object
  *                      properties:
  *                          status:
  *                              type: boolean,
@@ -155,7 +155,7 @@ router.post("/follow/:id",isLoggedIn, follow);
  *                          message:
  *                              type: string,
  *                              example: "user: Fantastic4 is Signup Success"
- *                               
+ *
  */
 
 /**
