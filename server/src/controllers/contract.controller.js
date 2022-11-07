@@ -37,7 +37,7 @@ const transfer = async (req, res, next) => {
 const myNFT = async (req, res, next) => {
   try {
     const { id } = req.cookies.loginData;
-    const find = await Token.findAll({ userId: id });
+    const find = await Token.findAll({ where: { userId: id } });
     let myToken = [];
     for (const data of find) {
       myToken.push({ tokenId: data.toJSON().tokenId });

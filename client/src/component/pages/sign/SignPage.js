@@ -214,7 +214,6 @@ const SignPage = ({ control }) => {
         const userInfoData = await registerInfo();
         const { address, nickname, email, profileurl, id } =
           userInfoData.data.loginData;
-
         dispatch(filtering({ list: userInfoData.data.postList }));
         localStorage.setItem(
           "userData",

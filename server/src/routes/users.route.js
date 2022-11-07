@@ -16,8 +16,8 @@ router.post("/signin", signin);
 router.post("/signout", signout);
 router.post("/signup", signup);
 router.get("/info", isLoggedIn, info);
-router.post("/edit",isLoggedIn, edit);
-router.post("/follow/:id",isLoggedIn, upload.single("post"), follow);
+router.post("/edit", isLoggedIn, upload.single("image"), edit);
+router.post("/follow/:id", isLoggedIn, follow);
 
 /**
  * @swagger
@@ -75,7 +75,7 @@ router.post("/follow/:id",isLoggedIn, upload.single("post"), follow);
  *             content:
  *              application/json:
  *                  schema:
- *                      type: object   
+ *                      type: object
  *                      properties:
  *                          status:
  *                              type: boolean,
@@ -83,8 +83,7 @@ router.post("/follow/:id",isLoggedIn, upload.single("post"), follow);
  *                          message:
  *                              type: string,
  *                              example: "user: Fantastic4 is Signup Success"
- *                               
+ *
  */
-
 
 export default router;

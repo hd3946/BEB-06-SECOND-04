@@ -138,20 +138,21 @@ const Mypage = () => {
 
   function editBTN() {
     //Todo: 서버에 imgurl 보내주기
-    // let formData = new FormData();
-    // formData.append("image", myFile);
-    // const config = {
-    //   "Content-Type": "multipart/form-data",
-    //   withCredentials: true,
-    // };
-    // axios
-    //   .post("http://localhost:3005/users/edit", formData, config)
-    //   .then((res) => {
-    //     res.data;
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    let formData = new FormData();
+    formData.append("image", myFile);
+    const config = {
+      "Content-Type": "multipart/form-data",
+      withCredentials: true,
+    };
+    console.log(myFile);
+    axios
+      .post("http://localhost:3005/users/edit", formData, config)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     console.log("완료");
     setSendImg(false);
   }
