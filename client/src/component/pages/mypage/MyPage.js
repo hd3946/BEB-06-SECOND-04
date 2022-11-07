@@ -6,6 +6,7 @@ import Mynft from "./Mynft";
 import Myposts from "./Myposts";
 import Send from "./Send";
 import axios from "axios";
+import { registerInfo } from "../../../api/sign";
 
 const MypageBox = styled.div`
   display: flex;
@@ -109,7 +110,6 @@ const Mypage = () => {
   const [myimgURL, setMyImgURL] = useState(""); // base64
   const [myFile, setMyFile] = useState(); //file 형식
   const [sendImg, setSendImg] = useState(false); //axios img
-  console.log(JSON.parse(localStorage["userData"]));
   useEffect(() => {
     getMyInfo();
   }, []);
@@ -123,7 +123,6 @@ const Mypage = () => {
 
   //edit profile photo
   const onChangeProfile = async (e) => {
-    console.log(e.target.files[0]);
     const reader = new FileReader();
     reader.readAsDataURL(e.target.files[0]);
     return new Promise((resolve) => {
@@ -149,10 +148,15 @@ const Mypage = () => {
       .post("http://localhost:3005/users/edit", formData, config)
       .then((res) => {
         console.log(res);
+        const userInfo = localStorage.getItem("userData");
+        const obj = JSON.parse(userInfo);
+        obj.profileImg = myimgURL;
+        localStorage.setItem("userData", JSON.stringify(obj));
       })
       .catch((err) => {
         console.log(err);
       });
+
     console.log("완료");
     setSendImg(false);
   }

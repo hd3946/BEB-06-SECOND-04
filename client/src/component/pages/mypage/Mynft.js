@@ -52,15 +52,12 @@ const MynftBox = styled.div`
 const Mynft = () => {
   const [nftList, setNftList] = useState([]);
 
-  // 임시 nft 받아오기
   const nftCall = () => {
-    console.log("nft 받아오자");
     axios
       .get("http://localhost:3005/contract/mynft", {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data.myToken);
         setNftList(res.data.myToken);
       });
   };
