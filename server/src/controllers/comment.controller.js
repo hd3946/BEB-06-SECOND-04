@@ -38,7 +38,7 @@ const writeComment = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      message: "Success",
+      message: "Write success",
     });
   } catch (err) {
     console.error(err);
@@ -56,7 +56,7 @@ const editComment = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      message: "edit success",
+      message: "Edit success",
     });
   } catch (err) {
     console.error(err);
@@ -76,7 +76,7 @@ const deletedComment = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      message: "delete success",
+      message: "Delete success",
     });
   } catch (err) {
     return res.status(401).json({
