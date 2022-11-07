@@ -109,7 +109,7 @@ const Mypage = () => {
   const [myimgURL, setMyImgURL] = useState(""); // base64
   const [myFile, setMyFile] = useState(); //file 형식
   const [sendImg, setSendImg] = useState(false); //axios img
-  console.log(JSON.parse(localStorage["userData"]));
+
   useEffect(() => {
     getMyInfo();
   }, []);
@@ -123,7 +123,6 @@ const Mypage = () => {
 
   //edit profile photo
   const onChangeProfile = async (e) => {
-    console.log(e.target.files[0]);
     const reader = new FileReader();
     reader.readAsDataURL(e.target.files[0]);
     return new Promise((resolve) => {
@@ -136,8 +135,8 @@ const Mypage = () => {
     });
   };
 
+  //edit profile photo axios
   function editBTN() {
-    //Todo: 서버에 imgurl 보내주기
     let formData = new FormData();
     formData.append("image", myFile);
     const config = {
@@ -149,10 +148,15 @@ const Mypage = () => {
       .post("http://localhost:3005/users/edit", formData, config)
       .then((res) => {
         console.log(res);
+        const userInfo = localStorage.getItem("userData");
+        const obj = JSON.parse(userInfo);
+        obj.profileImg = myimgURL;
+        localStorage.setItem("userData", JSON.stringify(obj));
       })
       .catch((err) => {
         console.log(err);
       });
+
     console.log("완료");
     setSendImg(false);
   }
@@ -216,7 +220,7 @@ const Mypage = () => {
                 color="#555555"
               />
             </div>
-            <div className="coinSymbol">{tokenBalance} FTC</div>
+            <div className="coinSymbol">{tokenBalance} ETH</div>
           </div>
           <div className="mypageName">{nickname}</div>
           <div className="mypageAccount">{account}</div>

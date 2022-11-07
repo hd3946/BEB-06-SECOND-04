@@ -56,6 +56,38 @@ const SearchAndPostBox = styled.div`
       width: 100%;
       margin-top: 20px;
 
+      .imageAdd {
+        position: absolute;
+        flex-direction: column;
+        right: 337px;
+        //transform: translateX(-337px);
+        width: 200px;
+        height: 32px;
+        z-index: 1;
+        label {
+          width: 100%;
+          height: 100%;
+          background-color: aliceblue;
+          transition: 0.2s;
+          :hover {
+            background-color: #d0e9ff;
+          }
+        }
+        .imageInput {
+          width: 100%;
+          height: 100%;
+          margin: 0px;
+          padding: 0px;
+          border: 0px;
+          //outline: 0px;
+          background-color: aliceblue;
+          z-index: 1;
+        }
+        .postFileName {
+          position: absolute;
+          transform: translateY(25px);
+        }
+      }
       input {
         width: 325px;
         height: 20px;
@@ -123,6 +155,7 @@ const SearchAndPost = () => {
   const [postData, setPostData] = useState({
     title: "",
     content: "",
+    file: null,
   });
   const [inputCheck, setInputCheck] = useState({
     title: false,
@@ -143,14 +176,19 @@ const SearchAndPost = () => {
 
   const posting = async () => {
     const { title, content } = inputCheck;
+    let formData = new FormData();
 
+    formData.append("title", postData.title);
+    formData.append("content", postData.content);
+    formData.append("image", postData.file[0]);
+    console.log(postData.file);
     if (title && content) {
       dispatch(check({ type: "loading" }));
-      const { status } = await postWrite(postData);
+      const { status } = await postWrite(formData);
 
       if (status) {
         const { data } = await postListCall();
-        dispatch(postlist({ list: data.postList.reverse() }));
+        dispatch(postlist({ list: data.postList }));
         setPostData({
           title: "",
           content: "",
@@ -160,9 +198,12 @@ const SearchAndPost = () => {
           content: false,
         });
         dispatch(check({ type: "" }));
-        window.location.href = `/`;
+        //window.location.href = `/`;
+        return;
       }
     }
+    dispatch(check({ type: "" }));
+    //window.location.href = `/`;
   };
 
   const enterAction = (type) => {
@@ -209,6 +250,35 @@ const SearchAndPost = () => {
           onFocus={() => setActive(true)}
           onBlur={() => setActive(false)}
         >
+          <div className="imageAdd cc">
+            <input
+              type="file"
+              id="postFileUpload"
+              className="imageInput"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                console.log(e.target.files.length);
+                if (e.target.files.length === 1) {
+                  setPostData({ ...postData, file: e.target.files });
+                } else {
+                  setPostData({ ...postData, file: "" });
+                }
+              }}
+            />
+            <label
+              className="cc"
+              htmlFor="postFileUpload"
+              style={{ cursor: "pointer" }}
+            >
+              {/* <FontAwesomeIcon icon="fa-regular fa-image" /> */}
+              <div className="dragdrop cc">
+                <FontAwesomeIcon icon="fa-regular fa-image" />
+              </div>
+            </label>
+            {postData.file ? (
+              <div className="postFileName">{postData.file[0].name}</div>
+            ) : null}
+          </div>
           <input
             placeholder={
               validate()
@@ -237,7 +307,6 @@ const SearchAndPost = () => {
               }
             }}
           />
-
           <textarea
             placeholder="자세하게 말해주세요! (contant)"
             className="ta"

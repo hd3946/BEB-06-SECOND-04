@@ -11,7 +11,6 @@ import {
   postListCall,
   postUpdate,
 } from "../../../api/post";
-import { usePost } from "../../../hooks/usePostFilter";
 import { loginInfo, postValidate, validate } from "../../../libs/validate";
 import { filtering, postlist } from "../../../store/slice";
 
@@ -35,8 +34,8 @@ const PageBox = styled.div`
     display: flex;
     width: 100%;
     .pageUserProfileBox {
-      width: 60px;
-      height: 60px;
+      width: 65px;
+      height: 65px;
       border-radius: 50%;
       background-color: rgba(82, 192, 255, 0.6);
       img {
@@ -44,9 +43,8 @@ const PageBox = styled.div`
       }
     }
     .pageUserBox {
-      width: 90%;
+      width: 100%;
       margin-left: 10px;
-
       .pageUsertitle {
         margin-top: 10px;
         font-weight: 500;
@@ -85,7 +83,7 @@ const PageBox = styled.div`
 
   .pageImgBox {
     margin-top: 10px;
-    background-color: rgba(82, 192, 255, 0.6);
+    object-fit: cover;
   }
 
   .pageEtcBox {
@@ -180,12 +178,13 @@ const Page = ({ data }) => {
   const { pathname } = location;
   const path = pathname.slice(1);
   const { content, postId, title, User, PostLikes, Comments, img } = data;
+
   const [updateToggle, setUpdateToggle] = useState(false);
   const [updateContent, setUpdateContent] = useState(content);
   const [deleteCheck, setDeleteCheck] = useState(false);
   const [likeCheck, setLikeCheck] = useState(false);
   const { searchText } = useSelector((state) => state.state);
-  // console.log(content);
+
   const dispatch = useDispatch();
   const postLikeUp = async () => {
     const { status } = await postLike(postId);
@@ -265,7 +264,7 @@ const Page = ({ data }) => {
     <PageBox path={path} deleteCheck={deleteCheck} likeCheck={likeCheck}>
       <div className="pageHeader">
         <div className="pageUserProfileBox cc">
-          <img src="" alt="Profile" />
+          <img src={User.profileurl} alt="Profile" />
         </div>
         <div className="pageUserBox">
           <Link

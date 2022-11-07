@@ -1,8 +1,8 @@
-## Getting Start Server
+### Getting Start Server
 <br />
 
 
-## Require 
+### Require 
 -----
 > IPFS Desktop [Install](https://ipfs.tech/#install) <br />
 > Ganache [Intall](https://trufflesuite.com/ganache) <br />
@@ -13,7 +13,7 @@
 
 <br />
 
-## Step <br />
+### Step <br />
 -----
 #### 1. `npm install` <br />
 #### 2. Ganache 실행 (Default. PORT: 7545, NetworkID 5777)
@@ -42,14 +42,16 @@
 <br />
 
 ### IPFS Desktop CORS setting
-<img src='../.github/ipfs_setting.png' width = 800 alt = 'IPFS_Setting_png'/>
+<p align="center">
+  <img src='../.github/ipfs_setting.png' width = 800 alt = 'IPFS_Setting_png'/>
+</p>
 
 
 <br />
 <br />
 
 -----
-> ## version 
+> ### version 
 -----
 <pre>
 web3 v1.8.0

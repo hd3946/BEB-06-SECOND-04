@@ -18,7 +18,7 @@ router.use("/users", usersRouter);
 /**
  * @swagger
  * tags:
- *  name: Posts 
+ *  name: Post 
  *  description: 게시글 추가 수정 삭제 조회
  */
 
@@ -27,7 +27,7 @@ router.use("/post", postRouter);
 /**
  * @swagger
  * tags:
- *  name: Comments
+ *  name: Comment
  *  description: 댓글 추가 수정 삭제 조회
  */
 

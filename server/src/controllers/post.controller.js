@@ -36,7 +36,7 @@ const writePost = async (req, res, next) => {
       const tokenBalance = await getTokenBalance(address);
       return res.status(200).json({
         status: true,
-        message: "Post Success",
+        message: "Post success",
         tokenBalance,
       });
     } else {
