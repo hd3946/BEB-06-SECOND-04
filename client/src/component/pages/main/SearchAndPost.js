@@ -63,9 +63,16 @@ const SearchAndPostBox = styled.div`
         //transform: translateX(-337px);
         width: 200px;
         height: 32px;
-        background-color: aliceblue;
         z-index: 1;
-
+        label {
+          width: 100%;
+          height: 100%;
+          background-color: aliceblue;
+          transition: 0.2s;
+          :hover {
+            background-color: #d0e9ff;
+          }
+        }
         .imageInput {
           width: 100%;
           height: 100%;
@@ -75,6 +82,10 @@ const SearchAndPostBox = styled.div`
           //outline: 0px;
           background-color: aliceblue;
           z-index: 1;
+        }
+        .postFileName {
+          position: absolute;
+          transform: translateY(25px);
         }
       }
       input {
@@ -144,7 +155,7 @@ const SearchAndPost = () => {
   const [postData, setPostData] = useState({
     title: "",
     content: "",
-    file: null,
+    file: [],
   });
   const [inputCheck, setInputCheck] = useState({
     title: false,
@@ -165,12 +176,12 @@ const SearchAndPost = () => {
 
   const posting = async () => {
     const { title, content } = inputCheck;
-    const formData = new FormData();
+    let formData = new FormData();
+
     formData.append("title", postData.title);
     formData.append("content", postData.content);
-    formData.append("file", postData.file);
-
-    console.log(formData);
+    formData.append("image", postData.file[0]);
+    console.log(postData.file);
     if (title && content) {
       dispatch(check({ type: "loading" }));
       const { status } = await postWrite(formData);
@@ -249,13 +260,19 @@ const SearchAndPost = () => {
                 setPostData({ ...postData, file: e.target.files });
               }}
             />
-            <label htmlFor="postFileUpload">
+            <label
+              className="cc"
+              htmlFor="postFileUpload"
+              style={{ cursor: "pointer" }}
+            >
               {/* <FontAwesomeIcon icon="fa-regular fa-image" /> */}
               <div className="dragdrop cc">
                 <FontAwesomeIcon icon="fa-regular fa-image" />
               </div>
             </label>
-            <div>없음</div>
+            {postData.file.length > 0 ? (
+              <div className="postFileName">{postData.file[0].name}</div>
+            ) : null}
           </div>
           <input
             placeholder={
