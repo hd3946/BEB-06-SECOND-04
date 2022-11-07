@@ -155,7 +155,7 @@ const SearchAndPost = () => {
   const [postData, setPostData] = useState({
     title: "",
     content: "",
-    file: [],
+    file: null,
   });
   const [inputCheck, setInputCheck] = useState({
     title: false,
@@ -257,7 +257,12 @@ const SearchAndPost = () => {
               className="imageInput"
               style={{ display: "none" }}
               onChange={(e) => {
-                setPostData({ ...postData, file: e.target.files });
+                console.log(e.target.files.length);
+                if (e.target.files.length === 1) {
+                  setPostData({ ...postData, file: e.target.files });
+                } else {
+                  setPostData({ ...postData, file: "" });
+                }
               }}
             />
             <label
@@ -270,7 +275,7 @@ const SearchAndPost = () => {
                 <FontAwesomeIcon icon="fa-regular fa-image" />
               </div>
             </label>
-            {postData.file.length > 0 ? (
+            {postData.file ? (
               <div className="postFileName">{postData.file[0].name}</div>
             ) : null}
           </div>
