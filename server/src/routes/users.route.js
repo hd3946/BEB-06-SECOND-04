@@ -16,8 +16,8 @@ router.post("/signin", signin);
 router.post("/signout", signout);
 router.post("/signup", signup);
 router.get("/info", isLoggedIn, info);
-router.post("/edit",isLoggedIn, edit);
-router.post("/follow/:id",isLoggedIn, upload.single("post"), follow);
+router.post("/edit",isLoggedIn, upload.single("image"), edit);
+router.post("/follow/:id",isLoggedIn, follow);
 
 /**
  * @swagger
