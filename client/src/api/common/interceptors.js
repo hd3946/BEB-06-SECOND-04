@@ -1,8 +1,12 @@
-export function setInterceptors(instance) {
+export function setInterceptors(instance, type) {
   // Add a request interceptor
   instance.interceptors.request.use(
     function (config) {
-      config.headers["Content-Type"] = "application/json; charset=utf-8";
+      if (type) {
+        config.headers["Content-Type"] = "multipart/form-data;; charset=utf-8";
+      } else {
+        config.headers["Content-Type"] = "application/json; charset=utf-8";
+      }
       config.withCredentials = true;
       //config.headers.Authorization = store.state.token; // token
       return config;
