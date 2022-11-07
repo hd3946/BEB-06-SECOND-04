@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { check } from "../../../store/slice";
@@ -118,14 +120,26 @@ const MintingPage = () => {
   const [fileData, setFileData] = useState(null); // 이미지 데이터
   const [nftName, setNftName] = useState(""); // nft 이름
   const [description, setDescription] = useState(""); // nft 설명
-  const [categorys, setCategory] = useState([{ trait_type: "", value: "" }]);
+  const [categorys, setCategory] = useState([{ trait_type: "", value: "" }]); //attributes
   const [imgURL, setImgURL] = useState(null); //imgURL base64
+  const [myToken, setMytoken] = useState(0);
   const dispatch = useDispatch();
-  console.log(categorys);
+
+  //token balance
+  useEffect(() => {
+    axios
+      .get("http://localhost:3005/users/info", {
+        "Content-Type": "application/json",
+        withCredentials: true,
+      })
+      .then((res) => setMytoken(res.data.tokenBalance));
+  }, []);
+
   //DragDrop 에서 imgURL 바꿔 줄 수 있는 함수
   const setImageUrl = (data) => {
     setImgURL(data);
   };
+
   const inputCategoryType = (e, idx) => {
     let newInput = [...categorys];
     newInput[idx].trait_type = e.target.value;
@@ -150,18 +164,12 @@ const MintingPage = () => {
   const handleMint = (e) => {
     dispatch(check({ type: "loading" }));
 
-    let formData = new FormData(); //formdata object
+    let formData = new FormData();
 
-    // formData.append("url", fileData);
     formData.append("name", nftName);
     formData.append("description", description);
     formData.append("image", fileData);
     formData.append("attributes", JSON.stringify(categorys));
-
-    // FormData의 value 확인
-    for (let value of formData.values()) {
-      console.log(value);
-    }
 
     const config = {
       "Content-Type": "multipart/form-data",
@@ -183,6 +191,14 @@ const MintingPage = () => {
     <MintingPageBox>
       <div className="mintingHeader">
         <div className="tapMinting">Minting</div>
+      </div>
+      <div style={{ marginLeft: "75%", fontSize: "20px" }}>
+        <FontAwesomeIcon
+          icon="fa-brands fa-bitcoin"
+          size="xl"
+          color="#555555"
+        />
+        &nbsp; My token balance : {myToken} FTC
       </div>
       <div className="mintingBody cc">
         <div className="mintingText1">Create your own NFT</div>

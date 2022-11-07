@@ -6,7 +6,6 @@ import Mynft from "./Mynft";
 import Myposts from "./Myposts";
 import Send from "./Send";
 import axios from "axios";
-import { registerInfo } from "../../../api/sign";
 
 const MypageBox = styled.div`
   display: flex;
@@ -110,6 +109,7 @@ const Mypage = () => {
   const [myimgURL, setMyImgURL] = useState(""); // base64
   const [myFile, setMyFile] = useState(); //file 형식
   const [sendImg, setSendImg] = useState(false); //axios img
+
   useEffect(() => {
     getMyInfo();
   }, []);
@@ -135,8 +135,8 @@ const Mypage = () => {
     });
   };
 
+  //edit profile photo axios
   function editBTN() {
-    //Todo: 서버에 imgurl 보내주기
     let formData = new FormData();
     formData.append("image", myFile);
     const config = {
@@ -220,7 +220,7 @@ const Mypage = () => {
                 color="#555555"
               />
             </div>
-            <div className="coinSymbol">{tokenBalance} FTC</div>
+            <div className="coinSymbol">{tokenBalance} ETH</div>
           </div>
           <div className="mypageName">{nickname}</div>
           <div className="mypageAccount">{account}</div>
