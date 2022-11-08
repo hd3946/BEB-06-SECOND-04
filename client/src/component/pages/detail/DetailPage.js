@@ -68,7 +68,7 @@ const DetailPage = () => {
   const [commentLender, setCommentLender] = useState(false);
 
   const { detailPage } = useSelector((state) => state.post);
-  console.log(commentList);
+
   const handlerCommentList = async () => {
     const { status, data } = await commentListCall(postId);
     if (status) {
@@ -97,7 +97,7 @@ const DetailPage = () => {
     handlerCommentList();
 
     return;
-  }, [postId]);
+  }, [postId, commentLender]);
 
   useEffect(() => {
     if (commentLender) {

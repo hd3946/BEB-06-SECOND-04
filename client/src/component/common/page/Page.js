@@ -224,8 +224,7 @@ const Page = ({ data }) => {
   };
 
   const postDeleteCall = async () => {
-    const { status, data } = await postDelete({ postId });
-    console.log(data);
+    const { status } = await postDelete({ postId });
     if (status) {
       window.location.href = `/`;
     }

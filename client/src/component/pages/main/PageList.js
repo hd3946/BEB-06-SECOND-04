@@ -35,7 +35,6 @@ const PageList = () => {
   const { list, filterList } = useSelector((state) => state.post);
 
   // const [filterList, allList] = usePost("on");
-  // console.log(allList);
   // console.log(filterList);
 
   useEffect(() => {
