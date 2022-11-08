@@ -136,6 +136,7 @@ const Comment = ({ comment, postId, commentLender, setCommentLender }) => {
   const [commentToggle, setCommentToggle] = useState(false);
   const [cDeleteCheck, setCDeleteCheck] = useState(false);
 
+  console.log(comment);
   //수정
   const handlerCommentEdit = async () => {
     const { status } = await commentUpdate({
@@ -164,6 +165,9 @@ const Comment = ({ comment, postId, commentLender, setCommentLender }) => {
   };
 
   useEffect(() => {
+    if (CommentLikes.length === 0) {
+      setCommentLikeCheck(false);
+    }
     const signData = loginInfo();
     if (!commentLikeCheck && signData) {
       for (let like of CommentLikes) {

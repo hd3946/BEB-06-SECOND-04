@@ -248,6 +248,9 @@ const Page = ({ data }) => {
   }, [updateToggle]);
 
   useEffect(() => {
+    if (PostLikes.length === 0) {
+      setLikeCheck(false);
+    }
     const signData = loginInfo();
     if (!likeCheck && signData) {
       for (let like of PostLikes) {
