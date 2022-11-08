@@ -40,7 +40,7 @@ router.post("/like/:postId", isLoggedIn, likePost);
  *                              example: true
  *                          message:
  *                              type: string,
- *                              example: "user: Fantastic4 is Signup Success"
+ *                              example: "Success"
  *                          postList:
  *                              type: array,
  *                              example: []
@@ -88,7 +88,7 @@ router.post("/like/:postId", isLoggedIn, likePost);
  *      ]
  *      responses:
  *          "200":
- *             description: 게시글 작성완료
+ *             description: 게시글 작성 완료
  *             content:
  *              application/json:
  *                  schema:
@@ -99,7 +99,7 @@ router.post("/like/:postId", isLoggedIn, likePost);
  *                              example: true
  *                          message:
  *                              type: string,
- *                              example: "Post Success"
+ *                              example: "Write success"
  *                          tokenBalance:
  *                              type: string,
  *                              example: "1"
@@ -112,7 +112,7 @@ router.post("/like/:postId", isLoggedIn, likePost);
  *  /post/edit:
  *    post:
  *      summary: "게시글 수정"
- *      description: "작성한 게시글의 제목, 내용, 이미지를 수정가능"
+ *      description: "작성한 게시글의 제목, 내용, 이미지를 수정"
  *      tags: [Post]
  *      parameters:  [
  *           {
@@ -147,7 +147,7 @@ router.post("/like/:postId", isLoggedIn, likePost);
  *      ]
  *      responses:
  *          "200":
- *             description: 게시글 수정완료
+ *             description: 게시글 수정 완료
  *             content:
  *              application/json:
  *                  schema:
@@ -158,7 +158,44 @@ router.post("/like/:postId", isLoggedIn, likePost);
  *                              example: true
  *                          message:
  *                              type: string,
- *                              example: "delete success"
+ *                              example: "Edit success"
+ *
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /post/delete:
+ *    post:
+ *      summary: "게시글 삭제"
+ *      description: "작성한 게시글을 삭제"
+ *      tags: [Post]
+ *      parameters:  [
+ *           {
+ *               "name": "postId",
+ *               "in": "body",
+ *               "description": "input postId",
+ *               "required": true,
+ *               "schema": {
+ *                   "type": "string",
+ *                   "example": "1"
+ *               }
+ *           }
+ *      ]
+ *      responses:
+ *          "200":
+ *             description: 게시글 삭제 완료
+ *             content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          status:
+ *                              type: boolean,
+ *                              example: true
+ *                          message:
+ *                              type: string,
+ *                              example: "Delete success"
  *
  */
 

@@ -15,7 +15,7 @@ const listPost = async (req, res, next) => {
     const postList = await getPostList();
     return res.status(200).json({
       status: true,
-      message: "전제글목록 검색",
+      message: "Success",
       postList, //최신게시글목록
     });
   } catch (err) {
@@ -36,7 +36,7 @@ const writePost = async (req, res, next) => {
       const tokenBalance = await getTokenBalance(address);
       return res.status(200).json({
         status: true,
-        message: "Post success",
+        message: "Write success",
         tokenBalance,
       });
     } else {
@@ -61,7 +61,7 @@ const editPost = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      message: "edit success",
+      message: "Edit success",
     });
   } catch (err) {
     return res.status(401).json({
@@ -80,7 +80,7 @@ const deletedPost = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      message: "delete success",
+      message: "Delete success",
     });
   } catch (err) {
     return res.status(401).json({
