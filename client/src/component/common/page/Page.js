@@ -266,7 +266,11 @@ const Page = ({ data }) => {
     <PageBox path={path} deleteCheck={deleteCheck} likeCheck={likeCheck}>
       <div className="pageHeader">
         <div className="pageUserProfileBox cc">
-          <img src={User.profileurl} alt="Profile" />
+          <img
+            src={User.profileurl}
+            alt="Profile"
+            style={{ width: "65px", height: "65px", borderRadius: "50%" }}
+          />
         </div>
         <div className="pageUserBox">
           <Link
