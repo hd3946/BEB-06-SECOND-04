@@ -286,6 +286,7 @@ const Page = ({ data }) => {
                 ref={textareaRef}
                 className="pageUserDesc ta"
                 value={updateContent}
+                content
                 onChange={(e) => {
                   resizeHeight();
                   setUpdateContent(e.target.value);
@@ -299,7 +300,7 @@ const Page = ({ data }) => {
               </button>
             </div>
           ) : (
-            <div className="pageUserDesc">{updateContent}</div>
+            <div className="pageUserDesc">{content}</div>
           )}
         </div>
       </div>
@@ -321,6 +322,7 @@ const Page = ({ data }) => {
               <div
                 className="icon"
                 onClick={() => {
+                  setUpdateContent(content);
                   setUpdateToggle(!updateToggle);
                 }}
               >
