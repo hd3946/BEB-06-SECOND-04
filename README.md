@@ -3,7 +3,7 @@
 </br>
 
 # 👋&nbsp;Introduce
-### 🄵🄰🄽🅃🄰🅂🅃🄸🄲 【﻿４】 <br />
+### Fantastic 4️ <br />
 오늘 나의 일들을 기록하고, 댓글을 달고 좋아요를 눌러 커뮤니티에 참여하세요 <br /> 참여할수록 토큰을 모을 수 있고 토큰으로 나의 NFT를 민팅 할 수 있습니다! <br />
 
 ### 📖&nbsp;WIKI [More Information](https://github.com/codestates-beb/BEB-06-SECOND-04/wiki)
@@ -38,43 +38,33 @@
 <br />
 
 # 📝&nbsp;Instruction
->### Signup & Signin
+>### Signup & in
 <br />
 <p align="center">
-	<img src='.github/' width = 800 alt="gif" />
+	<img src=".github/instruction/1_signup.gif" width = 800 alt="signup.gif" />
 </p>
 <br />
 
 >### Mypage
 <br />
 <p align="center">
-	<img src='.github/' width = 800 alt="gif" />
+	<img src=".github/instruction/2_mainpage.gif" width = 800 alt="mainpage.gif" />
 </p>
 <br />
 
->### Posting & comments
+>### Communication
 <br />
 <p align="center">
-	<img src='.github/' width = 800 alt="gif" />
+	<img src=".github/instruction/3_posting.gif" width = 800 alt="posting.gif" />
+	<img src=".github/instruction/4_comment.gif" width = 800 alt="comment.gif" />
+	<img src=".github/instruction/5_like.gif" width = 800 alt="like.gif" />
 </p>
 <br />
 
->### Likes & follow
+>### Mint NFT
 <br />
 <p align="center">
-	<img src='.github/' width = 800 alt="gif" />
-</p>
-
->### Mint
-<br />
-<p align="center">
-	<img src='.github/' alt="gif" />
-</p>
-
->### Tranfer Token
-<br />
-<p align="center">
-	<img src='.github/' width = 800 alt="gif" />
+	<img src=".github/instruction/6_minting.gif" alt="minting.gif" />
 </p>
 
 
