@@ -4,7 +4,7 @@
 
 ### ⚙️&nbsp;Architecture
 <p align="center">
-  <img src='./architecture.png' alt="architecture.png" width="800" />
+  <img src= "./architecture.png" alt="architecture.png" width="800" />
 </p>
 <br />
 <br />
@@ -19,8 +19,16 @@
 
 ### 📞&nbsp;Server API Docs.
 <p align="center">
-  <img src='./API/1_usersPostAPI.png' alt="usersPostAPI.png" width="800" />
-  <img src='./API/2_commentContractAPI.png' alt="commentContractAPI.png" width="800" />
+  <img src="./API/1_usersPostAPI.png" alt="usersPostAPI.png" width="800" />
+  <img src="./API/2_commentContractAPI.png" alt="commentContractAPI.png" width="800" />
+</p>
+
+<br />
+<br /> 
+
+### 💽&nbsp;DataBase Schema
+<p align="center">
+  <img src="./schema.png" alt="schema.png" width="800" />
 </p>
 
 <br />
@@ -39,6 +47,7 @@
 <img src="https://img.shields.io/badge/React_Router ^18.2.0-CA4245?style=for-the-badge&logo=React Router&logoColor=white"><br/>
 <img src="https://img.shields.io/badge/React_Router_dom ^6.4.2-CA4245?style=for-the-badge&logo=React Router&logoColor=white"><br/>
 <img src="https://img.shields.io/badge/axios ^1.1.3-5A29E4?style=for-the-badge&logo=axios&logoColor=white"><br/>
+
 
 ## Server <br />
 
