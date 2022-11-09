@@ -1,9 +1,9 @@
-import { create as ipfsHttpClient } from 'ipfs-http-client';
+import { create as ipfsHttpClient } from 'ipfs-http-client';// ipfs-core 
 
-const ipfs = ipfsHttpClient('/ip4/127.0.0.1/tcp/5001');
+const ipfs = ipfsHttpClient('/ip4/127.0.0.1/tcp/5001'); // core 없다
 
 const imgUpload = async (img) => { 
-  if(!Buffer.isBuffer(img)) return null;
+  if(!Buffer.isBuffer(img)) return null;  //  fs라이브 read(../imges/hi.jpg)
   const addFile = await ipfs.add(img);
   const initUri = "https://ipfs.io/ipfs/";
   const mkUrl = initUri + addFile.cid;

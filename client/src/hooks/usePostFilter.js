@@ -24,7 +24,7 @@ export function usePost(callSign) {
           return data.User.nickname === searchText;
         });
         setList({ ...lists, filterList: filter });
-        //dispatch(searchControl({ searchText: null }));
+        // dispatch(searchControl({ searchText: null }));
         // dispatch(filtering({ list: filter.reverse() }));
       }
     } else {
