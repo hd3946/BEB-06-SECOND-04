@@ -147,7 +147,6 @@ const Mypage = () => {
     axios
       .post("http://localhost:3005/users/edit", formData, config)
       .then((res) => {
-        console.log(res);
         const userInfo = localStorage.getItem("userData");
         const obj = JSON.parse(userInfo);
         obj.profileImg = myimgURL;

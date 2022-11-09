@@ -180,8 +180,12 @@ const SearchAndPost = () => {
 
     formData.append("title", postData.title);
     formData.append("content", postData.content);
-    formData.append("image", postData.file[0]);
     console.log(postData.file);
+    if (postData.file) {
+      formData.append("image", postData.file[0]);
+    } else {
+      formData.append("image", null);
+    }
     if (title && content) {
       dispatch(check({ type: "loading" }));
       const { status } = await postWrite(formData);

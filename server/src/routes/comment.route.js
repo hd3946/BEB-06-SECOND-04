@@ -81,7 +81,7 @@ router.post("/like/:commentId", isLoggedIn, likeComment);
  *       ]
  *      responses:
  *          "200":
- *             description: 댓글조회 완료
+ *             description: 댓글작성 완료
  *             content:
  *              application/json:
  *                  schema:
@@ -92,7 +92,53 @@ router.post("/like/:commentId", isLoggedIn, likeComment);
  *                              example: true
  *                          message:
  *                              type: string,
- *                              example: "Success"
+ *                              example: "Write uccess"
+ */
+
+/**
+ * @swagger
+ * paths:
+ *  /comment/edit:
+ *    post:
+ *      summary: "댓글 수정"
+ *      description: "해당 게시글의 댓글을 수정"
+ *      tags: [Comment]
+ *      parameters:  [
+ *           {
+ *               "name": " commentId",
+ *               "in": "body",
+ *               "description": "input commentId",
+ *               "required": true,
+ *               "schema": {
+ *                   "type": "string",
+ *                   "example": "1"
+ *               }
+ *           },
+ *           {
+ *               "name": "content",
+ *               "in": "body",
+ *               "description": "input content",
+ *               "required": true,
+ *               "schema": {
+ *                   "type": "string",
+ *                   "example": "content"
+ *               }
+ *           }
+ *       ]
+ *      responses:
+ *          "200":
+ *             description: 댓글수정 완료
+ *             content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          status:
+ *                              type: boolean,
+ *                              example: true
+ *                          message:
+ *                              type: string,
+ *                              example: "Edit success"
  */
 
 /**
@@ -128,7 +174,7 @@ router.post("/like/:commentId", isLoggedIn, likeComment);
  *                              example: true
  *                          message:
  *                              type: string,
- *                              example: "Success"
+ *                              example: "Delete success"
  */
 
 /**

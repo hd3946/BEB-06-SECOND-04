@@ -224,8 +224,7 @@ const Page = ({ data }) => {
   };
 
   const postDeleteCall = async () => {
-    const { status, data } = await postDelete({ postId });
-    console.log(data);
+    const { status } = await postDelete({ postId });
     if (status) {
       window.location.href = `/`;
     }
@@ -249,6 +248,9 @@ const Page = ({ data }) => {
   }, [updateToggle]);
 
   useEffect(() => {
+    if (PostLikes.length === 0) {
+      setLikeCheck(false);
+    }
     const signData = loginInfo();
     if (!likeCheck && signData) {
       for (let like of PostLikes) {
@@ -264,7 +266,11 @@ const Page = ({ data }) => {
     <PageBox path={path} deleteCheck={deleteCheck} likeCheck={likeCheck}>
       <div className="pageHeader">
         <div className="pageUserProfileBox cc">
-          <img src={User.profileurl} alt="Profile" />
+          <img
+            src={User.profileurl}
+            alt="Profile"
+            style={{ width: "65px", height: "65px", borderRadius: "50%" }}
+          />
         </div>
         <div className="pageUserBox">
           <Link
@@ -286,6 +292,7 @@ const Page = ({ data }) => {
                 ref={textareaRef}
                 className="pageUserDesc ta"
                 value={updateContent}
+                content
                 onChange={(e) => {
                   resizeHeight();
                   setUpdateContent(e.target.value);
@@ -299,7 +306,7 @@ const Page = ({ data }) => {
               </button>
             </div>
           ) : (
-            <div className="pageUserDesc">{updateContent}</div>
+            <div className="pageUserDesc">{content}</div>
           )}
         </div>
       </div>
@@ -321,6 +328,7 @@ const Page = ({ data }) => {
               <div
                 className="icon"
                 onClick={() => {
+                  setUpdateContent(content);
                   setUpdateToggle(!updateToggle);
                 }}
               >

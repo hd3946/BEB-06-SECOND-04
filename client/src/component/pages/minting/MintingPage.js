@@ -179,7 +179,6 @@ const MintingPage = () => {
     axios
       .post("http://localhost:3005/contract/mint", formData, config)
       .then((res) => {
-        console.log(res);
         dispatch(check({ type: "success" }));
       })
       .catch((err) => console.err);

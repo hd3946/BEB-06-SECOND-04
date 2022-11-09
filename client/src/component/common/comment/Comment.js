@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   commentDelete,
@@ -131,11 +131,12 @@ const CommentBox = styled.div`
 const Comment = ({ comment, postId, commentLender, setCommentLender }) => {
   const { User, content, commentId, CommentLikes } = comment;
 
-  const [likeCheck, setLikeCheck] = useState(false);
+  const [commentLikeCheck, setCommentLikeCheck] = useState(false);
   const [updateComment, setUpdateComment] = useState(content);
   const [commentToggle, setCommentToggle] = useState(false);
   const [cDeleteCheck, setCDeleteCheck] = useState(false);
 
+  console.log(comment);
   //수정
   const handlerCommentEdit = async () => {
     const { status } = await commentUpdate({
@@ -158,10 +159,25 @@ const Comment = ({ comment, postId, commentLender, setCommentLender }) => {
   const handlerCommentLike = async () => {
     const { status } = await commentLike(commentId);
     if (status) {
-      setLikeCheck(!likeCheck);
+      setCommentLikeCheck(!commentLikeCheck);
       setCommentLender(true);
     }
   };
+
+  useEffect(() => {
+    if (CommentLikes.length === 0) {
+      setCommentLikeCheck(false);
+    }
+    const signData = loginInfo();
+    if (!commentLikeCheck && signData) {
+      for (let like of CommentLikes) {
+        if (like.User.nickname === signData.nickname) {
+          setCommentLikeCheck(true);
+          return;
+        }
+      }
+    }
+  }, [CommentLikes]);
 
   return (
     <CommentBox cDeleteCheck={cDeleteCheck}>
@@ -235,7 +251,7 @@ const Comment = ({ comment, postId, commentLender, setCommentLender }) => {
               className="commentIcon likeButton"
               onClick={() => handlerCommentLike()}
             >
-              {likeCheck ? (
+              {commentLikeCheck ? (
                 <FontAwesomeIcon
                   icon="fa-solid fa-heart"
                   style={{ color: "red" }}

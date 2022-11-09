@@ -94,7 +94,6 @@ const mint = async (req, res, next) => {
         transactionHash: nftMint.transactionHash
       });
     } else {
-      const tokenTransfer = await ganache.giveContribution(address, 10); //test용
       return res.status(401).json({
         status: false,
         message: "Not enough tokens",

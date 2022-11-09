@@ -19,7 +19,7 @@ const MainPage = () => {
     const { data } = await postListCall();
     dispatch(postlist({ list: data.postList }));
   };
-
+  // listCall();
   useEffect(() => {
     listCall();
   }, []);
