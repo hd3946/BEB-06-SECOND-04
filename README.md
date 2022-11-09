@@ -57,14 +57,13 @@
 <p align="center">
 	<img src=".github/instruction/3_posting.gif" width = 800 alt="posting.gif" />
 	<img src=".github/instruction/4_comment.gif" width = 800 alt="comment.gif" />
-	<img src=".github/instruction/5_like.gif" width = 800 alt="like.gif" />
 </p>
 <br />
 
 >### Mint NFT
 <br />
 <p align="center">
-	<img src=".github/instruction/6_minting.gif" alt="minting.gif" />
+	<img src=".github/instruction/5_minting.gif" alt="minting.gif" />
 </p>
 
 
