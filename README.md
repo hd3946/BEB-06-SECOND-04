@@ -2,6 +2,8 @@
 </br>
 </br>
 
+[블로그정리](https://velog.io/@hd3946/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B82-Incentive-Community-%ED%81%B4%EB%A1%A0%EC%BD%94%EB%94%A9)
+
 # 👋&nbsp;Introduce
 ### Fantastic 4️ <br />
 오늘 나의 일들을 기록하고, 댓글을 달고 좋아요를 눌러 커뮤니티에 참여하세요 <br /> 참여할수록 토큰을 모을 수 있고 토큰으로 나의 NFT를 민팅 할 수 있습니다! <br />
